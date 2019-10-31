@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% load new_thread_tag %}
+{% load forum_template_tags %}
+{% load crispy_forms_tags %}
+
+
+{% block stylesheet %}
+      <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'css/profile_style.css' %}">
+{% endblock %}
+
+
+{% block sidebar_btn %}
+{% endblock sidebar_btn %}
+
+    {% block sidebar %}
+        <nav id="sidebar">
+            {% get_profile_sidebar_list request userprofile dropdown_active_text2 %}             
+        </nav>
+    {% endblock sidebar %}
+{% block row %}
+
+{% block content %}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Update Profile</h3>
+  </div>
+  <div class="panel-body">
+        <div style="margin-left: 38%; margin-bottom: -1.5em;" class="col-sm-6">
+                <div style="position: relative; padding: 0; margin: 0;" class="col-sm-4">
+                    {% if request.user.userprofile.attachment_set.count > 0 %}
+                        <img style="border: 4px solid #E0E0E0; border-radius: 50%; object-fit: cover;" id="profile-image-holder" height="150" src="{{ request.user.userprofile.attachment_set.all.first.image.url }}" width="150" height="150" alt="avatar">
+                        {% else %}
+                        <img style="border-radius: 50%; object-fit: cover;" id="profile-image-holder" height="150" src="{% static 'img/avatar.svg' %}" width="150" height="150" alt="avatar">                    
+                    {% endif %}
+                <a style="cursor: pointer; font-size: 14px; color: #134563;; position: absolute; top: 129px; background: rgb(235, 230, 230, .7); left: 102px;  padding: 0px 10px; border-radius: 4px; border: 1px solid #CCCCCC; box-shadow: 0 2px 3px #B1B1B1;" id="falseinput" type="button" class="btn btn-default"><span style="font-size: 26px; color: #333; position: relative; bottom: -2px;"><i class="glyphicon glyphicon-camera"></i></span></a>
+                </div>
+            </div>
+            <div style="margin-bottom: 4em;" class="col-sm-12">   
+                
+                <form style="position: relative;" method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button style="position: absolute; right: 0;" class="btn btn-primary"><i class="glyphicon glyphicon-floppy-save"></i> Update profile</button>
+                </form>
+                
+            </div>    
+
+        {% if messages %}
+        <div class='message-test'>
+            {% for message in messages %}
+                <div>Profile updated successfully!</div>
+            {% endfor %}
+        </div>
+        {% endif %}         
+
+  </div>
+</div>
+    
+{% endblock content %}
+
+{% endblock row %}
+
+{% block javascript %}
+  <script>
+    $(document).ready(function() {
+        // $('.message-test').css('display': 'none');
+        // $('.message-test').show()
+        // $('.message-test').hide()
+        $('.message-test').fadeIn(1000).delay(2500).fadeOut(1000)
+
+        // $('.message-test').animate({
+        //     opacity: 0.25,
+        //     right: "+=50",
+        //     height: "toggle"
+        //   }, 5000, function() {
+        //     // Animation complete.
+          // });
+
+        
+        $('#id_image').css('display', 'none');
+
+        /* Trigger the hidden file input button click */
+        $('#falseinput').on('click', function(){
+            $("#id_image").click();
+        });
+
+        /* Change the current image to the selected image */
+        $('#id_image').change(function(event) {
+            var selectedFile = event.target.files[0];
+            var reader = new FileReader();
+
+            var imgtag = document.getElementById("profile-image-holder");
+            imgtag.title = selectedFile.name;
+
+            reader.onload = function(event) {
+                imgtag.src = event.target.result;
+            };
+
+            reader.readAsDataURL(selectedFile);
+
+        });
+    });
+  </script>
+{% endblock javascript %}
+

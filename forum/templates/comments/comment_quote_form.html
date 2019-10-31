@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% load static %}
+
+{% block title %}Post a reply-{{ thread.title }}{% endblock title %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'css/simplemde.min.css' %}">
+{% endblock %}
+
+{% block javascript %}
+  <script src="{% static 'js/simplemde.min.js' %}"></script>
+  <script>
+    var simplemde = new SimpleMDE();
+  </script>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{{ category.get_absolute_url }}">{{ category.title }}</a></li>
+      <li class="active"><a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a></li>
+    </ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+    <h3>Reply Comment</h3>
+    <!--<div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><a href="#">{{ parent_comment.user.username }}</a> said <span class="text-muted pull-right"><small>{{parent_comment.created|date:'c'}}</small></span></h3>
+
+        </div>
+        <div class="panel-body">{{ parent_comment.message }}</div>
+    </div>-->
+
+  <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><a href="#">{{ parent_comment.user.username }}</a> said <span class="text-muted pull-right"><small>{{parent_comment.created|date:'c'}}</small></span></h3>
+
+        </div>
+        <div class="panel-body">
+
+        <!-- COMMENT FORM -->
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {% include '../includes/form.html' %}
+          <button style="margin-bottom: 5em" type="submit" class="btn btn-primary pull-right">Submit</button>
+        </form>
+    <!-- END COMMENT FORM -->
+
+
+      </div>
+    </div>
+
+{% endblock content %}
+
+

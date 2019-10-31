@@ -1,0 +1,137 @@
+.dropdown-active {
+    background-color: #2962FF !important;
+    color: #FFF !important;
+}
+
+.category-thread-header {
+    position: relative;
+    margin: 20px 0 10px 0;
+}
+
+.category-thread-header .dropdown {
+    font-weight: 300;
+}
+
+.dropdown .btn-default {
+    color: #7F7F7F;
+}
+
+.dropdown-menu li > a {
+    color: #7F7F7F;
+}
+
+.category-thread-header #dropdownMenu1{
+}
+
+.category-thread-header .btn-primary {
+    position: absolute;
+    top: 0;
+    right: 0;
+    box-shadow: 0 1px 3px hsla(0, 0%, .2);
+}
+
+.category-thread-header .user-dropdown {
+    position: absolute;
+    top: 0;
+    right: 55%;
+}
+
+
+
+.category-thread {
+    background-color: #FFF;
+    padding: 19px 16px 19px 16px;
+    /*border-radius: 3px;*/
+    margin-top: 4px;
+    margin-bottom: -3px;
+    /*border: 1px solid gray;*/
+    /*box-shadow: 0px 2px gray; */
+    position: relative;
+}
+
+.category-thread .profile-img {
+    position: absolute;
+    /*border: 1px solid #E7E7E7;*/
+    border-radius: 100%;
+    margin: -.1px 0 0;
+    left: 6px;
+    top: 7px;
+    object-fit: cover;
+
+}
+
+.category-thread-body {
+    position: relative;
+    margin: -16px 0 -5px 46px;
+}
+.category-thread-body h4 {
+    /*color: #1976D2 */
+    color: #333 !important; 
+
+    /*#448AFF*/
+}
+
+.category-thread-body a:hover{
+    text-decoration: underline;
+}
+
+div.category-thread-body  {
+    color: #7F7F7F;
+}
+
+.category-thread-body span {
+    font-size: 12px;
+    margin: 0 12px 0 4px;
+}
+
+.category-thread-body-bottom {
+    margin-right: -2px;
+}
+
+.category-thread-body .glyphicon  {
+    font-size: 11px;
+}
+
+/*.username {
+    margin-left: -2px;
+}*/
+
+
+.username {
+    display: inline-block;
+    position: relative;
+    bottom: -.9px;
+    left: 0;
+    margin-right: -4px !important; 
+
+    /*font-size: 10px;
+    transform: scale(1.18, 1.31);
+    margin-left: 6px;*/
+}
+
+.category-dot {
+    position: absolute;
+    bottom: 1px;
+    right: -12px;
+    font-size: 12px;
+}
+
+.category-dot .dot {
+  height: 5px;
+  width: 5px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 2.9px;
+  position: relative;
+  bottom: 2px;
+  left: 0;
+}
+
+.label-primary {
+    background-color: #BB08C8;
+}
+
+.label {
+    padding: .2em .6em .2em;
+}

@@ -1,0 +1,15 @@
+  {% load forum_template_tags %}
+
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    {% if dropdown_active_text %}
+      {{ dropdown_active_text|dropdown_text_value }}
+      {% else %}
+        Recent
+    {% endif %}
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    {% for dropdown_text_key in  all_dropdown_text_dict.keys %}
+      <li><a class="{% if dropdown_text_key == dropdown_active_text %}dropdown-active{% endif %}" href="{% if category %} /categories/{{ category.slug }}/{{ dropdown_text_key }}/{% else %}/threads/{{ dropdown_text_key }}/{% endif %}">{{ dropdown_text_key|dropdown_text_value }}</a></li>
+    {% endfor %}
+  </ul>

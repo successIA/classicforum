@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% load new_thread_tag %}
+{% load forum_template_tags %}
+{% load crispy_forms_tags %}
+
+
+
+{% block stylesheet %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/comment_style.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/profile_style.css' %}">
+  <style type="text/css">
+    .thread-title-bottom {
+      display: none;
+    }
+
+    .comment-created {
+      display: none;
+    }
+
+    .comment-ctrl {
+        /*display: none;*/
+    }
+
+
+
+    .category-thread {
+        margin-bottom: 0px;
+    }
+
+    .more {
+        display: none;
+    }
+  </style>
+
+{% endblock stylesheet %}
+
+
+{% block sidebar_btn %}
+{% endblock sidebar_btn %}
+
+{% block sidebar %}
+     <nav id="sidebar">
+        {% get_profile_sidebar_list request userprofile dropdown_active_text2 %}             
+    </nav>
+    {% endblock sidebar %}
+{% block row %}
+
+{% block content %}
+        
+<div>
+<div class="col-sm-12">
+    <div style="position: relative; margin: 0 0 25px">        
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div style="margin-left: 0%; margin-bottom: -1.5em;" class="col-sm-4">
+                <div style="position: relative; padding: 0; margin: 0;" class="col-sm-4">
+                    {% if userprofile.attachment_set.count > 0 %}
+                        <img style="border: 4px solid #E0E0E0; border-radius: 50%; object-fit: cover;" id="profile-image-holder" height="150" src="{{ userprofile.attachment_set.all.first.image.url }}" width="150" height="150" alt="avatar">
+                        {% else %}
+                        <img style="border-radius: 50%; object-fit: cover;" id="profile-image-holder" height="150" src="{% static 'img/avatar.svg' %}" width="150" height="150" alt="avatar">                    
+                    {% endif %}
+                    <a href="{% url 'accounts:user_edit' userprofile.user.username %}" style="cursor: pointer; font-size: 14px; color: #134563;; position: absolute; top: 129px; background: rgb(235, 230, 230, .7); left: 102px;  padding: 0px 10px; border-radius: 4px; border: 1px solid #CCCCCC; box-shadow: 0 2px 3px #B1B1B1;" id="falseinput" type="button" class="btn btn-default"><span style="font-size: 26px; color: #333; position: relative; bottom: -2px;"><i class="glyphicon glyphicon-camera"></i></span></a>
+                </div>
+            </div>
+            <div style="margin: 0px 0 0 -120px; color: #333; font-size: 13px;" class="col-sm-4">
+                <h3 style="font-weight: 700;">{{ userprofile.user.username|capfirst }}</h3>
+                <p class="text-muted"><i class="glyphicon glyphicon-calendar"></i> Joined {{ userprofile.user.date_joined|date:"F, Y" }}</p>
+
+                {% if userprofile.signature %}
+                    <div style="padding: 0;" class="col-sm-2"><i class="text-muted glyphicon glyphicon-book"></i></div><div style="padding: 0; margin: 0 0 7px -26px;" class="col-sm-10 text-muted">{{ userprofile.signature }}</div>
+                {% endif %}
+
+                {% if userprofile.location %}
+                    <p style="clear: both;" class="text-muted"><i class="glyphicon glyphicon-map-marker"></i> {{ userprofile.location }}</p>
+                {% endif %}
+
+                {% if userprofile.website %}
+                    <a href="#" class="text-muted"><i class="glyphicon glyphicon-globe"></i> {{ userprofile.website }}</a>                    
+                {% endif %}
+            </div>
+            
+            {% if request.user.is_authenticated %}
+                {% if request.user.userprofile != userprofile %}
+                    {% if request.user in userprofile.followers.all %}
+                        <span class="profile-user-follow"><a style="position: absolute; top: 25px; right: 70px; background-color: #546E7A; color: #fff;" class="btn" type="button" href="{{ userprofile.get_user_follow_url }}"><span style="font-size: 12px;"><i class="glyphicon glyphicon-ok"></i></span> Following</a></span>
+                    {% else %}
+                        <span style="position: absolute; top: 33px; right: 90px; border: 1px solid #ced4e5; border-radius: 4px; color: #546E7A; font-weight: 600;" class="profile-user-follow"><a class="follow btn" style="font-weight: 500;" type="button" href="{{ userprofile.get_user_follow_url }}"> Follow</a></span>                        
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            
+            
+
+        <div class="col-sm-12">
+            <hr style="margin: 16px 0 -8px  -15px;">            
+            <div class="panel-body profile-info-plus">
+
+                {% if userprofile.is_online %}
+                    <div><span class="text-muted"><i class="glyphicon glyphicon-time"></i>  </span><span>Online</span></div>
+                    {% else %}
+                       <div ><span class="text-muted"><i class="glyphicon glyphicon-time"></i>  </span><span>{{ userprofile.last_seen|timesince }}<span style="font-weight: 400;" class="text-muted">(offline)</span></span></div> 
+                {% endif %}
+                
+                <div ><span class="text-muted"><i class="glyphicon glyphicon-comment"></i>  </span><span>{% if last_posted %}
+                    {{ last_posted|timesince }}
+                    {% else %}
+                        No post yet
+                {% endif %}<span style="font-weight: 400;" class="text-muted">(last posted)</span></span></div>
+                <div ><span class="text-muted"><i class="glyphicon glyphicon-eye-open"></i>  </span><span>139<span style="font-weight: 400;" class="text-muted">(total views)</span></span></div>
+                {% if active_category %}
+                    <div><span class="text-muted"><i class="glyphicon glyphicon-flash"></i>  </span><span>{{ active_category }}<span style="font-weight: 400;" class="text-muted">(active category)</span> </span></div>
+                {% endif %}
+                
+                <div><span class="text-muted"><i class="glyphicon glyphicon-star"></i>   </span><span>Regular<span style="font-weight: 400;" class="text-muted">(trust level)</span></span></div>
+            </div>
+        </div>
+
+
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="col-sm-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+        <h3 class="panel-title">Summary</h3>
+        </div>
+        <div class="panel-body">
+            <div class="stats-sp">
+                <div class="">
+                    <span>{{ userprofile.user.comment_set.count }}</span>
+                    <span class="text-muted">Comments</span>
+                </div>
+                <div class="">
+                    <span>{{ userprofile.followers.count }}</span>
+                    <span class="text-muted">Followers</span>
+                </div>
+                <div class="">
+                    <span>{{ userprofile.following.count }}</span>
+                    <span class="text-muted">Following</span>
+                </div>
+                <div class="">
+                    <span>{{ userprofile.user.thread_set.count }}</span>
+                    <span class="text-muted">Threads</span>
+                </div>
+                <div class="">
+                    <span>{{ userprofile.threadfollowership_set.count }}</span>
+                    <span class="text-muted" style="">Thread Following</span>
+                </div>
+                <div class="">
+                    <span>{{ total_upvotes }}</span>
+                    <span class="text-muted" style="">Upvotes</span>
+                </div>
+                <div class="">
+                    <span>{{ total_upvoted }}</span>
+                    <span class="text-muted" style="">Upvoted</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+   
+<div style="margin-top: 7px;" class="col-sm-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Recent Comments</h3>
+        </div>
+        <div class="panel-body stats">
+            {% for comment in recent_comments %}
+                <div class="sub comment-profile"  style="padding: 8px 0 0; position: relative; margin-left: 0px;">
+                    <span class="label label-default" style=" position: absolute; top: 0; z-index: 2; color: #777; background-color: #EEEEEE; border-bottom-left-radius: 0em; border-top-right-radius: 0em; font-size: 11px;"><a href="{{ comment.get_precise_url }}">{{ comment.thread.title }}</a></span>
+                    {% include "includes/comment.html" with comment=comment %} 
+                <div class="more" style="width: 100%; position: absolute; bottom: 0; height: 18px; background-image: linear-gradient(180deg, rgba(255, 255, 255, .2),rgba(250, 250, 250, .2), rgba(245, 245, 245, .2),  rgba(227, 234, 231, 1));"><p style=" color: rgba(41, 98, 255, 1); cursor: pointer;" data="" class="text-center more-text">Expand</p></div>           
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div style="margin-top: 7px;" class="col-sm-12">
+    <div  class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Recent Threads</h3>
+        </div>
+        <div class="panel-body stats">
+            {% for thread in recent_threads %}
+                <div class="sub" style="padding: 8px 0 0; position: relative; margin-left: 0px; ">
+                    <span class="label label-default" style=" position: absolute; top: 0; z-index: 2; color: #777; background-color: #EEEEEE; border-bottom-left-radius: 0em; border-top-right-radius: 0em; font-size: 11px;"><a href="{{ thread.category.get_absolute_url }}">{{ thread.category.title }}</a></span>
+                    {% include "includes/thread.html" with thread=thread %}            
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+</div>
+    
+  
+
+{% endblock content %}
+
+
+{% endblock row %}
+{% block javascript %}
+
+  <script>
+    $(document).ready(function() {
+        var comments = $('.comment-profile')
+        for(var i = 0; i < comments.length; i++) {
+            height = parseInt(comments.eq(i).outerHeight())
+            if (height > 120) {
+                comments.eq(i).find('.more').attr('data', height)
+                comments.eq(i).css({
+                    height: '120',
+                    overflow: 'hidden'
+                });
+                comments.eq(i).find('.more').css('display', 'block')
+                comments.eq(i).find('.more').on('click', function() {
+                    original_height = parseInt($(this).attr('data'))
+                    current_height = parseInt($(this).parent().outerHeight())
+                    console.log(current_height)
+                    if (current_height === 120) {
+                        $(this).parent().css('height', String(original_height)); 
+                        $(this).find('p').text('Collapse');
+                    } else {
+                        $(this).parent().css('height', String(120)); 
+                        $(this).find('p').text('Expand');
+                    }
+                });
+            }
+        }
+    });
+  </script>
+{% endblock %}
+

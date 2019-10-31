@@ -1,0 +1,144 @@
+/* Paragraph and Thread div Styling */
+        p {
+          font-family: Tahoma, Times, serif;
+        }
+        .thread {
+            margin-top: 1em;
+            background-color: #FFF;
+            padding: 16px;
+            border-radius: 3px;
+        }
+
+        .thread-header {
+            background-color: #E3F2FD !important;
+        }
+
+        .thread img {
+            max-width: 100%;
+        }
+        /* End of Paragraph and Thread div Styling */
+
+        /* Thread Buttons Styling */
+        .reply-modify-thread-btn {
+            background-color: #FFF;
+            color: #2962FF;
+            border: 2px solid #2962FF;
+        }
+
+        .reply-modify-thread-btn:hover {
+           background-color: #2962FF;
+           color: #FFF;
+        }
+
+        #follow-thread-btn {
+            background-color: #FFF;
+            color: green;
+            border: 2px solid green;
+        }
+
+        #follow-thread-btn:hover {
+            background-color: green;
+            color: #FFF;
+            border: 2px solid green;
+        }
+
+        #unfollow-thread-btn {
+            background-color: #FFF;
+            color: red;
+            border: 2px solid red;
+        }
+
+        #unfollow-thread-btn:hover {
+            background-color: red;
+            color: #FFF;
+            border: 2px solid red;
+        }
+        /* End of Thread Buttons Styling */
+
+        .thread-top {
+            float: right;
+        }
+
+        .thread-title-bottom {
+            float: right;
+            font-size: small;
+            margin-right: 3px;
+        }
+
+        .thread-title-bottom a {
+            text-decoration: none;
+            color: gray !important;
+        }
+
+        .thread-title a {
+            color: #000;
+            font-size: 2em;
+            text-decoration: none;
+        }
+
+        .thread-user-info {
+            color: gray;
+            font-size: small;
+        }
+
+        .thread-user-info a {
+            color: maroon;
+            font-size: 14px;            
+        }
+
+        #thread-body {
+            line-height: 1.5em;
+            font-size: 16px;
+        }
+
+        
+        .comment-image {
+            margin: 1em;
+            width: 400;
+            height: 200;
+        }
+
+        .comment {
+            margin-top: 1em;
+            background-color: white;
+            padding: 32px;
+        }
+
+        .comment img {
+            max-width: 100%;
+        }
+
+        .comment .profile-img {
+            float: left;
+            margin-left: -4px;
+            margin-right: 6px;
+            border: 1px solid #E7E7E7;
+            border-radius: 100%;
+        }
+
+        .comment-heading {
+            padding: 5px;
+            margin: 0;
+        }
+
+         .username, .comment .profile-img {
+            margin-top: .05em;
+        }
+
+        .comment-created {
+            font-size: 12px
+        }
+
+        .comment-message {
+            padding: 0 5px 5px 5px;
+            margin: 0;
+        }
+
+        .comment-ctrl {
+            color: #333;
+        }
+
+        a:hover {
+            text-decoration: none;
+            color: #337AB7;
+        }

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% load new_thread_tag %}
+{% load forum_template_tags %}
+{% load crispy_forms_tags %}
+
+
+{% block stylesheet %}
+      <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'css/profile_style.css' %}">
+{% endblock %}
+
+
+{% block sidebar_btn %}
+{% endblock sidebar_btn %}
+
+{% block sidebar %}
+    <nav id="sidebar">
+        {% get_profile_sidebar_list request userprofile dropdown_active_text2 %}             
+    </nav>
+    {% endblock sidebar %}
+{% block row %}
+
+{% block content %}
+        
+        <div class="category-thread-header">
+          
+          {% for thread in threads %}
+          <div style="max-height: 187px;" class="category-thread">
+                <div class="profile-img">
+                      <a href="{{ thread.user.userprofile.get_absolute_url }}"><img  style="display: inline" src="{% static 'img/avatar.svg' %}" width="40" height="40" alt="" class="profile-img"></a>
+                </div>
+
+              <div style="margin-top: -17px" class="category-thread-body"> <!-- THREAD-BODY -->
+                <div style="margin-bottom: -5px;" class="category-thread-body-title">
+                  <h4><a href="{% thread_url thread.get_absolute_url thread.comment_count thread.new_c_id thread.new_c_num %}">{{ thread.title|truncatechars:66 }}</a></h4>
+                  <p>{{ thread.starting_comment.message }}</p>
+                </div>
+               <div class="category-thread-body-bottom"><span style="margin-left: 0px;"><i class="glyphicon glyphicon-user"></i><span class="username">{% if thread.final_comment_user %}<a href="{{ thread.final_comment_user.userprofile.get_absolute_url }}">{{ thread.final_comment_user.username|capfirst }}</a>{% else %}<a href="{{ thread.final_comment_user.userprofile.get_absolute_url }}">{{ thread.user.username|capfirst }}</a>{% endif %}</span></span><span><i class="glyphicon glyphicon-time"></i> {% if thread.final_comment_time %}{{ thread.final_comment_time|date:"M d, Y, g:i:s a" }}{% else %}{{ thread.created|date:"M d, Y, g:i:s a" }}{% endif %}</span><span><i class="glyphicon glyphicon-comment"></i> {% if thread.comment_count > 1 %}
+                 {{ thread.comment_count }}
+                 {% else %}
+                  0
+               {% endif %}</span><span><i class="glyphicon glyphicon-eye-open"></i> {{ thread.views }}</span>{% if thread.new_c_num > 0 %}<span class="label label-primary"><i class="glyphicon glyphicon-comment"></i>  {{ thread.new_c_num }} new</span>{% endif %}<span class="category-dot"><span class="dot"></span><a href="{{ thread.category.get_absolute_url }}">{{ thread.category.title }}</a></span>
+              </div>
+            </div> <!-- END OF THREAD-BODY-->                    
+                
+              
+          </div><!-- END OF THREAD -->
+          {% empty %}
+            <ul style="margin-top: 1.7em;" class="list-group">
+              <li style="padding: 0;" class="list-group-item">
+                <h4 class="text-center">No Availble threads for the current selection.</h4>
+              </li>
+            </ul>
+          {% endfor %}
+
+          {% include "includes/thread_pagination.html" with threads=threads %}
+          
+
+{% endblock content %}
+
+
+{% endblock row %}

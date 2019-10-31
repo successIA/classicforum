@@ -1,0 +1,258 @@
+/* USER FOLLOWERS/FOLLOWING STYLES */
+.user-follow {
+    border-radius: 4px;
+    width: 122px;
+    padding: 0;
+    border-top: 5px solid #546E7A;
+    background-color: #ECEFF1;
+    margin-right: 16px;
+    /*box-shadow: 0 3px 3px #B1B1B1;*/
+}
+
+
+.user-follow img {
+    object-fit: cover;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #FFF;
+    margin-bottom: 8px;
+
+}
+
+.user-follow p{
+  /*margin-top: -2px;*/
+}
+
+
+.user-follow > h4 {
+    text-align: center;
+
+  color: #333;
+  /*font-size: 16px;*/
+  font-weight: 500 !important;
+  text-align: center;
+  /*margin-top: -2px;*/
+}
+
+.user-follow h4 > a:hover {
+  text-decoration: underline;
+}
+
+.user-follow .profile-user-follow {
+  display: inline-block;
+  color: #FFF;
+  font-weight: 600;
+  width: 100%;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+
+
+.user-follow .profile-user-follow .btn {
+  padding: 4px 6px 4px 6px;
+}
+
+
+.user-follow  .profile-user-follow .following {
+  color: #FFF;
+  background-color: #546E7A;
+}
+
+.user-follow  .profile-user-follow .follow {
+  border: 1px solid #ced4e5;
+  color: #546E7A;
+  font-weight: 600;
+}
+
+
+.user-follow span > a:hover {
+  color: #000;
+}
+
+/* END OF USER FOLLOWERS/FOLLOWING STYLES */
+
+.col-sm-12 {
+  margin-bottom: -18px;
+}
+
+.panel-default>.panel-heading {
+    background-color: #FFF;
+}
+
+.panel-title {
+  font-weight: 600;
+}
+
+.profile-info-plus {
+  margin-left: -2.4em;
+}
+.profile-info-plus div {
+  /*width: 100%;*/
+  /*border-right: 1px solid #eee;*/
+  /*padding: 0;*/
+  /*border: 1px solid #eee;*/
+  display: inline-block;
+  /*margin-right: 1em;*/
+  margin-right: .62em;
+  border-radius: 4px;
+}
+
+.profile-info-plus i {
+  font-size: 12.3px;
+}
+
+.profile-info-plus div span:nth-child(2) {
+  font-weight: 600;
+}
+
+.profile-info-plus div span {
+  display: inline-block;
+  padding: 3px;
+}
+
+.profile-info-plus div span:nth-child(1) {
+ /*background-color: #009688;*/
+ /*border-top-left-radius: 4px;
+ border-bottom-left-radius: 4px;*/
+ /*text-transform: lowercase;*/
+ /*color: #FFF;*/
+}
+
+.profile-info-plus div span:nth-child(2) {
+  /*border-left: 1px solid #eee;*/
+}
+
+.recent-comments {
+  width: 100%;
+  height: 90px;
+}
+
+.stats {
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+.stats-sp div {
+    display: inline-block;
+    margin-right: 1.4em;
+    border-radius: 4px;
+}
+
+.stats-sp div span:nth-child(1) {
+    font-weight: 600;
+}
+
+.stats-sp div {
+    padding: 4px 0 0;
+}
+
+.stats .sub {
+    color: #333333;
+    border-radius: 4px;
+    border: 1px solid #eee;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+.stats h5 {
+    margin-top: 0px;
+}
+
+.message-test {
+    display: none;
+    position: fixed;
+    right: 120px;
+    top: 90px;
+    width: 150px;
+    background-color: rgb(151, 221, 102);
+    border-radius: 4px;
+    padding: 8px;
+    box-shadow: 0 2px 3px #B1B1B1;
+}
+
+
+.count {
+    display: inline-block;
+    text-align: center;
+    width: 30px;
+    border-radius: 5px;
+    color: #FFF;
+    font-weight: 600;
+    background-color: #9E9E9E;
+}
+
+#sidebar {
+    min-width: 210px;
+    max-width: 210px;
+    background: #FFF;
+    color: #607D8B;
+    transition: all 0.3s;
+    margin-top: 83px;
+
+    height: 100%; /* Full-height: remove this if you want "auto" height */
+    /* width: 160px;  Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 100px;
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 20px;
+}
+.main {
+    /*background-color: #FFF;*/
+    margin-left: 200px;
+}
+
+/* User Profile Picture Styling */
+.user-profile-change-header {
+    text-align: center;
+}
+
+#userprofile-img {
+    display: block;
+    margin: 0 auto;
+    border-radius: 100%;
+    border: 1px solid #F5F5F5;
+}
+
+.userprofile-control-img-btn {
+    display: block;
+    margin: 0 auto;
+    width: 150px;
+    border-radius: 3px;
+}
+
+#falseinput {
+    background-color: #FFF;
+    color: #2962FF;
+    border: 2px solid #2962FF;
+    margin-bottom: 2px;
+}
+
+#falseinput:hover {
+   background-color: #2962FF;
+   color: #FFF;
+}
+
+#remove-avatar-btn {
+    background-color: #FFF;
+    color: #F00;
+    border: 2px solid #F00;
+}
+
+#remove-avatar-btn:hover {
+   background-color: #F00;
+   color: #FFF;
+
+}
+
+#remove-avatar-link {
+    text-decoration: none;
+}
+
+/* End of User Profile Picture Styling */
