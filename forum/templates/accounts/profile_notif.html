@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% load new_thread_tag %}
+{% load forum_template_tags %}
+{% load crispy_forms_tags %}
+
+
+
+{% block stylesheet %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/comment_style.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/profile_style.css' %}">
+  <style type="text/css">
+    .thread-title-bottom {
+      display: none;
+    }
+
+    .comment-created {
+      display: none;
+    }
+
+    .comment-ctrl {
+        /*display: none;*/
+    }
+
+
+
+    .category-thread {
+        margin-bottom: 0px;
+    }
+
+    .more {
+        display: none;
+    }
+  </style>
+
+{% endblock stylesheet %}
+
+
+{% block sidebar_btn %}
+{% endblock sidebar_btn %}
+
+{% block sidebar %}
+    <nav id="sidebar">
+        {% get_profile_sidebar_list request userprofile dropdown_active_text2 %}             
+    </nav>  
+    {% endblock sidebar %}
+{% block row %}
+
+{% block content %}
+        
+<div>
+
+<div class="col-sm-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Notifications</h3>
+      </div>
+      <div class="panel-body">
+        <ul class="list-group">
+            {% for notif in notifications %}
+                <li class="notif-list list-group-item">{{ notif.get_description }}</li>            
+            {% endfor %}
+        </ul>
+      </div>
+    </div>
+</div>
+
+</div>  
+  
+
+{% endblock content %}
+
+
+{% endblock row %}
+{% block javascript %}
+
+  <script>
+   $(document).ready(function() {
+        var comments = $('.notif-list')
+        for(var i = 0; i < comments.length; i++) {
+            height = parseInt(comments.eq(i).outerHeight())
+            console.log(height)
+            if (height > 122) {
+                // comments.eq(i).find('.more').attr('data', height)
+                comments.eq(i).css({
+                    height: '122',
+                    overflow: 'hidden'
+                });
+                // comments.eq(i).find('.more').css('display', 'block')
+                // comments.eq(i).find('.more').on('click', function() {
+                //     original_height = parseInt($(this).attr('data'))
+                //     current_height = parseInt($(this).parent().outerHeight())
+                //     console.log(current_height)
+                //     if (current_height === 120) {
+                //         $(this).parent().css('height', String(original_height)); 
+                //         $(this).find('p').text('Collapse');
+                //     } else {
+                //         $(this).parent().css('height', String(120)); 
+                //         $(this).find('p').text('Expand');
+                //     }
+                // });
+            }
+        }
+    });
+  </script>
+{% endblock %}
+

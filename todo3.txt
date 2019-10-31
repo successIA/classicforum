@@ -1,0 +1,39 @@
+report user
+report inappropiate thread
+report inappropiate comment
+
+hide threads
+hide comment
+delete threads permanently
+delete comment permanently
+
+moderation
+ - suspend users
+ - delete accounts
+
+dedicated admin dashboard
+	- all
+
+
+optional
+	email user privately
+
+Report
+	- description
+	- reporter
+	- comment
+
+	=> The reporter and comment must be unique together
+	=> A user cannot report a comment twice unless the comment
+	   is updated
+	=> 
+
+	ReportForm
+		description options
+
+	comments/12/report
+
+	{'description': "inappropiate comment"}
+
+To hide a comment or thread, make it active field be False
+

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Profile - {{ username }}{% endblock %}
+
+{% block content %}
+<h3 style="margin-top: 4em" class="text-center">User Profile - {{ username }}</h3>
+
+{% if userprofile.images.count > 0 %}
+    <img  style="margin-top: 3em" src="{{ userprofile.images.first.image.url }}" alt="{{ userprofile.images.first.image.name }}">
+    <br>
+    <!-- delete picture -->
+    <a href="{{ userprofile.get_userprofile_update_url}}?delete_profile_pic=True"><button style="margin: 3em 0" type="submit" class="btn btn-sm btn-danger">Remove avatar</button></a>
+    <h4>Change profile picture</h4>
+    <form method="POST" action="{{ userprofile.get_userprofile_update_url}}" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% include '../includes/form.html' %}
+   <button style="margin-bottom: 5em" type="submit" class="btn btn-success">Update</button>
+  </form>
+    {% else %}
+    <h4>Add/Change profile picture</h4>
+    <img src="{% static "img/avatar.svg" %}" width="120" height="99" alt="avatar">
+    <form method="POST" action="{{ userprofile.get_userprofile_update_url}}" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% include '../includes/form.html' %}
+   <button style="margin-bottom: 5em" type="submit" class="btn btn-success">Update</button>
+  </form>
+{% endif %}
+
+{% if user.is_authenticated and user != user_object %}
+    <a href="{{ userprofile.get_user_follow_url }}"><button class="btn btn-primary btn-sm">{% if user_object not in user.userprofile.followers.all %}follow{% else %}unfollow{% endif %}</button></a>
+
+{% endif %}
+
+
+    <div class="list-group">
+        <h4>Followed Threads</h4>
+        {% if followed_threads %}
+        {% for thread in followed_threads %}
+            <a href="{{ thread.get_absolute_url }}" class="list-group-item">{{thread.title}}</a>
+        {% endfor %}
+        {% else %}
+            <p class="text-center list-group-item"><strong>You are not following any thread</strong></p>
+        {% endif %}
+</div>
+
+    <h4>Following</h4>
+    <hr />
+    {% if userprofile.followers.count > 0 %}
+        {% for member in userprofile.followers.all %}
+            <a href="{{ member.userprofile.get_absolute_url }}"><span class="label label-default">{{member.username}}</span></a>
+        {% endfor %}
+    {% else %}
+        <strong>No followed users yet</strong>
+    {% endif %}
+{% endblock %}

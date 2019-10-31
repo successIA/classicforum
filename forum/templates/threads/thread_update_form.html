@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% load form_tags %}
+
+{% block title %}Update Thread - {{ thread.title }}{% endblock %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'css/simplemde.min.css' %}">
+{% endblock %}
+
+{% block javascript %}
+  <script src="{% static 'js/simplemde.min.js' %}"></script>
+  <script>
+    var simplemde = new SimpleMDE();
+  </script>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{{ thread.category.get_absolute_url }}">{{ thread.category.title }}</a></li>
+      <li class="active"><a href="{{ thread.get_thread_follow_url }}">{{ thread.title }}</a></li>
+    </ol>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+<h3>Update Thread</h3><hr>
+<form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% include '../includes/form.html' %}
+    <button style="margin-bottom: 5em" type="submit" class="btn btn-primary pull-right">Submit</button>
+</form>
+
+{% endblock %}

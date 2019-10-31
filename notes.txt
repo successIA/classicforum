@@ -1,0 +1,5 @@
+No test for thread followership
+recent filter for homepage shows new for user others were not implemented
+
+New Version
+Total of thread followership
