@@ -8,67 +8,12 @@ from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch
 from forum.comments.models import Comment, CommentRevision
 from forum.comments.forms import CommentForm
 from forum.core.utils import find_mentioned_usernames
-from forum.attachments.utils import associate_attachment_with_comment
 from forum.core.bbcode_quote import bbcode_quote
 from forum.core.utils import convert_mention_to_link
-from forum.notifications.utils import (
-    send_notif_to_mentioned_users,
-    notify_receiver_for_reply
-)
-from forum.threads.utils import (
-    create_thread_followership,
-    increase_thread_comment_count,
-    notify_thread_followers_for_comment,
-)
 
 from markdown import markdown
 import bleach
 from bleach_whitelist import markdown_tags, markdown_attrs
-
-
-def save_comment(comment):
-    comment = comment
-    message = bleach.clean(comment.message, markdown_tags, markdown_attrs)
-    comment.message = message
-    if not comment.pk:
-        print('performing create')
-        _create(comment)
-    else:
-        print('performing update with comment.pk: ', comment.pk)
-        _update(comment)
-    comment.mentioned_users = get_mentioned_users(comment.message)
-    comment.marked_message = get_rendered_message(comment)
-    comment.save()
-    send_notif_to_mentioned_users(comment)
-    return comment
-    
-
-def _create(comment):
-    comment.position = comment.thread.comments.count() + 1
-    comment.save()
-    userprofile = comment.user.userprofile
-    associate_attachment_with_comment(comment)
-    create_thread_followership(userprofile, comment.thread)
-    thread = increase_thread_comment_count(
-        comment.thread, comment.user, comment.created
-    )
-    notify_thread_followers_for_comment(comment.user, comment, thread)
-    if comment.parent and comment.parent.user != comment.user:
-        notify_receiver_for_reply(comment)
-
-
-def _update(comment):
-    old_comment = get_object_or_404(Comment, pk=comment.pk)
-    associate_attachment_with_comment(comment, old_comment)
-    comment_revision = CommentRevision(
-        comment=comment, 
-        message=old_comment.message, 
-        marked_message=old_comment.marked_message
-    )
-    comment_revision.save()
-    comment_revision.mentioned_users = old_comment.mentioned_users.all()
-    comment_revision.save()
-    comment.save()
 
 
 def get_rendered_message(comment):
@@ -93,7 +38,7 @@ def get_bbcode_message_quote(parent_comment):
 
 def get_comment_reply_form(comment):
     message = get_bbcode_message_quote(comment)
-    return CommentForm.get_for_reply(message, extra='edit-message') 
+    return CommentForm.get_for_reply(message, extra='edit-message')
 
 
 def find_parent_info_in_comment(message):
@@ -134,4 +79,3 @@ def set_just_commented(request, comment):
     key = '%s%s' % (str(comment.thread.slug), '_just_commented')
     request.session[key] = True
     return request
-

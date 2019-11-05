@@ -13,7 +13,7 @@ class ThreadQuerySet(models.query.QuerySet):
             if qs:
                 return qs, qs.first().category
         return self.active(), False
-            
+
     def get_for_user(self, user):
         queryset = self
         if not user.is_authenticated:
@@ -34,7 +34,7 @@ class ThreadQuerySet(models.query.QuerySet):
         return queryset1.union(queryset2)
 
     def get_recent(self, user):
-        return self.get_for_user(user).order_by('-final_comment_time')        
+        return self.get_for_user(user).order_by('-final_comment_time')
 
     def get_new_for_user(self, user):
         queryset = self
@@ -93,7 +93,7 @@ class ThreadQuerySet(models.query.QuerySet):
         return self.active().get_related().filter(
             user=user
         ).order_by('-final_comment_time')[:count]
-        
+
     def get_with_no_reply(self, category=None):
         queryset = self
         queryset = queryset.filter(comment_count=1).get_related()
@@ -108,7 +108,7 @@ class ThreadQuerySet(models.query.QuerySet):
             dt = timezone.now() - timedelta(days=days)
             queryset = queryset.filter(created__gte=dt)
         return queryset.get_for_user(user).order_by('comment_count')
-        
+
     def get_by_category(self, category=None):
         if not category:
             return self.active()
@@ -118,11 +118,10 @@ class ThreadQuerySet(models.query.QuerySet):
         return self.select_related(
             'user', 'category', 'final_comment_user', 'starting_comment'
         ).prefetch_related(
-            'user__userprofile', 
-            'final_comment_user__userprofile', 
+            'user__userprofile',
+            'final_comment_user__userprofile',
             'user__userprofile__attachment_set'
         )
-            
+
     def active(self, *args, **kwargs):
         return self.filter(visible=True)
-

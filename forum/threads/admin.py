@@ -2,13 +2,11 @@ from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 
 from forum.comments.models import Comment
-from forum.image_app.models import Image
 from forum.threads.models import (
-    Thread, 
-    ThreadFollowership, 
+    Thread,
+    ThreadFollowership,
     ThreadRevision
 )
-
 
 
 class ThreadFollowershipInline(admin.TabularInline):
@@ -22,10 +20,6 @@ class ThreadRevisionInline(admin.TabularInline):
 class CommentInline(admin.TabularInline):
     model = Comment
 
-# class ImageInline(GenericTabularInline):
-#     model = Image
-#     extra = 0
-#     max_num = 5
 
 
 class ThreadAdmin(admin.ModelAdmin):

@@ -51,20 +51,13 @@ INSTALLED_APPS = [
     'crispy_forms',
     'widget_tweaks',
     'debug_toolbar',
-    # 'markdownx',
 
-    # 'redactor',
 
     'forum.categories',
     'forum.comments',
     'forum.threads',
-
     'forum.attachments',
-
-
     'forum.accounts',
-
-    'forum.image_app',
     'forum.notifications',
 
 ]
@@ -105,9 +98,9 @@ TEMPLATES = [
                 'django.template.context_processors.static',
             ],
             'libraries': {
-                'forum_template_tags' : 'forum.templatetags.forum_template_tags',
-                'form_tags' : 'forum.templatetags.form_tags',
-                'new_thread_tag' : 'forum.templatetags.new_thread_tag',
+                'forum_template_tags': 'forum.templatetags.forum_template_tags',
+                'form_tags': 'forum.templatetags.form_tags',
+                'new_thread_tag': 'forum.templatetags.new_thread_tag',
             }
         },
     },
@@ -183,8 +176,7 @@ MEDIA_URL = '/media/'
 # crispy form
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-# REDACTOR_OPTIONS = {'lang': 'en'}
-# REDACTOR_UPLOAD = 'uploads/'
+
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips

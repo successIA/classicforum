@@ -33,7 +33,6 @@ from forum.threads.models import ThreadFollowership, Thread
 from forum.notifications.models import Notification
 from forum.comments.models import Comment
 from forum.core.utils import get_paginated_queryset
-from forum.attachments.utils import create_attachment_by_profile
 from forum.accounts.mixins import profile_owner_required
 from forum.accounts.utils import (
     get_mentioned_users_context,
@@ -45,7 +44,7 @@ def user_profile_stats(request, username):
     userprofile = get_object_or_404(UserProfile, user__username=username)
     user = userprofile.user
     ctx = {
-        'userprofile': userprofile, 
+        'userprofile': userprofile,
         'dropdown_active_text2': 'stats',
         'last_posted': Comment.objects.get_user_last_posted(user),
         'active_category': Comment.objects.get_user_active_category(user),
@@ -53,7 +52,7 @@ def user_profile_stats(request, username):
         'total_upvoted': Comment.objects.filter(upvoters=user).count(),
         'recent_comments': Comment.objects.get_recent_for_user(user, 5),
         'recent_threads': Thread.objects.get_recent_for_user(request, user)
-    }                                    
+    }
     return render(request, 'accounts/profile_stats.html', ctx)
 
 
@@ -62,10 +61,10 @@ def user_profile_stats(request, username):
 def user_notification_list(request, username, userprofile):
     notifs = Notification.objects.get_for_user(username)
     ctx = {
-        'userprofile': userprofile, 
-        'dropdown_active_text2': 'user_notifs', 
+        'userprofile': userprofile,
+        'dropdown_active_text2': 'user_notifs',
         'notifications': notifs
-    }  
+    }
     return render(request, 'accounts/profile_notif.html', ctx)
 
 
@@ -74,21 +73,23 @@ def user_notification_list(request, username, userprofile):
 def user_profile_edit(request, username, userprofile):
     form = UserProfileForm(instance=userprofile)
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
+        form = UserProfileForm(
+            request.POST, request.FILES, instance=userprofile)
         if form.is_valid():
             image = form.cleaned_data.get('image')
-            create_attachment_by_profile(image, userprofile)
+            from forum.attachments.models import Attachment
+            Attachment.objects.create_with_userprofile(image, userprofile)
             form.save()
-            messages.success(request, 'Profile updated successfully!') 
+            messages.success(request, 'Profile updated successfully!')
             username = userprofile.user.username
             return HttpResponseRedirect(
                 reverse('accounts:user_edit', kwargs={'username': username})
             )
     ctx = {
-        'userprofile': userprofile, 
-        'dropdown_active_text2': 'profile', 
+        'userprofile': userprofile,
+        'dropdown_active_text2': 'profile',
         'form': form
-    }  
+    }
     return render(request, 'accounts/profile_info.html', ctx)
 
 
@@ -99,8 +100,8 @@ def user_comment_list(request, username, page):
     ).get_related().order_by('id')
     comments = get_paginated_queryset(comment_qs, 10, page)
     ctx = {
-        'comments': comments, 
-        'dropdown_active_text2': 'replies', 
+        'comments': comments,
+        'dropdown_active_text2': 'replies',
         'userprofile': user.userprofile
     }
     return render(request, 'accounts/profile_comments.html', ctx)
@@ -135,7 +136,7 @@ def signup(request):
         email_data = get_signup_email_confirm_form_entries(request, user)
         user.email_user(email_data['subject'], email_data['message'])
         return redirect('accounts:account_activation_sent')
-    ctx = { 'form': form }
+    ctx = {'form': form}
     return render(request, 'accounts/signup.html', ctx)
 
 
@@ -154,7 +155,7 @@ def activate(request, uidb64, token):
         # authenticate the new user by setting his/her plain text password to a
         # unique hash
         auth_login(request, user)
-        return redirect('home')  
+        return redirect('home')
     return render(request, 'accounts/account_activation_invalid.html')
 
 
@@ -194,7 +195,7 @@ def user_followers(request, username):
 def user_mention(request):
     username = request.GET.get('username')
     if username:
-        userprofile_qs =  UserProfile.objects.select_related('user').filter(
+        userprofile_qs = UserProfile.objects.select_related('user').filter(
             user__username__startswith=username
         )
         if userprofile_qs.exists():
@@ -206,12 +207,12 @@ def user_mention(request):
 def user_mention_list(request):
     username_dict_list = json.loads(request.GET.get('username_list'))
     if username_dict_list:
-        username_list = [username_dict['username'] for username_dict in username_dict_list]
-        userprofile_qs =  UserProfile.objects.select_related('user').filter(
+        username_list = [username_dict['username']
+                         for username_dict in username_dict_list]
+        userprofile_qs = UserProfile.objects.select_related('user').filter(
             user__username__in=username_list
         )
         if userprofile_qs.exists():
-            userprofile_list = get_mentioned_users_context(userprofile_qs)            
+            userprofile_list = get_mentioned_users_context(userprofile_qs)
             return JsonResponse({'user_list':  userprofile_list})
     return JsonResponse({'user_list': []})
-
