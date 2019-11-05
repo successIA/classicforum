@@ -17,85 +17,19 @@ from django.http import (
 )
 
 from forum.core.models import TimeStampedModel
-from forum.image_app.models import Image
 from forum.core.bbcode_quote import bbcode_quote
 from forum.core.constants import COMMENT_PER_PAGE
 from forum.core.utils import convert_mention_to_link
+from forum.comments.managers import CommentQuerySet
 
 from markdown import markdown
 import bleach
 from bleach_whitelist import markdown_tags, markdown_attrs
 
 
-class CommentQuerySet(models.query.QuerySet):
-
-    def get_new_for_user(self, user, thread, time):
-        if not user.is_authenticated:
-            return
-        if not time:
-            return 
-        queryset = self.filter(thread=thread, created__gt=time)
-        return queryset.exclude(user=user)
-
-    def get_for_thread(self, thread):
-        queryset = self.active().get_related().filter(thread=thread)
-        return queryset.order_by('created').all()
-
-    def get_user_last_posted(self, user):
-        queryset = self.filter(user=user)
-        if queryset.count() > 0:
-            return queryset.latest('created').created
-
-    def get_user_active_category(self, user):
-        if user.comment_set.count() > 0:
-            return self.values('thread').filter(
-                user=user
-            ).annotate(category=F('thread__category__title')).annotate(
-                thread_count=Count('thread')
-            ).order_by('-thread_count')[0].get('category')
-
-    def get_recent_for_user(self, user, count):
-        return self.get_related().filter(
-            user=user
-        ).exclude(is_starting_comment=True).order_by('-created')[:count]
-
-    def get_user_total_upvotes(self, user):
-        queryset = self.filter(user=user).annotate(upvotes=Count('upvoters'))
-        total_upvotes = 0
-        for model_instance in queryset:
-            total_upvotes = total_upvotes + model_instance.upvotes
-        return total_upvotes
-
-    def get_related(self):
-        return self.select_related(
-            'thread', 'user', 'parent'
-        ).prefetch_related(
-            # 'attachment_set',
-            'user__userprofile__attachment_set',
-            'revisions', 
-            'user__userprofile', 
-            'parent__user',
-            'parent__thread',
-            'upvoters',
-            'downvoters'
-        )
-
-    def get_parent(self, pk):
-        comment_qs = None
-        try:
-            comment_qs = self.filter(pk=int(pk))
-        except:
-            return None
-        if comment_qs.exists():
-            return comment_qs.first()
-
-    def active(self, *args, **kwargs):
-        return self.filter(visible=True)
-
-
 class Comment(TimeStampedModel):
     message = models.TextField(max_length=4000)
-    marked_message =  models.TextField(max_length=4000, blank=True)
+    marked_message = models.TextField(max_length=4000, blank=True)
     thread = models.ForeignKey(
         'threads.Thread', on_delete=models.CASCADE, related_name='comments'
     )
@@ -105,9 +39,9 @@ class Comment(TimeStampedModel):
     )
     parent = models.ForeignKey('self', blank=True, null=True)
     mentioned_users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, 
-        blank=True, 
-        related_name = 'comment_mention'
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name='comment_mention'
     )
     upvoters = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name='upvoted_comments'
@@ -116,13 +50,49 @@ class Comment(TimeStampedModel):
         settings.AUTH_USER_MODEL, related_name='downvoted_comments'
     )
     # voters = models.ManyToManyField(
-    #     settings.AUTH_USER_MODEL, 
-    #     related_name='voted_comments', 
+    #     settings.AUTH_USER_MODEL,
+    #     related_name='voted_comments',
     #     through=CommentVote
     # )
     position = models.IntegerField(default=0)
     visible = models.BooleanField(default=True)
     objects = CommentQuerySet.as_manager()
+
+    def save(self, *args, **kwargs):
+        from forum.attachments.models import Attachment
+        from forum.threads.models import ThreadFollowership
+        from forum.notifications.models import Notification
+        from forum.comments.utils import get_mentioned_users
+
+        message = bleach.clean(self.message, markdown_tags, markdown_attrs)
+        if not self.pk:
+            self.position = self.thread.comments.count() + 1
+            super(Comment, self).save(*args, **kwargs)
+            self.thread.sync_with_comment(self.user, self.created)
+            Attachment.objects.sync_with_comment(self)
+            ThreadFollowership.objects.create_followership(
+                self.user.userprofile, self.thread
+            )
+            ThreadFollowership.objects.sync_with_comment(self)
+            if self.parent and self.parent.user != self.user:
+                Notification.objects.notify_receiver_for_reply(self)
+        else:
+            comment_revision = CommentRevision(comment=self,
+                                               message=self.message,
+                                               marked_message=self.marked_message)
+            comment_revision.save()
+            comment_revision.mentioned_users = self.mentioned_users.all()
+            comment_revision.save()
+            Attachment.objects.sync_with_comment(self, comment_revision)
+            super(Comment, self).save(*args, **kwargs)
+        self.mentioned_users = get_mentioned_users(self.message)
+        self.marked_message = self.get_rendered_message()
+        # To prevent integrity constraint violation
+        kwargs["force_update"] = True
+        # To prevent integrity constraint violation
+        kwargs["force_insert"] = False
+        super(Comment, self).save(*args, **kwargs)
+        Notification.objects.notify_mentioned_users(self)
 
     def __str__(self):
         return self.message[:32]
@@ -139,35 +109,33 @@ class Comment(TimeStampedModel):
     def get_precise_url(self, page_num=None):
         if not page_num:
             count = self.position
-            page_num = ceil(count / COMMENT_PER_PAGE) 
+            page_num = ceil(count / COMMENT_PER_PAGE)
         return '%s?page=%s&read=True#comment%s' % (
             self.thread.get_absolute_url(), str(page_num), str(self.pk)
         )
 
     def get_reply_url(self):
         return '%scomments/%s/reply/' % (
-            self.thread.get_absolute_url(), str(self.pk) 
+            self.thread.get_absolute_url(), str(self.pk)
         )
 
     def get_update_url(self):
         return '%scomments/%s/' % (
-            self.thread.get_absolute_url(), str(self.pk) 
+            self.thread.get_absolute_url(), str(self.pk)
         )
 
     def get_form_reply_url(self, page_num):
         return '%scomments/%s/reply/?page=%s#comment-form' % (
-            self.thread.get_absolute_url(), str(self.pk), str(page_num) 
+            self.thread.get_absolute_url(), str(self.pk), str(page_num)
         )
 
     def get_reply_form_action(self):
         page_num = ceil(self.position / 5)
         return self.get_form_reply_url(page_num)
 
-
-                        
     def get_form_update_url(self, page_num):
         return '%scomments/%s/?page=%s#comment-form' % (
-            self.thread.get_absolute_url(), str(self.pk), str(page_num) 
+            self.thread.get_absolute_url(), str(self.pk), str(page_num)
         )
 
     def get_update_form_action(self):
@@ -177,41 +145,35 @@ class Comment(TimeStampedModel):
     def get_upvote_url(self):
         return '%scomments/%s/upvote/' % (
             self.thread.get_absolute_url(), str(self.pk)
-        )         
+        )
 
     def get_downvote_url(self):
         return '%scomments/%s/downvote/' % (
             self.thread.get_absolute_url(), str(self.pk)
-        )  
+        )
 
     def downvote(self, user):
         if user in self.downvoters.all():
             self.downvoters.remove(user)
         else:
             self.upvoters.remove(user)
-            self.downvoters.add(user)  
+            self.downvoters.add(user)
 
     def upvote(self, user):
-        from forum.notifications.utils import (
-            delete_comment_upvote_notif
-        )
         from forum.notifications.models import Notification
 
         if user in self.upvoters.all():
             self.upvoters.remove(user)
-            delete_comment_upvote_notif(user, self)
+            Notification.objects.delete_comment_upvote_notification(
+                user, self.user, self
+            )
         else:
             self.downvoters.remove(user)
             self.upvoters.add(user)
-            Notification.objects.create(
-                sender=user, 
-                receiver=self.user,
-                comment=self, 
-                notif_type=Notification.COMMENT_UPVOTED
+            Notification.objects.notify_receiver_for_comment_upvote(
+                user, self.user, self
             )
 
-
-            
 
 class CommentRevision(models.Model):
     comment = models.ForeignKey(
@@ -221,9 +183,9 @@ class CommentRevision(models.Model):
     message = models.TextField(max_length=4000)
     marked_message = models.TextField(max_length=4000, blank=True)
     mentioned_users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, 
-        blank=True, 
-        related_name = 'comment_rev_mention'
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name='comment_rev_mention'
     )
     created = models.DateTimeField(auto_now_add=True)
 
@@ -252,9 +214,9 @@ class CommentRevision(models.Model):
 #         if queryset.exists():
 #             queryset.first().delete()
 #             notif_qs = Notification.objects.filter(
-#                 sender=voter, 
+#                 sender=voter,
 #                 receiver=comment.user,
-#                 comment=comment, 
+#                 comment=comment,
 #                 notif_type=Notification.COMMENT_UPVOTED
 #             )
 #             if notif_qs.exists():
@@ -263,12 +225,12 @@ class CommentRevision(models.Model):
 #         else:
 #             self.create(comment=comment, voter=voter, vote=CommentVote.UPVOTE)
 #             Notification.objects.create(
-#                 sender=voter, 
+#                 sender=voter,
 #                 receiver=comment.user,
-#                 comment=comment, 
+#                 comment=comment,
 #                 notif_type=Notification.COMMENT_UPVOTED
 #             )
-    
+
 #     def downvote(self, comment, voter):
 #         queryset = self.filter(comment=comment, voter=voter)
 #         if queryset.exists():
@@ -290,9 +252,3 @@ class CommentRevision(models.Model):
 #     )
 #     vote = models.CharField(max_length=1, choices=VOTE_CHOICES)
 #     objects = CommentVoteQuerySet.as_manager()
-
-
-
-
-
-

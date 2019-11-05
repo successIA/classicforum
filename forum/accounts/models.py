@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.db import models
 from django.conf import settings
 from django.core.urlresolvers import reverse_lazy, reverse
@@ -7,22 +9,18 @@ from django.utils import timezone
 
 from forum.core.models import TimeStampedModel
 
-from forum.image_app.models import Image
-    
-from datetime import timedelta
-
 
 class UserProfile(models.query.QuerySet):
-    
+
     def get_related(self):
         return self.select_related(
             'user'
         ).prefetch_related(
-            'followers__userprofile__user', 
-            'following__userprofile__user', 
+            'followers__userprofile__user',
+            'following__userprofile__user',
             'attachment_set'
         )
-    
+
 
 class UserProfile(TimeStampedModel):
     GENDER_OPTIONS = (
@@ -32,7 +30,8 @@ class UserProfile(TimeStampedModel):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
-    gender = models.CharField(max_length=20, choices=GENDER_OPTIONS, blank=True)
+    gender = models.CharField(
+        max_length=20, choices=GENDER_OPTIONS, blank=True)
     signature = models.TextField(max_length=127, blank=True)
     location = models.CharField(max_length=32, blank=True)
     website = models.URLField(max_length=50, blank=True)
@@ -42,7 +41,6 @@ class UserProfile(TimeStampedModel):
     following = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name='following', blank=True
     )
-    # images = GenericRelation(Image)
     last_seen = models.DateTimeField(default=timezone.now)
     email_confirmed = models.BooleanField(default=False)
     objects = UserProfile.as_manager()
@@ -68,7 +66,7 @@ class UserProfile(TimeStampedModel):
 
     def get_avatar_url(self):
         return self.attachment_set.first().image.url
-    
+
     def toggle_followers(self, follower):
         if follower not in self.followers.all():
             self.followers.add(follower)
@@ -92,5 +90,3 @@ class UserProfile(TimeStampedModel):
 
     def get_login_url(self):
         return reverse('accounts:login')
-
-        

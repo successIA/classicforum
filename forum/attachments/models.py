@@ -1,4 +1,3 @@
-
 import os
 import uuid
 
@@ -34,6 +33,7 @@ def get_filename_ext(filepath):
     name, ext = os.path.splitext(base_name)
     return name, ext
 
+
 def upload_to(instance, filename):
     name, ext = get_filename_ext(filename)
     new_filename = instance.md5sum
@@ -49,11 +49,64 @@ def upload_to(instance, filename):
     )
 
 
+class AttachmentQuerySet(models.query.QuerySet):
+    def sync_with_comment(self, comment, comment_rev=None):
+        from forum.attachments.utils import find_images_in_message
+
+        if comment_rev:
+            self._detach_from_comment(comment, comment_rev)
+        image_url_list = find_images_in_message(comment.message)
+        for url in image_url_list:
+            url = url.replace('http://127.0.0.1:8000', "")
+            if url:
+                attachment_qs = self.filter(url=url)
+            if attachment_qs.exists():
+                attachment = attachment_qs.first()
+                attachment.comments.add(comment)
+                attachment.is_orphaned = False
+                attachment.save()
+
+    def _detach_from_comment(self, comment, comment_rev):
+        from forum.attachments.utils import (
+            get_unreferenced_attachment_urls_in_message
+        )
+        '''
+        Detach comment from all its attachments if there is any
+        change in the image urls in the message
+        '''
+        urls = get_unreferenced_attachment_urls_in_message(
+            comment_rev.message, comment.message
+        )
+        queryset = comment.attachment_set
+        for att in queryset.all():
+            if att.url in urls:
+                att.comments.remove(comment)
+                if not att.userprofile and att.comments.all().count() < 1\
+                        and att.threads.all().count() < 1:
+                    att.is_orphaned = True
+                    att.save()
+    
+    def create_with_userprofile(self, image, userprofile):
+        from forum.attachments.utils import md5
+
+        if not image:
+            return
+        md5sum = md5(image)
+        queryset = self.filter(md5sum=md5sum)
+        if queryset.exists():
+            queryset.first().userprofiles.add(userprofile)
+        else:
+            att = Attachment(image=image, filename=image.name,
+                            has_userprofile=True)
+            att.save()
+            att.userprofiles.add(userprofile)
+
+
 class Attachment(models.Model):
     image = models.ImageField(
         upload_to=upload_to, storage=MediaFileSystemStorage()
     )
-    filename = models.CharField(max_length=255)    
+    filename = models.CharField(max_length=255)
     url = models.URLField(max_length=2000, blank=True)
     comments = models.ManyToManyField(Comment, blank=True)
     threads = models.ManyToManyField(Thread, blank=True)
@@ -61,7 +114,8 @@ class Attachment(models.Model):
     md5sum = models.CharField(max_length=36, blank=True)
     has_userprofile = models.BooleanField(default=False)
     is_orphaned = models.BooleanField(default=True)
-    
+    objects = AttachmentQuerySet.as_manager()
+
     def __str__(self):
         return str(self.filename)
 
@@ -71,13 +125,8 @@ class Attachment(models.Model):
             md5 = md5()
             for chunk in self.image.chunks():
                 md5.update(chunk)
-            self.md5sum = md5.hexdigest()            
-        self.filename = self.image.name    
+            self.md5sum = md5.hexdigest()
+        self.filename = self.image.name
         super().save(*args, **kwargs)
         self.url = self.image.url
         super().save(*args, **kwargs)
-
-        
-
-
-

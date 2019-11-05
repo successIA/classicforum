@@ -18,12 +18,10 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, FormMixin, UpdateView
 
 from forum.core.utils import get_paginated_queryset
-from forum.threads.models import Thread
+from forum.threads.models import Thread, ThreadFollowership
 from forum.threads.utils import (
-    create_thread as create_thread_,
-    update_thread,
     get_filtered_threads,
-    toggle_thread_followership,
+    # toggle_thread_followership,
     get_additional_thread_detail_ctx,
     update_threadfollowership,
     update_thread_open_time
@@ -70,7 +68,6 @@ from forum.core.constants import THREAD_PER_PAGE
 #         raise PermissionDenied
 
 
-
 def thread_list(request, filter_str=None, page=1, form=None):
     thread_qs = Thread.objects.active()
     thread_data = get_filtered_threads(request, filter_str, thread_qs)
@@ -96,7 +93,20 @@ def create_thread(request, slug=None, filter_str=None, page=None):
         raise PermissionDenied
     form = ThreadForm(request.POST or None)
     if form.is_valid():
-        thread = create_thread_(form, request.user)
+        # thread = create_thread_(form, request.user)
+        thread = form.save(commit=False)
+        thread.user = request.user
+        thread.userprofile = request.user.userprofile
+        thread.category = form.cleaned_data.get('category')
+        thread.save()
+        comment, created = Comment.objects.get_or_create(
+            message=form.cleaned_data.get('message'),
+            thread=thread,
+            user=request.user,
+            is_starting_comment=True
+        )
+        thread.starting_comment = comment
+        thread.save()
         return redirect(thread.get_absolute_url())
     else:
         category_qs = Category.objects.filter(slug=slug)
@@ -108,7 +118,7 @@ def create_thread(request, slug=None, filter_str=None, page=None):
 
 
 def thread_detail(request, thread_slug, form=None, form_action=None):
-    thread = get_object_or_404(Thread, slug=thread_slug) 
+    thread = get_object_or_404(Thread, slug=thread_slug)
     ctx = {
         'thread': thread,
         'form': form if form else CommentForm,
@@ -123,11 +133,17 @@ def thread_detail(request, thread_slug, form=None, form_action=None):
 @thread_owner_required
 def update_thread(request, thread_slug, thread=None):
     message = thread.starting_comment.message
-    form = ThreadForm(instance=thread, initial={'message': message}) 
+    form = ThreadForm(instance=thread, initial={'message': message})
     if request.method == 'POST':
         form = ThreadForm(request.POST)
         if form.is_valid():
-            thread = update_thread(form, request.user, thread.pk)
+            # thread = update_thread(form, request.user, thread.pk)
+            comment = thread.starting_comment
+            comment.message = form.cleaned_data.get('message')
+            comment.save()
+            thread.title = form.cleaned_data.get('title')
+            thread.message = form.cleaned_data.get('message')
+            thread.save()
             return HttpResponseRedirect(thread.get_absolute_url())
     form_action = thread.get_thread_update_url()
     return thread_detail(
@@ -147,8 +163,14 @@ def follow_thread(request, thread_slug):
         # Use the opening time of the thread so as to allow the user to
         # to get notified of newly added comments if the user stayed on
         # the thread page for some time before clicking on follow btn.
-        toggle_thread_followership(userprofile, thread, open_time)
+        # toggle_thread_followership(userprofile, thread, open_time)
+        ThreadFollowership.objects.toggle_thread_followership(
+            userprofile, thread, open_time
+        )
+        
     else:
-        toggle_thread_followership(userprofile, thread, timezone.now())
+        # toggle_thread_followership(userprofile, thread, timezone.now())
+        ThreadFollowership.objects.toggle_thread_followership(
+            userprofile, thread, open_time
+        )
     return redirect(thread.get_absolute_url())
-

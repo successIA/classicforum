@@ -1,10 +1,11 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from forum.accounts.models import UserProfile
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
+
+from forum.accounts.models import UserProfile
 
 
 class AccountOwnerMixin(object):
@@ -19,6 +20,7 @@ class AccountOwnerMixin(object):
         else:
             raise Http404
 
+
 class ProfileOwnerMixin(object):
 
     @method_decorator(login_required)
@@ -26,6 +28,7 @@ class ProfileOwnerMixin(object):
         if request.user.username != kwargs.get('username'):
             raise Http404
         return super(ProfileOwnerMixin, self).dispatch(request, *args, **kwargs)
+
 
 def profile_owner_required(function):
     def wrap(request, *args, **kwargs):

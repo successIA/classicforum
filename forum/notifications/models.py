@@ -9,6 +9,77 @@ from forum.core.models import TimeStampedModel
 
 
 class NotificationQuerySet(models.query.QuerySet):
+    def notify_receiver_for_reply(self, reply):
+        self.create(
+            sender=reply.user,
+            receiver=reply.parent.user,
+            comment=reply,
+            notif_type=Notification.COMMENT_REPLIED
+        )
+
+    def notify_mentioned_users(self, comment):
+        if comment.revisions.count() > 0:
+            rev_comment = comment.revisions.latest('created')
+            self._remove_by_unmentioned_users(comment)
+        user_qs = comment.mentioned_users.exclude(pk=comment.user.pk)
+        for user in user_qs.all():
+            self.create(
+                sender=comment.user,
+                receiver=user,
+                comment=comment,
+                notif_type=Notification.USER_MENTIONED
+            )
+
+    def _remove_by_unmentioned_users(self, comment):
+        for user in comment.mentioned_users.all():
+            queryset = self.filter(
+                sender=comment.user,
+                receiver=user,
+                comment=comment,
+                notif_type=Notification.USER_MENTIONED
+            )
+            if queryset.exists():
+                queryset.first().delete()
+
+    def notify_user_followers_for_thread_creation(self, thread):
+        for user in thread.user.userprofile.followers.all():
+            self.create(
+                sender=thread.user,
+                receiver=user,
+                thread=thread,
+                notif_type=Notification.THREAD_CREATED
+            )
+
+    def notify_thread_followers_for_modification(self, thread):
+        other_followers = thread.followers.exclude(
+            threadfollowership__userprofile=thread.user.userprofile
+        )
+        for userprofile in other_followers.all():
+            self.get_or_create(
+                sender=thread.user,
+                receiver=userprofile.user,
+                thread=thread,
+                notif_type=Notification.THREAD_UPDATED
+            )
+
+    def notify_receiver_for_comment_upvote(self, sender, receiver, comment):
+        self.create(
+            sender=sender,
+            receiver=receiver,
+            comment=comment,
+            notif_type=Notification.COMMENT_UPVOTED
+        )
+
+    def delete_comment_upvote_notification(self, sender, receiver, comment):
+        queryset = self.filter(
+            sender=sender,
+            receiver=receiver,
+            comment=comment,
+            notif_type=Notification.COMMENT_UPVOTED
+        )
+        if queryset.exists():
+            queryset.first().delete()
+
     def get_for_user(self, username):
         return Notification.objects.select_related(
             'sender', 'receiver', 'comment').prefetch_related(
@@ -41,15 +112,15 @@ class Notification(TimeStampedModel):
         COMMENT_CREATED, COMMENT_UPVOTED, COMMENT_REPLIED, USER_MENTIONED
     ]
     NOTIF_USER_TYPES = [USER_FOLLOWED]
-    
+
     sender = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE, 
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
         related_name='sender_notif'
     )
     receiver = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE, 
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
         related_name='receiver_notif'
     )
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE, null=True)
@@ -57,7 +128,7 @@ class Notification(TimeStampedModel):
     notif_type = models.CharField(max_length=6, choices=NOTIF_TYPES)
     unread = models.BooleanField(default=True)
     objects = NotificationQuerySet.as_manager()
-    
+
     def __str__(self):
         return '%s (sender) - %s - %s(receiver)' % (
             self.sender, self.notif_type, self.receiver
@@ -68,7 +139,7 @@ class Notification(TimeStampedModel):
         if self.thread and self.comment:
             raise FieldError(
                 'Notification cannot have both comment field and thread field set.'
-                )
+            )
         if self.thread and self.notif_type not in Notification.NOTIF_THREAD_TYPES:
             raise FieldError('Invalid notification type for field thread')
         if self.comment and self.notif_type not in Notification.NOTIF_COMMENT_TYPES:
@@ -78,7 +149,7 @@ class Notification(TimeStampedModel):
         super().save(*args, **kwargs)
 
     def get_description(self):
-        context = { 'userprofile': self.sender.userprofile, 'notif': self }
+        context = {'userprofile': self.sender.userprofile, 'notif': self}
         description_dict = {
             Notification.THREAD_CREATED: 'notifications/thread_create.html',
             Notification.THREAD_UPDATED: 'notifications/thread_update.html',
@@ -89,4 +160,3 @@ class Notification(TimeStampedModel):
             Notification.USER_FOLLOWED: 'notifications/thread_update.html',
         }
         return render_to_string(description_dict[self.notif_type], context)
-

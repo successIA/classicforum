@@ -6,14 +6,7 @@ from django.utils.text import slugify
 from django.contrib.contenttypes.fields import GenericRelation
 
 from django.utils.html import mark_safe
-# from markdown import markdown
-# from markdownx.models import MarkdownxField
-# from markdownx.utils import markdownify
-# from redactor.fields import RedactorField
 from forum.core.models import TimeStampedModel
-
-
-from forum.image_app.models import Image
 
 import random
 import string
@@ -50,10 +43,6 @@ class Category(TimeStampedModel):
             kwargs={'slug': self.slug, 'filter_str': filter_str, 'page': page}
         )
 
-    
-
-    
-
 
 def create_category_slug(instance, new_slug=None):
 
@@ -66,7 +55,8 @@ def create_category_slug(instance, new_slug=None):
         slug = new_slug
     qs = Category.objects.filter(slug=slug)
     if qs.exists():
-        s = ''.join([random.choice(string.ascii_lowercase + string.digits) for i in range(10)])
+        s = ''.join([random.choice(string.ascii_lowercase + string.digits)
+                     for i in range(10)])
         new_slug = '%s-%s' % (slug, s)
         return create_category_slug(instance, new_slug=new_slug)
     return slug
