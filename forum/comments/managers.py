@@ -46,8 +46,8 @@ class CommentQuerySet(models.query.QuerySet):
         return self.select_related(
             'thread', 'user', 'parent'
         ).prefetch_related(
-            # 'attachment_set',
-            'user__userprofile__attachment_set',
+            # # 'attachment_set',
+            # 'user__userprofile__attachment_set',
             'revisions',
             'user__userprofile',
             'parent__user',

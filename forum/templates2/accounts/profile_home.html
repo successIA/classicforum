@@ -1,0 +1,246 @@
+{% extends 'profile_base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% load new_thread_tag %}
+{% load forum_template_tags %}
+
+{% block profile_content %}
+<main>
+    <div class="container ">
+        <!-- Profile Info -->
+        <div class="row offset-lg-1">
+            <div class="col-7 col-lg-7 col-xl-8 mt-4">
+                {% if userprofile.attachment_set.count > 0 %}
+                <!-- Mobile -->
+                <img src="{{ userprofile.attachment_set.all.last.image.url }}" height="90" width="90"
+                    class="mr-3 rounded-circle d-md-none" alt="..."
+                    style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+                {% else %}
+                <img src="{% static 'img/avatar.svg' %}" height="90" width="90" class="mr-3 rounded-circle d-md-none"
+                    alt="..." style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+                {% endif %}
+                <!-- Mobile -->
+                <!-- Desktop -->
+                <div class="d-none d-md-table-cell">
+                    {% if userprofile.attachment_set.count > 0 %}
+                    <img src="{{ userprofile.attachment_set.all.last.image.url }}" height="150" width="150"
+                        class="mr-3 rounded-circle d-none d-sm-block" alt="..."
+                        style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+                    {% else %}
+                    <img src="{% static 'img/avatar.svg' %}" height="150" width="150"
+                        class="mr-3 rounded-circle d-none d-sm-block" alt="..."
+                        style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+                    {% endif %}
+                </div><!-- Desktop -->
+
+                <div class="d-none d-md-table-cell align-top">
+                    <h4>{{ userprofile.user.username|capfirst }}</h4>
+
+                    <div class="profile-bio text-muted font-weight-light">
+                        <span class="d-table-cell"><i class="far fa-calendar-alt mr-2"></i></span>
+                        <span class="d-table-cell">Joined {{ userprofile.user.date_joined|date:"F, Y" }}</span>
+                    </div>
+
+                    {% if userprofile.signature %}
+                    <div class="profile-bio text-muted font-weight-light">
+                        <span class="d-table-cell"><i class="fas fa-book mr-2"></i></span>
+                        <span class="d-table-cell">{{ userprofile.signature }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if userprofile.location %}
+                    <div class="profile-bio text-muted font-weight-light">
+                        <span class="d-table-cell"><i class="fas fa-map-marker-alt mr-2"></i></span>
+                        <span class="d-table-cell">{{ userprofile.location }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if userprofile.website %}
+                    <div class="profile-bio text-muted font-weight-light">
+                        <span class="d-table-cell"><i class="fas fa-globe-africa mr-2"></i></span>
+                        <span class="d-table-cell">{{ userprofile.website }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div
+                class="col-5 mt-4 d-flex align-items-start justify-content-end justify-content-lg-end justify-content-xl-end col-lg-3 col-xg-2">
+
+                {% if request.user.is_authenticated and request.user.userprofile == userprofile %}
+                <a href="{% url 'accounts:user_edit' userprofile.user.username %}"
+                    class="btn btn-outline-primary float-right">
+                    Edit profile
+                </a>
+                {% endif %}
+
+                {% if request.user.is_authenticated %}
+                {% if request.user.userprofile != userprofile %}
+                {% if request.user in userprofile.followers.all %}
+                <a href="{{ person.userprofile.get_user_follow_url }}"
+                    class="btn btn-outline-primary mt-2 font-weight-bold">
+                    <i class="fas fa-check mr-1"></i>Following
+                </a>
+                {% else %}
+                <a href="{{ person.userprofile.get_user_follow_url }}"
+                    class="btn btn-primary text-bold mt-2 font-weight-bold">
+                    Follow
+                </a>
+                {% endif %}
+                {% endif %}
+                {% endif %}
+            </div>
+        </div><!-- Profile Info -->
+
+        <!-- Profile Info (responsive-fix)-->
+        <div class="d-md-none row mt-2">
+            <div class="col-12">
+                <h4>{{ userprofile.user.username|capfirst }}</h4>
+
+                <div class="text-muted font-weight-light">
+                    <span class="d-table-cell"><i class="far fa-calendar-alt mr-2"></i></span>
+                    <span class="d-table-cell">Joined {{ userprofile.user.date_joined|date:"F, Y" }}</span>
+                </div>
+
+                {% if userprofile.signature %}
+                <div class="text-muted font-weight-light">
+                    <span class="d-table-cell"><i class="fas fa-book mr-2"></i></span>
+                    <span class="d-table-cell">{{ userprofile.signature }}</span>
+                </div>
+                {% endif %}
+
+                {% if userprofile.location %}
+                <div class="text-muted font-weight-light">
+                    <span class="d-table-cell"><i class="fas fa-map-marker-alt mr-2"></i></span>
+                    <span class="d-table-cell">{{ userprofile.location }}</span>
+                </div>
+                {% endif %}
+
+                {% if userprofile.website %}
+                <div class="text-muted font-weight-light">
+                    <span class="d-table-cell"><i class="fas fa-globe-africa mr-2"></i></span>
+                    <span class="d-table-cell">{{ userprofile.website }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div><!-- Profile Info (responsive-fix)-->
+
+        <!-- Profile Activity -->
+        <div class="row mt-3 offset-lg-1">
+            <div class="col-sm-12">
+                {% if userprofile.is_online %}
+                <span class="d-inline-block mr-3 mt-2 mt-md-0"><i class="far fa-clock mr-2 text-muted"></i>Online</span>
+                {% else %}
+                <span class="d-inline-block mr-3 mt-2 mt-md-0"><i
+                        class="far fa-clock mr-2 text-muted"></i>{{ userprofile.last_seen|timesince|splittime }}
+                    (offline)</span>
+                {% endif %}
+                <span class="d-inline-block mr-3 mt-2 mt-md-0"><i class="far fa-comment mr-2 text-muted"></i>
+                    {% if last_posted %}
+                    {{ last_posted|timesince|splittime }}
+                    {% else %}
+                    No post yet
+                    {% endif %}
+                </span>
+                <span class="d-inline-block mr-3 mt-2 mt-md-0"><i class="far fa-eye mr-2 text-muted"></i>139</span>
+                {% if active_category %}
+                <span class="d-inline-block mr-3 mt-2 mt-md-0"><i
+                        class="fas fa-bolt mr-2 text-muted"></i>{{ active_category }}</span>
+                {% endif %}
+            </div>
+        </div><!-- Profile Activity -->
+
+        <!-- Profile Stats -->
+        <div class="row mt-3 offset-lg-1 mb-4">
+            <div class="col-sm-12">
+                <span class="d-inline-block mt-1 mr-3"><strong>{{ userprofile.user.comment_set.count }}</strong><span
+                        class="text-muted ml-1">Comments</span></span>
+                <span class="d-inline-block mt-1 mr-3"><strong>{{ userprofile.followers.count }}</strong><span
+                        class="text-muted ml-1">Followers</span></span>
+                <span class="d-inline-block mt-1 mr-3"><strong>{{ userprofile.following.count }}</strong><span
+                        class="text-muted ml-1">Following</span></span>
+                <span class="d-inline-block mt-1 mr-3"><strong>{{ userprofile.user.thread_set.count }}</strong><span
+                        class="text-muted ml-1">Threads</span></span>
+                <span
+                    class="d-inline-block mt-1 mr-3"><strong>{{ userprofile.threadfollowership_set.count }}</strong><span
+                        class="text-muted ml-1">Thread
+                        Following</span></span>
+                <span class="d-inline-block mt-1 mr-3"><strong>{{ total_upvotes }}</strong><span
+                        class="text-muted ml-1">Upvotes</span></span>
+                <span class="d-inline-block mt-1 mr-3"><strong>{{ total_upvoted }}</strong><span
+                        class="text-muted ml-1">Upvoted</span></span>
+            </div>
+        </div><!-- Profile Stats -->
+
+        <div class="row offset-lg-1 mb-5">
+            <div class="col-12 col-lg-8">
+                <!-- Recent Header -->
+                <ul class="nav border-top shadow-sm mb-4 py-0" style="margin-left: -20rem; margin-right: -35rem;">
+                    <li class="nav-item " style="margin-left: 20rem; margin-right: 35rem;">
+                        <a class="nav-link active pl-0 text-dark" href="#">
+                            <h5 class="py-0 my-0 mb-1">Recent Posts</h5>
+                        </a>
+                    </li>
+                </ul><!-- Recent Posts Header -->
+
+                <!-- Recent Posts Tab Panel -->
+                <div class="col-12">
+                    <ul class="nav nav-tabs border-bottom-0" id="myTab" role="tablist"
+                        style="margin-left: -0.95rem; margin-right: -0.95rem;">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                                aria-controls="home" aria-selected="true">Comments</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                                aria-controls="profile" aria-selected="false">Threads</a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Panel Content -->
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <!-- Comment Section -->
+                            <ul class="list-group mb-4 comment-list-group">
+                                {% if recent_comments %}
+                                {% for comment in recent_comments %}
+                                <li class="list-group-item rounded-0">
+                                    {% include "includes/comment.html" with comment=comment %}
+                                </li>
+                                {% endfor %}
+                                {% else %}
+                                <ul style="margin-top: 1.7em;" class="list-group">
+                                    <li style="padding: 0;" class="list-group-item">
+                                        <h4 class="text-center">No comment yet</h4>
+                                    </li>
+                                </ul>
+                                {% endif %}
+                            </ul><!-- Comment Section -->
+                        </div>
+
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <!-- Thread Section -->
+                            <ul class="list-group mb-4 thread-list-group">
+                                {% if recent_threads %}
+                                {% for thread in recent_threads %}
+                                <li class="list-group-item">
+                                    {% include "includes/thread.html" with thread=thread %}
+                                </li>
+                                {% endfor %}
+                                {% else %}
+                                <ul style="margin-top: 1.7em;" class="list-group">
+                                    <li style="padding: 0;" class="list-group-item">
+                                        <h4 class="text-center">No thread yet</h4>
+                                    </li>
+                                </ul>
+                                {% endif %}
+                            </ul><!-- Thread Section -->
+                        </div>
+                    </div><!-- Tab Panel Content -->
+                </div><!-- Recent Posts Tab Panel -->
+            </div>
+        </div>
+</main>
+{% endblock profile_content %}

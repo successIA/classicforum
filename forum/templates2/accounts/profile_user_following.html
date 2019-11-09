@@ -1,0 +1,62 @@
+{% extends 'profile_base.html' %}
+{% load static %}
+
+
+{% block  profile_content %}
+<main>
+  <div class="container mt-lg-4">
+    <!-- Navigation Scroller Item Detail -->
+    <div class="row offset-lg-1 mt-2 mb-4">
+      <div class="col-12">
+        <h5 class="mb-4">User Following</h5>
+      </div>
+
+      {% for person in userprofile.following.all %}
+      <div class="col col-sm-4 col-md-3 col-lg-3 col-xl-2 mb-4">
+        <div class="card  align-items-center py-3 px-3 follow-user" style="width: 8.8rem; background-color: #ECEFF1;">
+          {% if person.userprofile.avatar_url %}
+          <img src="{{ person.userprofile.avatar_url }}" class="rounded-circle" width="110" height="110">
+          {% else %}
+          <img src="{% static 'img/avatar.svg' %}" class="rounded-circle" width="110" height="110">
+          {% endif %}
+
+          <h5 class="mt-2"><a class="text-dark"
+              href="{{ person.userprofile.get_absolute_url }}">{{ person.userprofile.user.username }}</a>
+          </h5>
+
+          {% if request.user.is_authenticated and request.user != person  %}
+          {% if request.user in person.userprofile.following.all %}
+          <a href="{{ person.userprofile.get_user_follow_url }}"
+            class="btn btn-outline-primary btn-sm mt-2 font-weight-bold">
+            <i class="fas fa-check mr-1"></i>Following
+          </a>
+          {% else %}
+          <a href="{{ person.userprofile.get_user_follow_url }}"
+            class="btn btn-primary btn-sm text-bold mt-2 font-weight-bold">
+            Follow
+          </a>
+          {% endif %}
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12 col-lg-8">
+        <!-- <h6 class="font-weight-light">Yet to follow any user</h6> -->
+        <div class="card">
+          <div class="card-header text-center text-primary font-weight-bold bg-white">
+            Yet to follow any user
+          </div>
+        </div>
+        <!-- <div
+          class="d-flex p-3 pb-0 justify-content-center rounded font-weight-bold text-dark shadow-sm align-items-center position-relative">
+          <span class="d-inline block" style="position: absolute; left: .5rem; top: .2rem; font-size: 1.8em;">
+            <i class="fas fa-info-circle"></i>
+          </span>
+          <p class="position-relative mt-3">Yet to follow any user</p>
+        </div> -->
+      </div>
+      {% endfor %}
+    </div><!-- Navigation Scroller Item Detail -->
+  </div>
+</main>
+{% endblock profile_content %}

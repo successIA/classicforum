@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% load new_thread_tag %}
+{% load forum_template_tags %}
+
+{% block title %}
+{{ category.title }}
+{% endblock title %}
+
+{% block content %}
+<div class="container-fluid border-top border-bottom">
+    <div class="row align-items-center">
+        {% include 'includes/thread_filter_ctrl.html' with dropdown_active_text=dropdown_active_text %}
+        <ol
+            class="d-none d-md-flex ml-md-auto breadcrumb bg-white justify-content-end align-items-center rounded-0 py-0 pt-auto mb-0 ">
+            <li class="breadcrumb-item"><a href="/"><small class="font-weight-bold text-muted">Home</small></a></li>
+            <li class="breadcrumb-item"><a href="{{ category.get_absolute_url }}"><small
+                        class="font-weight-bold text-secondary">{{ category.title }}</a></small></li>
+            <li class="breadcrumb-item active text-muted" aria-current="page"><small
+                    class="font-weight-bold">{{ threads.number }}</small></li>
+        </ol>
+    </div>
+</div>
+<main>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-sm-12 col-md-10 offset-md-1 col-lg-9 col-xl-8 offset-lg-1">
+                <ul class="list-group mb-4 thread-list-group">
+                    {% for thread in threads %}
+                    <li class="list-group-item">
+                        <div class="media">
+                            {% if thread.userprofile.avatar_url %}
+                            <img src="{{ thread.userprofile.avatar_url }}" height="60" width="60"
+                                class="mr-3 rounded-circle d-none d-md-block" alt="..."
+                                style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1);" />
+                            {% else %}
+                            <img src="{% static 'img/avatar.svg' %}" height="60" width="60"
+                                class="mr-3 rounded-circle d-none d-md-block" alt="..."
+                                style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1);" />
+                            {% endif %}
+                            <div class="media-body">
+                                <h5 class="mt-0">
+                                    <a href="{% thread_url thread.get_absolute_url thread.comment_count thread.new_c_id thread.new_c_num %}"
+                                        class="text-dark">
+                                        {{ thread.title }}
+                                    </a>
+                                    {% if thread.new_c_num > 0 %}
+                                    <span class="badge badge-info py-1 ml-2">
+                                        <small class="font-weight-bold ">{{ thread.new_c_num }} new</small>
+                                    </span>
+                                    {% endif %}
+                                </h5>
+
+                                <div class="media-footer text-muted">
+                                    <small class="mr-4"><i class="far fa-comments"></i>
+                                        {% if thread.comment_count > 1 %}
+                                        {{ thread.comment_count }}
+                                        {% else %}
+                                        0
+                                        {% endif %}
+                                    </small>
+
+                                    {% if thread.final_comment_user %}
+                                    <a href="{{ thread.final_comment_user.userprofile.get_absolute_url }}"
+                                        class="text-muted">
+                                        <small class="mr-4"><i class="far fa-user"></i>
+                                            {{ thread.final_comment_user.username|capfirst }}</small>
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ thread.userprofile.get_absolute_url }}">
+                                        <small class="mr-4"><i
+                                                class="far fa-user"></i>{{ thread.username|capfirst }}</small>
+                                    </a>
+                                    {% endif %}
+
+                                    <small class="mr-4"><i class="far fa-clock"></i>
+                                        {% if thread.final_comment_time %}
+
+                                        {% comment %}
+                                        {{ thread.final_comment_time|date:"M d, Y, g:i:s a" }}
+                                        {{ thread.created|date:"M d, Y, g:i:s a" }}
+                                        {% endcomment %}
+
+                                        {{ thread.final_comment_time|naturaltime|splittime }}
+                                        {% else %}
+                                        {{ thread.created|naturaltime|splittime }}
+                                        {% endif %}
+                                    </small>
+
+                                    <small class="mr-4"><i class="far fa-eye"></i>
+                                        {{ thread.views }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <div class="card">
+                        <div class="card-header text-primary text-center font-weight-bold bg-white">
+                            No Availble threads for the current selection.
+                        </div>
+                    </div>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+                {% include "includes/thread_pagination.html" with threads=threads %}
+            </div>
+        </div>
+
+        <style scoped>
+            @media (max-width: 480px) {
+                .form-small {
+                    margin-left: .60rem;
+                    margin-right: .60rem;
+                }
+            }
+        </style>
+        <di class="form-small row">
+            <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+                {% include "includes/comment_form.html" with form=form form_action=form_action %}
+            </div>
+    </div>
+    </div>
+</main>
+{% endblock content %}

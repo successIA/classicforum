@@ -21,11 +21,12 @@ from forum.core.constants import COMMENT_PER_PAGE
 
 
 def get_filtered_threads(request, filter_str=None, thread_qs=None):
-    auth_users_only = ['following', 'new', 'me']
-    if filter_str in auth_users_only and not request.user.is_authenticated:
+    RECENT = 'recent'
+    auth_filter_list = ['following', 'new', 'me']
+    if filter_str in auth_filter_list and not request.user.is_authenticated:
         raise Http404
     threads_dict = {
-        'recent': thread_qs.get_recent(request.user),
+        RECENT: thread_qs.get_recent(request.user),
         'trending': thread_qs.get_by_days_from_now(request.user, days=7),
         'popular': thread_qs.get_by_days_from_now(request.user, days=None),
         'fresh': thread_qs.get_with_no_reply(),
@@ -33,8 +34,14 @@ def get_filtered_threads(request, filter_str=None, thread_qs=None):
         'following': thread_qs.get_following_for_user(request.user),
         'me': thread_qs.get_only_for_user(request.user),
     }
-    if not threads_dict.get(filter_str):
-        return ['recent', threads_dict['recent']]
+    all_filter_list = auth_filter_list + ['trending', 'popular', 'fresh']
+    # Recent threads are returned for invalid filters as default.
+    # However, threads_dict.get(filter_str) may return an empty queryset
+    # if there is no thread for the current selection. So also perform check
+    # for that situation to avoid getting recent threads for valid filters
+    # with no threads
+    if not threads_dict.get(filter_str) and filter_str not in all_filter_list:
+        return [RECENT, threads_dict[RECENT]]
     return [filter_str, threads_dict[filter_str]]
 
 

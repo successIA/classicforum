@@ -53,7 +53,8 @@ def user_profile_stats(request, username):
         'recent_comments': Comment.objects.get_recent_for_user(user, 5),
         'recent_threads': Thread.objects.get_recent_for_user(request, user)
     }
-    return render(request, 'accounts/profile_stats.html', ctx)
+    # return render(request, 'accounts/profile_stats.html', ctx)
+    return render(request, 'accounts/profile_home.html', ctx)
 
 
 @login_required
@@ -78,8 +79,15 @@ def user_profile_edit(request, username, userprofile):
         if form.is_valid():
             image = form.cleaned_data.get('image')
             from forum.attachments.models import Attachment
-            Attachment.objects.create_with_userprofile(image, userprofile)
-            form.save()
+            avatar_url = Attachment.objects.create_with_userprofile(
+                image, userprofile
+            )
+            userprofile = form.save(commit=False)
+            # To avoid deleting the user's avatar url if it is null
+            # or empty string perform this check first.
+            if avatar_url:
+                userprofile.avatar_url = avatar_url
+            userprofile.save()
             messages.success(request, 'Profile updated successfully!')
             username = userprofile.user.username
             return HttpResponseRedirect(

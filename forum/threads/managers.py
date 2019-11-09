@@ -111,16 +111,17 @@ class ThreadQuerySet(models.query.QuerySet):
 
     def get_by_category(self, category=None):
         if not category:
-            return self.active()
-        return self.active().filter(category=category)
+            return self.active().get_related()
+        return self.active().filter(category=category).get_related()
 
     def get_related(self):
         return self.select_related(
-            'user', 'category', 'final_comment_user', 'starting_comment'
+            'user', 'category', 'final_comment_user', 'starting_comment', 'userprofile'
         ).prefetch_related(
             'user__userprofile',
             'final_comment_user__userprofile',
-            'user__userprofile__attachment_set'
+            # 'user__userprofile__attachment_set',
+            # 'userprofile__attachment_set'
         )
 
     def active(self, *args, **kwargs):
