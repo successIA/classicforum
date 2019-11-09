@@ -17,6 +17,7 @@ from forum.threads.forms import ThreadForm
 def category_detail(request, slug, filter_str=None, page=1, form=None):
     print('category_detail called: ')
     print('slug: ', slug)
+    print('filter_str', filter_str)
     # form = ThreadForm(request.POST or None)
 
     # if form.is_valid():
@@ -36,4 +37,3 @@ def category_detail(request, slug, filter_str=None, page=1, form=None):
         get_additional_category_detail_ctx(request, category, filter_str, page)
     )
     return render(request, 'categories/category_detail.html', ctx)
-

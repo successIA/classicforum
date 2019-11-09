@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+{% load static %}
+{% load compress %}
+{% load forum_template_tags %}
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+  <!-- <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    /> -->
+  <!-- <script src="https://kit.fontawesome.com/50165bb753.js" crossorigin="anonymous"></script> -->
+  <link href="{% static 'css/fontawesome/all.css' %}" rel="stylesheet">
+
+  <!-- <link rel="stylesheet" href="css/bootstrap.css" /> -->
+  {% compress css %}
+  <link type="text/x-scss" href="{% static 'scss/styles.scss' %}" rel="stylesheet" media="screen" />
+  {% endcompress %}
+  <title>{% block title %}Forum{% endblock %}</title>
+</head>
+
+<body>
+  <!-- Overlay -->
+  <div class="sidebar-overlay"></div>
+  <div class="d-flex" id="wrapper">
+    {% block sidebar %}
+    <!-- Sidebar -->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+      <div class="sidebar-heading font-weight-bold">
+        <span class="d-inline-block d-md-none" id="close-sidebar">&times;</span>
+
+        <a class="navbar-brand" href="/">
+          <img src="{% static 'assets/bootstrap-solid.svg' %}" width="30" height="30" alt="" />
+          <span>Bootstrap</span>
+        </a>
+      </div>
+      <div class="list-group list-group-flush">
+        {% if category %}
+        {% get_category_list category %}
+        {% else %}
+        {% get_category_list %}
+        {% endif %}
+      </div>
+    </div><!-- Sidebar -->
+    {% endblock sidebar %}
+
+    <!-- Sidebar Fix -->
+    <div class="sidebar-wrapper-fix">
+      <div class="list-group">
+        <a class="list-group-item" href="#"></a>
+      </div>
+    </div><!-- Sidebar Fix -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+      <!-- Navigation -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="menu-toggle">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="d-flex d-lg-none justify-content-start align-items-center ml-2 ml-lg-0 mr-auto">
+          <a class="navbar-brand" href="/">
+            <img src="{% static 'assets/bootstrap-solid.svg' %}" width="30" height="30" alt="" />
+            <span class="d-none d-md-inline-block">Bootstrap</span>
+          </a>
+        </div>
+        <form class="form-inline my-2 my-lg-0 justify-content-end d-none d-md-flex position-relative mr-lg-auto">
+          <i class="fas fa-search search-abs"></i>
+          <input class="form-control mr-sm-4 search-pl" type="search" placeholder="Search" aria-label="Search" />
+        </form>
+
+        <div class="d-flex justify-content-end align-items-center">
+          {% if request.user.is_authenticated %}
+          <span class="d-inline-block d-md-none mr-4 text-dark"><i class="fas fa-search"></i></span>
+          {% endif %}
+
+          {% if request.user.is_authenticated %}
+          <span class="mr-4 position-relative d-flex justify-content-center align-items-center"><a
+              class="text-decoration-none text-dark" href="{{ user.userprofile.get_absolute_url }}notifications/">
+              <i style="font-size: 1.5rem;""
+                class=" far fa-bell"></i>
+              <span style="font-size: 0.7rem; position: absolute; top: -.67rem; right: -.63rem; min-width: 1em; 
+              padding: .25em .4em; text-align: center;"
+                class="bg-primary text-center rounded-circle text-white">36</span></a>
+          </span>
+          <div class="btn-group">
+            <a class="dropdown-toggle nav-profile-img text-dark" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false" href="#">
+              {% if request.user.userprofile.avatar_url %}
+              <img src="{{ request.user.userprofile.avatar_url }}" height="38" width="38"
+                class="mr-1 mr-md-2 rounded-circle" alt="..."
+                style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+              {% else %}
+              <img src="{% static 'img/avatar.svg' %}" height="38" width="38" class="mr-1 mr-md-2 rounded-circle"
+                alt="..." style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+              {% endif %}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right w-50">
+              <a class="dropdown-item" href="{{ user.userprofile.get_absolute_url }}">My account</a>
+              <a class="dropdown-item" href="{% url 'accounts:user_edit' request.user.username %}">
+                Update profile
+              </a>
+              <a class="dropdown-item" href="{% url 'accounts:password_change' %}">Change password</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a>
+            </div>
+          </div>
+          {% else %}
+          <!-- Login/Register navigation for Desktop/Tablet -->
+          <div class="d-none d-md-flex justify-content-end align-items-center">
+            <span class="d-inline-block d-lg-none mr-3 text-dark"><i class="fas fa-search"></i></span>
+            <!-- Search Icon for Tablet -->
+            <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn mr-2">
+              Register
+            </a>
+            <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary">
+              Login
+            </a>
+
+
+          </div>
+          {% endif %}
+        </div>
+      </nav>
+      {% if not request.user.is_authenticated %}
+      <!-- Login/Register and Search Icon navigation for mobile devices -->
+      <div class="container-fluid d-block d-md-none">
+        <div class="row">
+          <div class="col-12 py-2">
+            <div class="d-flex  align-items-center">
+              <span class="d-inline-block d-lg-none mr-auto text-dark"><i class="fas fa-search"></i></span>
+              <a href="{% url 'accounts:signup' %}" class="btn btn-primary mr-2">
+                Register
+              </a>
+              <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary">
+                Login
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+
+      {% block content %} {% endblock content %}
+    </div>
+  </div>
+
+  <script src="{% static 'js4/jquery.min.js' %}"></script>
+  <script src="{% static 'js4/popper.min.js' %}"></script>
+  <script src="{% static 'js4/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js4/script.js' %}"></script>
+</body>
+
+</html>

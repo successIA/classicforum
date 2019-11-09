@@ -21,7 +21,6 @@ from forum.core.utils import get_paginated_queryset
 from forum.threads.models import Thread, ThreadFollowership
 from forum.threads.utils import (
     get_filtered_threads,
-    # toggle_thread_followership,
     get_additional_thread_detail_ctx,
     update_threadfollowership,
     update_thread_open_time
@@ -85,7 +84,8 @@ def thread_list(request, filter_str=None, page=1, form=None):
         'form_action': form_action + '#comment-form',
         'dropdown_active_text': thread_data[0]
     }
-    return render(request, 'categories/home.html', context)
+    # return render(request, 'categories/home.html', context)
+    return render(request, 'home.html', context)
 
 
 def create_thread(request, slug=None, filter_str=None, page=None):
@@ -105,6 +105,15 @@ def create_thread(request, slug=None, filter_str=None, page=None):
             user=request.user,
             is_starting_comment=True
         )
+        # Reinstantiate the thread with current data in the db to
+        # avoid race condition.
+        # comment creation uses F expression to increase the thread
+        # comment count in it save method. Calling save the second time
+        # will cause the thread comment count to increase for the second
+        # time because F(comment_count) + 1 is still tied to thread
+        # and calling save the second time leads to another F(comment_count) +1
+        # call which makes the comment_count to become 2 instead of 1.
+        thread.refresh_from_db()
         thread.starting_comment = comment
         thread.save()
         return redirect(thread.get_absolute_url())
@@ -167,7 +176,7 @@ def follow_thread(request, thread_slug):
         ThreadFollowership.objects.toggle_thread_followership(
             userprofile, thread, open_time
         )
-        
+
     else:
         # toggle_thread_followership(userprofile, thread, timezone.now())
         ThreadFollowership.objects.toggle_thread_followership(

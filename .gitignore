@@ -4,6 +4,7 @@
 __pycache__
 # db.sqlite3 # Personal comment
 media
+staticfiles
 
 # Backup files # 
 *.bak 

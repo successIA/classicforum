@@ -1,0 +1,24 @@
+{% extends 'profile_base.html' %}
+{% load static %}
+{% load humanize %}
+{% load new_thread_tag %}
+{% load forum_template_tags %}
+
+
+{% block  profile_content %}
+<main>
+    <div class="container mt-lg-4">
+        <!-- Navigation Scroller Item Detail -->
+        <div class="row offset-lg-1">
+            <div class="notification col-12 col-lg-9">
+                <h5 class="mb-3">Notifications</h5>
+                <ul class="list-group mb-4 notification-list-group">
+                    {% for notif in notifications %}
+                    <li class="notif-list list-group-item">{{ notif.get_description }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div><!-- Navigation Scroller Item Detail -->
+    </div>
+</main>
+{% endblock profile_content %}

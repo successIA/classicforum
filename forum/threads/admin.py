@@ -21,7 +21,6 @@ class CommentInline(admin.TabularInline):
     model = Comment
 
 
-
 class ThreadAdmin(admin.ModelAdmin):
     inlines = [
         ThreadFollowershipInline,
@@ -33,6 +32,7 @@ class ThreadAdmin(admin.ModelAdmin):
 
 admin.site.register(Thread, ThreadAdmin)
 admin.site.register(ThreadFollowership)
+admin.site.register(ThreadRevision)
 
 #     # prepopulated_fields = {"slug": ("title",)}
 

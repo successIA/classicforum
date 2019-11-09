@@ -18,7 +18,7 @@ class UserProfile(models.query.QuerySet):
         ).prefetch_related(
             'followers__userprofile__user',
             'following__userprofile__user',
-            'attachment_set'
+            # 'attachment_set'
         )
 
 
@@ -43,6 +43,7 @@ class UserProfile(TimeStampedModel):
     )
     last_seen = models.DateTimeField(default=timezone.now)
     email_confirmed = models.BooleanField(default=False)
+    avatar_url = models.CharField(max_length=255, blank=True, null=True)
     objects = UserProfile.as_manager()
 
     def __str__(self):

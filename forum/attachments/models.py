@@ -85,7 +85,7 @@ class AttachmentQuerySet(models.query.QuerySet):
                         and att.threads.all().count() < 1:
                     att.is_orphaned = True
                     att.save()
-    
+
     def create_with_userprofile(self, image, userprofile):
         from forum.attachments.utils import md5
 
@@ -95,11 +95,13 @@ class AttachmentQuerySet(models.query.QuerySet):
         queryset = self.filter(md5sum=md5sum)
         if queryset.exists():
             queryset.first().userprofiles.add(userprofile)
+            return queryset.first().image.url
         else:
             att = Attachment(image=image, filename=image.name,
-                            has_userprofile=True)
+                             has_userprofile=True)
             att.save()
             att.userprofiles.add(userprofile)
+            return att.image.url
 
 
 class Attachment(models.Model):

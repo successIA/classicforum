@@ -63,7 +63,14 @@ class Thread(TimeStampedModel):
             # Create thread revision when the thread is fully created
             # with starting comment. A thread can only have a starting
             # comment after it is saved to the db.
-            if self.starting_comment:
+            # Always check for comment count
+            comment_count = 0
+            thread_from_db_qs = Thread.objects.filter(pk=self.pk)
+            if thread_from_db_qs.exists():
+                comment_count = thread_from_db_qs.first().comment_count
+            print("COMMENT_COUNT DB", comment_count)
+            print("COMMENT_COUNT INSTANCE", self.comment_count)
+            if comment_count > 1 and self.starting_comment:
                 ThreadRevision.objects.create(
                     thread=self,
                     starting_comment=self.starting_comment,
@@ -80,6 +87,7 @@ class Thread(TimeStampedModel):
         self.final_comment_user = final_user
         self.final_comment_time = final_time
         self.comment_count = F('comment_count') + 1
+        print("sync_with_comment called")
         self.save()
 
     def get_absolute_url(self):

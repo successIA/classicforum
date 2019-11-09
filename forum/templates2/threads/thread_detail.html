@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% load new_thread_tag %}
+{% load forum_template_tags %}
+{% load crispy_forms_tags %}
+
+{% load humanize %}
+
+
+{% block title %}
+{{ thread.title }}
+{% endblock title %}
+
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="d-none d-md-block">
+    <ol class="breadcrumb bg-white border-bottom justify-content-end rounded-0 py-2">
+        <li class="breadcrumb-item"><a href="{{ thread.category.get_absolute_url }}"><small
+                    class="font-weight-bold text-muted">{{ thread.category }}</small></a></li>
+        <li class="breadcrumb-item"><a href="{{ thread.get_absolute_url }}"><small
+                    class="font-weight-bold text-secondary">{{ thread.title }}</a></small></li>
+        <li class="breadcrumb-item active text-muted" aria-current="page"><small
+                class="font-weight-bold">{{ comments.number }}</small></li>
+    </ol>
+</nav><!-- Breadcrumb -->
+
+<main>
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+                <!-- Thread Heading -->
+                <div class="thread-heading">
+                    <h4 class="mt-0 mb-0">
+                        <a href="{{ thread.get_absolute_url }}" class="text-dark">{{ thread.title }}</a>
+                    </h4>
+                    <div class="dull-color mb-2 d-flex mt-2 align-items-end">
+                        <small class="d-inline-block mr-4 dull-color"><i class="far fa-comments"></i>
+                            {% if thread.comment_count > 1 %}
+                            {{ thread.comment_count }} replies
+                            {% else %}
+                            No reply
+                            {% endif %}
+                        </small>
+
+                        <small class="d-inline-block mr-auto dull-color"><i class="far fa-eye"></i>
+                            {{ thread.views }} view
+                        </small>
+
+                        <a href="{{ thread.get_thread_follow_url}}" class="btn btn-light text-muted btn-sm">
+                            {% if user.userprofile in thread.followers.all %}
+                            Unfollow
+                            {% else %}
+                            Follow
+                            {% endif %}
+                            <span>
+                                {{ thread.followers.count }}
+                            </span>
+                        </a>
+                    </div>
+                </div><!-- Thread Heading -->
+
+                <!-- Comment Section -->
+                <ul class="list-group mb-4 comment-list-group">
+                    {% for comment in comments %}
+                    <li class="list-group-item">
+                        {% include "includes/comment.html" with comment=comment %}
+                    </li>
+                    {% empty %}
+                    <div class="card">
+                        <div class="card-header text-dark text-center font-weight-bold bg-white">
+                            Something went wrong. Please try updating the thread if you were the author.
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    {% if comments.count == 1 %}
+                    <div class="card mt-4">
+                        <div class="card-header text-dark text-center font-weight-bold bg-white">
+                            Be the first to comment
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </ul><!-- Comment Section -->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+                {% include "includes/comment_pagination.html" with comments=comments %}
+            </div>
+        </div>
+
+        <style scoped>
+            @media (max-width: 480px) {
+                .form-small {
+                    margin-left: .60rem;
+                    margin-right: .60rem;
+                }
+            }
+        </style>
+        <div class="form-small row">
+            <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+                {% include "includes/comment_form.html" with form=form form_action=form_action %}
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock content %}

@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% load new_thread_tag %}
+{% load forum_template_tags %}
+
+
+<!-- <nav id="sidebar">
+    {% get_profile_sidebar_list request userprofile dropdown_active_text2 %}
+</nav> -->
+
+
+{% block sidebar %}
+<div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="sidebar-heading font-weight-bold">
+        <span class="d-inline-block d-md-none" id="close-sidebar">&times;</span>
+
+        <a class="navbar-brand ml-3" href="/">
+            <img src="{% static 'assets/bootstrap-solid.svg' %}" width="30" height="30" alt="" />
+            <span>Bootstrap</span>
+        </a>
+    </div>
+    <div class="list-group list-group-flush mt-3 profile-sidebar">
+        {% get_profile_sidebar_list request userprofile dropdown_active_text2 %}
+    </div>
+</div>
+{% endblock sidebar %}
+
+{% block content %}
+
+<!-- Navigation Scroller -->
+<div class="row mb-4 d-flex d-lg-none">
+    <div class="col-12">
+        <div class="nav-scroller border-top border-bottom">
+
+            <nav class="nav nav-underline ">
+                {% get_profile_sidebar_list request userprofile dropdown_active_text2 %}
+                <!-- <a class="nav-link  mr-3" href="{% url 'accounts:user_stats' userprofile.user.username %}">
+                    Information
+                </a>
+                <a class="nav-link  mr-3" href="{% url 'accounts:user_notifs' userprofile.user.username %}">
+                    Notifications
+                    <span class="badge badge-pill bg-light align-text-bottom">27</span>
+                </a>
+                <a class="nav-link  mr-3" href="{% url 'accounts:user_edit' userprofile.user.username %}">Settings</a>
+                <a class="nav-link  mr-3"
+                    href="{% url 'accounts:user_comments' userprofile.user.username %}">Replies</a>
+                <a class="nav-link  mr-3" href="{% url 'accounts:thread_new' userprofile.user.username 'new' %}">New
+                    <span class="badge badge-pill bg-light align-text-bottom">14</span>
+                </a>
+                <a class="nav-link  mr-3"
+                    href="{% url 'accounts:thread_following' userprofile.user.username 'following' %}">Following</a>
+                <a class="nav-link  mr-3" href="{% url 'accounts:thread_user' userprofile.user.username 'me' %}">My
+                    Threads</a>
+                <a class="nav-link  mr-3" href="{% url 'accounts:user_following' userprofile.user.username %}">User
+                    Following</a>
+                <a class="nav-link  mr-3"
+                    href="{% url 'accounts:user_followers' userprofile.user.username %}">Followers</a> -->
+            </nav>
+        </div>
+    </div>
+</div><!-- Navigation Scroller -->
+
+{% block profile_content %}
+
+{% endblock profile_content %}
+
+{% endblock content %}

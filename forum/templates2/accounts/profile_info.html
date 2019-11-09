@@ -1,0 +1,82 @@
+{% extends 'profile_base.html' %}
+{% load static %}
+{% load humanize %}
+{% load new_thread_tag %}
+{% load forum_template_tags %}
+{% load crispy_forms_tags %}
+
+
+{% block  profile_content %}
+<main>
+    <div class="container mt-lg-4">
+        <!-- Navigation Scroller Item Detail -->
+        <div class="row offset-lg-1">
+            <div class="col-12">
+                <h5 class="mb-3">Edit Profile</h5>
+            </div>
+            <div class="col-12 col-lg-9 col-xl-8">
+                <!-- card -->
+                <div class="card mb-5 p-3 pl-xl-0">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        <!-- row -->
+                        <div class="row">
+                            <!-- row col-->
+                            <div
+                                class="col-12 text-center mb-0 mb-md-0 col-md-3 col-lg-4 col-xl-4 d-xl-flex justify-content-xl-end">
+                                {% if userprofile.avatar_url %}
+                                <!-- Mobile -->
+                                <img src="{{ userprofile.avatar_url }}" height="90" width="90"
+                                    class="mx-auto rounded-circle d-md-none" alt="..."
+                                    style="object-fit: cover;  box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1); cursor: pointer;"
+                                    id="fake-image-chooser1" />
+                                <span class="text-muted font-weight-light mt-1 text-center d-block d-md-none">Tap image
+                                    to
+                                    change picture</span>
+                                {% else %}
+                                <img src="{% static 'img/avatar.svg' %}" height="90" width="90"
+                                    class="mx-auto rounded-circle d-md-none" alt="..."
+                                    style="object-fit: cover;  box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1); cursor: pointer;"
+                                    id="fake-image-chooser1" />
+                                <span class="text-muted font-weight-light mt-1 text-center d-block d-md-none">Tap image
+                                    to
+                                    change picture</span>
+                                {% endif %}
+                                <!-- Mobile -->
+
+                                <!-- Desktop -->
+                                <div class="d-none d-md-table-cell">
+                                    {% if userprofile.avatar_url %}
+                                    <img src="{{ userprofile.avatar_url }}" height="150" width="150"
+                                        class="mr-3 rounded-circle d-none d-sm-block" alt="..."
+                                        style="object-fit: cover;  box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1); cursor: pointer;"
+                                        id="fake-image-chooser2" />
+                                    {% else %}
+                                    <img src="{% static 'img/avatar.svg' %}" height="150" width="150"
+                                        class="mr-3 rounded-circle d-none d-sm-block" alt="..."
+                                        style="object-fit: cover;  box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1); cursor: pointer;"
+                                        id="fake-image-chooser2" />
+                                    {% endif %}
+                                </div><!-- Desktop -->
+
+                                <!-- <input type="file" class="form-control-file mt-2 d-none" id="real-image-chooser"
+                                    accept="image/*" datatype="image" /> -->
+                            </div><!-- row col -->
+
+                            <div class="col-12 col-md-9 col-lg-8 col-xl-8">
+                                <!-- <form method="post" enctype="multipart/form-data" novalidate> -->
+                                {% csrf_token %}
+                                {{ form|crispy }}
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="far fa-save mr-1"></i>Update
+                                </button>
+                                <!-- </form> -->
+                            </div>
+                        </div><!-- row -->
+                    </form>
+                </div><!-- card -->
+            </div>
+        </div>
+        <!-- Navigation Scroller Item Detail -->
+    </div>
+</main>
+{% endblock profile_content %}

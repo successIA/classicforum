@@ -1,0 +1,26 @@
+{% if threads.has_other_pages %}
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {% if threads.has_previous %}
+        <li><a href="{{ threads_url }}/{{ threads.previous_page_number }}/">&laquo;</a></li>
+        {% else %}
+        <li class="disabled"><a href="#">&laquo;</a></li>
+        {% endif %}
+        {% for i in threads.paginator.page_range %}
+        {% if threads.number == i %}
+        <li>
+            <a href="#" class="active">{{ i }}</a>
+        </li>
+        {% else %}
+        <li><a href="{{ threads_url }}/{{ i }}/">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+
+        {% if threads.has_next %}
+        <li><a href="{{ threads_url }}/{{ threads.next_page_number }}/">&raquo;</a></li>
+        {% else %}
+        <li class="disabled"><a href="#"><span>&raquo;</span></a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% load new_thread_tag %}
+{% load forum_template_tags %}
+
+{% block content %}
+<div class="container-fluid border-bottom">
+  <div class="row align-items-center">
+    {% include 'includes/thread_filter_ctrl.html' with dropdown_active_text=dropdown_active_text %}
+  </div>
+</div>
+
+<main>
+  <div class="container">
+    <div class="row mt-4">
+      <div class="col-sm-12 col-md-10 offset-md-1 col-lg-9 col-xl-8 offset-lg-1">
+        <ul class="list-group mb-4 thread-list-group">
+          {% for thread in threads %}
+          <li class="list-group-item">
+            {% include "includes/thread.html" with thread=thread %}
+          </li>
+          {% empty %}
+          <div class="card">
+            <div class="card-header text-primary text-center font-weight-bold bg-white">
+              No Availble threads for the current selection.
+            </div>
+          </div>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+        {% include "includes/thread_pagination.html" with threads=threads %}
+      </div>
+    </div>
+
+    <style scoped>
+      @media (max-width: 480px) {
+        .form-small {
+          margin-left: .60rem;
+          margin-right: .60rem;
+        }
+      }
+    </style>
+    <div class="form-small row">
+      <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+        {% include "includes/comment_form.html" with form=form form_action=form_action %}
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

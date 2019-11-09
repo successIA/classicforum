@@ -1,0 +1,22 @@
+{% if category_list %}
+{% for category in category_list %}
+<style scoped>
+    a.list-group-item:focus,
+    a.list-group-item:hover {
+        background-color: hsl(204, 20%, 93%) !important;
+    }
+</style>
+<a href="{% url 'categories:category_detail' category.slug %}" class="list-group-item list-group-item-action 
+                   {% if current_category != category %}
+                       bg-light
+                   {% endif %}" style="{% if current_category == category %}
+                        background-color: #DAE0E5;
+                    {% endif %}">
+    <i class="{{ category.icon }} mr-3"></i>{{ category.title }}
+</a>
+{% endfor %}
+
+{% else %}
+<li style="margin: 14px 90px 10px; color: #FFF; "><strong>No available category at this moment, please check back
+        later.</strong></li>
+{% endif %}

@@ -1,0 +1,75 @@
+<style scoped>
+    a.nav-link:focus,
+    a.nav-link:hover {
+        background-color: hsl(204, 20%, 93%) !important;
+    }
+</style>
+<a class="text-muted nav-link mr-4 mr-lg-0 {% if dropdown_active_text2 == 'stats' %}
+        category-active bg-light-gray
+    {% endif %} tab-control" href="{% url 'accounts:user_stats' userprofile.user.username %}">
+    <i class="far fa-id-badge" style="font-size: 1.1rem; margin-left: .7rem; margin-right: 1.43rem;"></i>Information
+</a>
+
+{% if request.user.is_authenticated and request.user.userprofile == userprofile %}
+<a class="text-muted nav-link mr-4 mr-lg-0 {% if dropdown_active_text2 == 'user_notifs' %}
+            category-active bg-light-gray
+        {% endif %}" href="{% url 'accounts:user_notifs' userprofile.user.username %}">
+    <i class="ml-2 far fa-bell mr-4" style="font-size: 1.1rem;"></i>Notifications
+    <span class="badge badge-pill bg-light align-text-bottom">27</span>
+</a>
+
+<a class="text-muted nav-link mr-4 mr-lg-0 {% if dropdown_active_text2 == 'profile' %}
+            category-active bg-light-gray
+        {% endif %} tab-control" href="{% url 'accounts:user_edit' userprofile.user.username %}">
+    <i class="ml-2 fas fa-user-cog" style="font-size: 1.1rem; margin-right: 1.1rem;"></i>Settings</a>
+{% endif %}
+
+<a class="text-muted nav-link mr-4 mr-lg-0 {% if dropdown_active_text2 == 'replies' %}
+        category-active bg-light-gray
+    {% endif %}" href="{% url 'accounts:user_comments' userprofile.user.username %}">
+    <i class="ml-2 far fa-comments" style="font-size: 1.1rem; margin-right: 1.3rem;"></i>Replies</a>
+
+{% if request.user.is_authenticated and request.user == userprofile.user %}
+<a class="text-muted nav-link mr-4 mr-lg-0 {% if dropdown_active_text2 == 'new' %}
+                category-active bg-light-gray
+            {% endif %}" href="{% url 'accounts:thread_new' userprofile.user.username 'new' %}">
+    <i class="ml-2 fas fa-info-circle" style="font-size: 1.1rem; margin-right: 1.45rem;"></i>New</a></li>
+<a class="text-muted nav-link mr-4 mr-lg-0 {% if dropdown_active_text2 == 'following' %}
+                category-active bg-light-gray
+            {% endif %}" href="{% url 'accounts:thread_following' userprofile.user.username 'following' %}">
+    <i class="ml-2 fas fa-rss" style="font-size: 1.1rem; margin-right: 1.57rem;"></i>Following</a></li>
+{% endif %}
+<a class="text-muted nav-link mr-4 mr-lg-0 {% if dropdown_active_text2 == 'me' %}
+        category-active bg-light-gray
+    {% endif %}" href="{% url 'accounts:thread_user' userprofile.user.username 'me' %}">
+    <i class="ml-2 fas fa-book mr-4" style="font-size: 1.1rem;"></i>Threads</a>
+<a class="text-muted nav-link mr-4 mr-lg-0 {% if dropdown_active_text2 == 'user_following' %}
+        category-active bg-light-gray
+    {% endif %}" href="{% url 'accounts:user_following' userprofile.user.username %}">
+    <i class="ml-2 fas fa-user-friends" style="font-size: 1.1rem; margin-right: 1.1rem;"></i>User Following</a>
+<a class="text-muted nav-link mr-4 mr-lg-0 {% if dropdown_active_text2 == 'user_followers' %}
+        category-active bg-light-gray
+    {% endif %}" href="{% url 'accounts:user_followers' userprofile.user.username %}">
+    <i class="ml-2 fas fa-users" style="font-size: 1.1rem; margin-right: 1.1rem;"></i>Followers</a>
+
+
+<!-- 
+<a class="nav-link  mr-4" href="{% url 'accounts:user_stats' userprofile.user.username %}">
+    Information
+</a>
+<a class="nav-link  mr-4" href="{% url 'accounts:user_notifs' userprofile.user.username %}">
+    Notifications
+    <span class="badge badge-pill bg-light align-text-bottom">27</span>
+</a>
+<a class="nav-link  mr-4" href="{% url 'accounts:user_edit' userprofile.user.username %}">Settings</a>
+<a class="nav-link  mr-4" href="{% url 'accounts:user_comments' userprofile.user.username %}">Replies</a>
+<a class="nav-link  mr-4" href="{% url 'accounts:thread_new' userprofile.user.username 'new' %}">New
+    <span class="badge badge-pill bg-light align-text-bottom">14</span>
+</a>
+<a class="nav-link  mr-4"
+    href="{% url 'accounts:thread_following' userprofile.user.username 'following' %}">Following</a>
+<a class="nav-link  mr-4" href="{% url 'accounts:thread_user' userprofile.user.username 'me' %}">My
+    Threads</a>
+<a class="nav-link  mr-4" href="{% url 'accounts:user_following' userprofile.user.username %}">User
+    Following</a>
+<a class="nav-link  mr-4" href="{% url 'accounts:user_followers' userprofile.user.username %}">Followers</a> -->
