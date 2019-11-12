@@ -93,10 +93,8 @@ def create_thread(request, slug=None, filter_str=None, page=None):
         raise PermissionDenied
     form = ThreadForm(request.POST or None)
     if form.is_valid():
-        # thread = create_thread_(form, request.user)
         thread = form.save(commit=False)
         thread.user = request.user
-        thread.userprofile = request.user.userprofile
         thread.category = form.cleaned_data.get('category')
         thread.save()
         comment, created = Comment.objects.get_or_create(
@@ -105,15 +103,7 @@ def create_thread(request, slug=None, filter_str=None, page=None):
             user=request.user,
             is_starting_comment=True
         )
-        # Reinstantiate the thread with current data in the db to
-        # avoid race condition.
-        # comment creation uses F expression to increase the thread
-        # comment count in it save method. Calling save the second time
-        # will cause the thread comment count to increase for the second
-        # time because F(comment_count) + 1 is still tied to thread
-        # and calling save the second time leads to another F(comment_count) +1
-        # call which makes the comment_count to become 2 instead of 1.
-        thread.refresh_from_db()
+
         thread.starting_comment = comment
         thread.save()
         return redirect(thread.get_absolute_url())
@@ -133,6 +123,14 @@ def thread_detail(request, thread_slug, form=None, form_action=None):
         'form': form if form else CommentForm,
     }
     ctx.update(get_additional_thread_detail_ctx(request, thread, form_action))
+
+    # comment_pk_list = [comment.pk for comment in ctx['comments']]
+    # print("COMMENT_PK_LIST", comment_pk_list)
+    # url, count = get_unread_url_and_count(request.user, thread)
+    # if request.user.is_authenticated:
+    #     CommentActivity.objects.mark_as_read(
+    #         request.user, thread, comment_id_list, url
+    #     )
     update_threadfollowership(request.user, thread, ctx['comments'])
     update_thread_open_time(request.session, thread)
     return render(request, 'threads/thread_detail.html', ctx)
@@ -146,7 +144,6 @@ def update_thread(request, thread_slug, thread=None):
     if request.method == 'POST':
         form = ThreadForm(request.POST)
         if form.is_valid():
-            # thread = update_thread(form, request.user, thread.pk)
             comment = thread.starting_comment
             comment.message = form.cleaned_data.get('message')
             comment.save()
@@ -163,7 +160,6 @@ def update_thread(request, thread_slug, thread=None):
 @login_required
 def follow_thread(request, thread_slug):
     thread = get_object_or_404(Thread, slug=thread_slug)
-    userprofile = request.user.userprofile
     thread_key = str(thread.slug) + '_thread_detail_time'
     open_time = request.session.get(thread_key, None)
     if open_time:
@@ -172,14 +168,14 @@ def follow_thread(request, thread_slug):
         # Use the opening time of the thread so as to allow the user to
         # to get notified of newly added comments if the user stayed on
         # the thread page for some time before clicking on follow btn.
-        # toggle_thread_followership(userprofile, thread, open_time)
+        # toggle_thread_followership(user, thread, open_time)
         ThreadFollowership.objects.toggle_thread_followership(
-            userprofile, thread, open_time
+            request.user, thread, open_time
         )
 
     else:
-        # toggle_thread_followership(userprofile, thread, timezone.now())
+        # toggle_thread_followership(user, thread, timezone.now())
         ThreadFollowership.objects.toggle_thread_followership(
-            userprofile, thread, open_time
+            user, thread, open_time
         )
     return redirect(thread.get_absolute_url())

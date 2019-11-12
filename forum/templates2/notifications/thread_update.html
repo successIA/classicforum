@@ -3,9 +3,9 @@
 {% load static %}
 
 <div class="media">
-  <a href="{% url 'accounts:user_stats' userprofile.user.username %}" class="text-dark">
-    {% if notif.sender.userprofile.avatar_url %}
-    <img src="{{ notif.sender.userprofile.avatar_url }}" style="object-fit: cover;" class="mr-3 rounded-circle"
+  <a href="{% url 'accounts:user_stats' userprofile.username %}" class="text-dark">
+    {% if notif.sender.avatar_url %}
+    <img src="{{ notif.sender.avatar_url }}" style="object-fit: cover;" class="mr-3 rounded-circle"
       alt="..." width="50" height="50" />
     {% else %}
     <img src="{% static 'img/avatar.svg' %}" style="object-fit: cover;" class="mr-3 rounded-circle" alt="..." width="50"
@@ -14,16 +14,24 @@
   </a>
 
   <div class="media-body">
-    <h4 style="font-size: 16px;">
-      <strong>
-        <a class="text-dark" href="{% url 'accounts:user_stats' userprofile.user.username %}">{{ notif.sender }}</a>
-      </strong>
-      <span class="text-muted" style="font-size: 14px;">updated a thread you are following:</span>
-
-      &quot<strong><a class="text-dark"
-          href="{{ notif.thread.get_absolute_url }}">{{ notif.thread.title }}</a></strong>&quot
-      <span style="font-size: 14px;" class="text-muted"> {{ notif.thread.modified|naturaltime|splittime }}.</span>
-    </h4>
+    <div class="mb-2">
+			<strong>
+				<a class="text-dark font-weight-bold" href="{% url 'accounts:user_stats' userprofile.username %}">
+					{{ notif.sender }}
+				</a>
+			</strong>
+			<span class="text-muted font-weight-light">
+				updated a thread you are following:
+			</span>
+			<span class="text-italic font-weight-bold">
+				<a class="text-dark" href="{{ notif.thread.get_precise_url }}">
+					{{ notif.thread.title }}
+				</a>
+			</span>
+			<span class="text-muted font-weight-light"> 
+				{{ notif.thread.modified|naturaltime|splittime }}.
+			</span>
+		</div>
 
     {{ notif.thread.starting_comment.marked_message|safe|truncatechars:180 }}
     {% if notif.thread.starting_comment.marked_message|length > 180 %}

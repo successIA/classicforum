@@ -81,28 +81,32 @@
           {% endif %}
 
           {% if request.user.is_authenticated %}
-          <span class="mr-4 position-relative d-flex justify-content-center align-items-center"><a
-              class="text-decoration-none text-dark" href="{{ user.userprofile.get_absolute_url }}notifications/">
+          <span class="mr-4 position-relative d-flex justify-content-center align-items-center">
+            <a class="text-decoration-none text-dark" href="{{ request.user.notif_url }}">
               <i style="font-size: 1.5rem;""
                 class=" far fa-bell"></i>
+              {% if request.user.notif_count %}
               <span style="font-size: 0.7rem; position: absolute; top: -.67rem; right: -.63rem; min-width: 1em; 
-              padding: .25em .4em; text-align: center;"
-                class="bg-primary text-center rounded-circle text-white">36</span></a>
+                                padding: .25em .4em; text-align: center;"
+                class="bg-primary text-center rounded-circle text-white">
+                {{ request.user.notif_count }}
+              </span>
+              {% endif %}
+            </a>
           </span>
           <div class="btn-group">
             <a class="dropdown-toggle nav-profile-img text-dark" data-toggle="dropdown" aria-haspopup="true"
               aria-expanded="false" href="#">
-              {% if request.user.userprofile.avatar_url %}
-              <img src="{{ request.user.userprofile.avatar_url }}" height="38" width="38"
-                class="mr-1 mr-md-2 rounded-circle" alt="..."
-                style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+              {% if request.user.avatar_url %}
+              <img src="{{ request.user.avatar_url }}" height="38" width="38" class="mr-1 mr-md-2 rounded-circle"
+                alt="..." style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
               {% else %}
               <img src="{% static 'img/avatar.svg' %}" height="38" width="38" class="mr-1 mr-md-2 rounded-circle"
                 alt="..." style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
               {% endif %}
             </a>
             <div class="dropdown-menu dropdown-menu-right w-50">
-              <a class="dropdown-item" href="{{ user.userprofile.get_absolute_url }}">My account</a>
+              <a class="dropdown-item" href="{{ user.get_absolute_url }}">My account</a>
               <a class="dropdown-item" href="{% url 'accounts:user_edit' request.user.username %}">
                 Update profile
               </a>

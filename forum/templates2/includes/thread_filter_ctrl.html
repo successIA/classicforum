@@ -1,5 +1,10 @@
+{% load forum_template_tags %}
 <div class="col col-md-2 col-lg-2 col-xl-1 position-relative py-2 text-center">
-    <a class="text-dark filter" href="{% if category %}
+    <a class="{% if not dropdown_active_text or dropdown_active_text == 'recent' %}
+                text-primary
+            {% else %}
+                text-dark
+            {% endif %} filter" href="{% if category %}
                         /categories/{{ category.slug }}/recent/
                     {% else %}
                        /threads/recent/
@@ -8,56 +13,15 @@
     </a>
     <span class="{% if dropdown_active_text == 'recent' %}thread-active{% endif %}"></span>
 </div>
-<div class="col col-md-2 col-lg-2 col-xl-1 position-relative py-2 text-center">
-    <a class="text-dark filter" href="{% if category %}
-                        /categories/{{ category.slug }}/trending/
-                    {% else %}
-                        /threads/trending/
-                    {% endif %}">
-        Trending
-    </a>
-    <span class="{% if dropdown_active_text == 'trending' %}thread-active{% endif %}"></span>
-</div>
 {% if request.user.is_authenticated %}
+    <div class="col col-md-2 col-lg-2 position-relative py-2 text-center">
+        <div class="btn-group">
+            {% get_filter_dropdown_body dropdown_active_text True category %}
+        </div>
+    </div>
+{% endif %}
 <div class="col col-md-2 col-lg-2 col-xl-1 position-relative py-2 text-center">
     <div class="btn-group">
-        <a class="filter dropdown-toggle text-dark" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-            href="#">
-            {% if dropdown_active_text == 'new' %}
-            New Threads
-            {% elif dropdown_active_text == 'following' %}
-            Following
-            {% elif dropdown_active_text == 'me' %}
-            My Threads
-            {% else %}
-            Filter
-            {% endif %}
-        </a>
-        <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item {% if dropdown_active_text == 'new' %}bg-primary text-white{% endif %}"
-                href="{% if category %}/categories/{{ category.slug }}/new/{% else %}/threads/new/{% endif %}">
-                New
-            </a>
-            <a class="dropdown-item {% if dropdown_active_text == 'popular' %}bg-primary text-white{% endif %}"
-                href="{% if category %}/categories/{{ category.slug }}/popular/{% else %}/threads/popular/{% endif %}">
-                Popular
-            </a>
-            <a class="dropdown-item {% if dropdown_active_text == 'fresh' %}bg-primary text-white{% endif %}"
-                href="{% if category %}/categories/{{ category.slug }}/fresh/{% else %}/threads/fresh/{% endif %}">
-                No Replies Yet
-            </a>
-            <a class="dropdown-item {% if dropdown_active_text == 'following' %}bg-primary text-white{% endif %}"
-                href="{% if category %}/categories/{{ category.slug }}/following/{% else %}/threads/following/{% endif %}">
-                Following
-            </a>
-            <a class="dropdown-item {% if dropdown_active_text == 'me' %}bg-primary text-white{% endif %}"
-                href="{% if category %}/categories/{{ category.slug }}/me/{% else %}/threads/me/{% endif %}">
-                For Me
-            </a>
-        </div>
-        <span style="top: 1.8rem; position: absolute;"
-            class="{% if dropdown_active_text == 'new' or dropdown_active_text == 'following' or dropdown_active_text == 'me' or dropdown_active_text == 'popular' or dropdown_active_text == 'fresh' %}thread-active{% endif %}">
-        </span>
+        {% get_filter_dropdown_body dropdown_active_text False category %}
     </div>
 </div>
-{% endif %}

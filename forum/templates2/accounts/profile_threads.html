@@ -24,25 +24,23 @@
       <div class="col-12 col-lg-8">
         <!-- Thread Section -->
         <ul class="list-group mb-4 thread-list-group">
-          {% if threads %}
           {% for thread in threads %}
           <li class="list-group-item">
             {% include "includes/thread.html" with thread=thread %}
           </li>
+          {% empty %}
+          <div class="card">
+            <div class="card-header text-primary text-center font-weight-bold bg-white">
+              No threads yet
+            </div>
+          </div>
           {% endfor %}
-          {% else %}
-          <ul style="margin-top: 1.7em;" class="list-group">
-            <li style="padding: 0;" class="list-group-item">
-              <h4 class="text-center">No thread yet</h4>
-            </li>
-          </ul>
-          {% endif %}
         </ul><!-- Thread Section -->
       </div>
     </div>
-    <div class="row">
+    <div class="row mt-3">
       <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
-        {% include "includes/thread_pagination.html" with threads=threads %}
+        {% include "includes/pagination.html" with page_obj=threads  %}
       </div>
     </div>
   </div>

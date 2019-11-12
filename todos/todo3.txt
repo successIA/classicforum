@@ -1,3 +1,33 @@
+from django.utils import timezone
+
+from forum.accounts.models import User
+from forum.categories.models import Category
+from forum.threads.models import Thread
+from forum.comments.models import Comment
+from forum.attachments.models import Attachment
+from forum.notifications.models import Notification
+
+from faker import Faker
+fake = Faker()
+
+usr = User.objects.get(id=1)
+cat = Category.objects.get(slug="programming")
+
+for i in range(20):
+    t = fake.sentence()
+    m = ''.join(fake.texts())
+    if (isinstance(t, str)) and (isinstance(m, str)):
+        th, cr = Thread.objects.get_or_create(title = t, body="NA", user=usr, category=cat, created=timezone.now(), modified=timezone.now())
+        co, cr = Comment.objects.get_or_create(message=m, user=usr, thread=th, is_starting_comment=True, created=timezone.now(), modified=timezone.now())
+        th.starting_comment = co
+        th.save()
+
+	
+for i in range(72):
+     m = ''.join(fake.texts())
+     if (isinstance(m, str)):
+             Comment.objects.create(message=m, user=usr, thread=th, created=timezone.now(), modified=timezone.now())
+			 
 report user
 report inappropiate thread
 report inappropiate comment

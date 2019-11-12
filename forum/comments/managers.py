@@ -14,7 +14,9 @@ class CommentQuerySet(models.query.QuerySet):
         return queryset.exclude(user=user)
 
     def get_for_thread(self, thread):
-        queryset = self.active().get_related().filter(thread=thread)
+        queryset = self.active().get_related().filter(
+            thread=thread
+        ).exclude(is_starting_comment=True)
         return queryset.order_by('created').all()
 
     def get_user_last_posted(self, user):
@@ -46,10 +48,7 @@ class CommentQuerySet(models.query.QuerySet):
         return self.select_related(
             'thread', 'user', 'parent'
         ).prefetch_related(
-            # # 'attachment_set',
-            # 'user__userprofile__attachment_set',
             'revisions',
-            'user__userprofile',
             'parent__user',
             'parent__thread',
             'upvoters',

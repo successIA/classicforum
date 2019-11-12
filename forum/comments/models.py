@@ -66,20 +66,26 @@ class Comment(TimeStampedModel):
 
         message = bleach.clean(self.message, markdown_tags, markdown_attrs)
         if not self.pk:
-            self.position = self.thread.comments.count() + 1
+            if self.is_starting_comment:
+                self.position = 0
+            else:
+                self.position = self.thread.comments.count() + 1
             super(Comment, self).save(*args, **kwargs)
-            self.thread.sync_with_comment(self.user, self.created)
+            if not self.is_starting_comment:
+                self.thread.sync_with_comment(self.user, self.created)
             Attachment.objects.sync_with_comment(self)
             ThreadFollowership.objects.create_followership(
-                self.user.userprofile, self.thread
+                self.user, self.thread
             )
             ThreadFollowership.objects.sync_with_comment(self)
             if self.parent and self.parent.user != self.user:
                 Notification.objects.notify_receiver_for_reply(self)
         else:
-            comment_revision = CommentRevision(comment=self,
-                                               message=self.message,
-                                               marked_message=self.marked_message)
+            comment_revision = CommentRevision(
+                comment=self,
+                message=self.message,
+                marked_message=self.marked_message
+            )
             comment_revision.save()
             comment_revision.mentioned_users = self.mentioned_users.all()
             comment_revision.save()
@@ -153,11 +159,17 @@ class Comment(TimeStampedModel):
         )
 
     def downvote(self, user):
+        from forum.notifications.models import Notification
+
         if user in self.downvoters.all():
             self.downvoters.remove(user)
         else:
             self.upvoters.remove(user)
             self.downvoters.add(user)
+            # Incase the user upvoted the comment initially by mistake
+            Notification.objects.delete_comment_upvote_notification(
+                user, self.user, self
+            )
 
     def upvote(self, user):
         from forum.notifications.models import Notification
@@ -196,6 +208,8 @@ class CommentRevision(models.Model):
         from markdown import markdown
         text, comment_info_list = bbcode_quote(self.message)
         return mark_safe(markdown(text, safe_mode='escape'))
+
+
 
 
 # from forum.threads.models import Thread

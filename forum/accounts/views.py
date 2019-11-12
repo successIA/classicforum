@@ -1,17 +1,12 @@
 import json
 
 from django.contrib.auth import login as auth_login
-from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
-from django.views.generic.edit import CreateView
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.views import View
-from django.views.generic import DetailView, ListView
-from django.views.generic.edit import UpdateView
 from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views import View
 from django.http import Http404
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
@@ -23,9 +18,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch, Sum
 from django.http import JsonResponse
+# from django.utils import timezone
 
 from forum.accounts.tokens import account_activation_token
-from forum.accounts.models import UserProfile
 from forum.accounts.forms import UserProfileForm
 from forum.accounts.forms import UserSignUpForm
 from forum.threads.utils import get_filtered_threads
@@ -40,17 +35,20 @@ from forum.accounts.utils import (
 )
 
 
+User = get_user_model()
+
+
 def user_profile_stats(request, username):
-    userprofile = get_object_or_404(UserProfile, user__username=username)
-    user = userprofile.user
+    user = get_object_or_404(User, username=username)
+    comment_qs = Comment.objects.active()
     ctx = {
-        'userprofile': userprofile,
+        'userprofile': user,
         'dropdown_active_text2': 'stats',
-        'last_posted': Comment.objects.get_user_last_posted(user),
-        'active_category': Comment.objects.get_user_active_category(user),
-        'total_upvotes': Comment.objects.get_user_total_upvotes(user),
-        'total_upvoted': Comment.objects.filter(upvoters=user).count(),
-        'recent_comments': Comment.objects.get_recent_for_user(user, 5),
+        'last_posted': comment_qs.get_user_last_posted(user),
+        'active_category': comment_qs.get_user_active_category(user),
+        'total_upvotes': comment_qs.get_user_total_upvotes(user),
+        'total_upvoted': comment_qs.filter(upvoters=user).count(),
+        'recent_comments': comment_qs.get_recent_for_user(user, 5),
         'recent_threads': Thread.objects.get_recent_for_user(request, user)
     }
     # return render(request, 'accounts/profile_stats.html', ctx)
@@ -59,10 +57,16 @@ def user_profile_stats(request, username):
 
 @login_required
 @profile_owner_required
-def user_notification_list(request, username, userprofile):
-    notifs = Notification.objects.get_for_user(username)
+def user_notification_list(request, username):
+    page = request.GET.get('page')
+    notif_qs = Notification.objects.get_for_user(request.user)
+    notifs = get_paginated_queryset(notif_qs, 3, page)
+    notif_id_list = [notif.pk for notif in notifs]
+    print("NOTIF_IDS", notif_id_list)
+    # Notification.objects.mark_all_as_read_for_receiver(request.user)
+    Notification.objects.mark_as_read(request.user, notif_id_list)
     ctx = {
-        'userprofile': userprofile,
+        'userprofile': request.user,
         'dropdown_active_text2': 'user_notifs',
         'notifications': notifs
     }
@@ -71,62 +75,60 @@ def user_notification_list(request, username, userprofile):
 
 @login_required
 @profile_owner_required
-def user_profile_edit(request, username, userprofile):
-    form = UserProfileForm(instance=userprofile)
+def user_profile_edit(request, username):
+    form = UserProfileForm(instance=request.user)
     if request.method == 'POST':
         form = UserProfileForm(
-            request.POST, request.FILES, instance=userprofile)
+            request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             image = form.cleaned_data.get('image')
             from forum.attachments.models import Attachment
-            avatar_url = Attachment.objects.create_with_userprofile(
-                image, userprofile
-            )
-            userprofile = form.save(commit=False)
+            avatar_url = Attachment.objects.create_avatar(image, request.user)
+            user = form.save(commit=False)
             # To avoid deleting the user's avatar url if it is null
             # or empty string perform this check first.
             if avatar_url:
-                userprofile.avatar_url = avatar_url
-            userprofile.save()
+                user.avatar_url = avatar_url
+            user.save()
             messages.success(request, 'Profile updated successfully!')
-            username = userprofile.user.username
+            username = request.user.username
             return HttpResponseRedirect(
                 reverse('accounts:user_edit', kwargs={'username': username})
             )
     ctx = {
-        'userprofile': userprofile,
+        'userprofile': request.user,
         'dropdown_active_text2': 'profile',
         'form': form
     }
     return render(request, 'accounts/profile_info.html', ctx)
 
 
-def user_comment_list(request, username, page):
+def user_comment_list(request, username):
     user = User.objects.filter(username=username).first()
     comment_qs = Comment.objects.filter(user=user).exclude(
         is_starting_comment=True
     ).get_related().order_by('id')
-    comments = get_paginated_queryset(comment_qs, 10, page)
+    print("COUNT CQS", comment_qs.count())
+    comments = get_paginated_queryset(comment_qs, 10, request.GET.get('page'))
     ctx = {
         'comments': comments,
         'dropdown_active_text2': 'replies',
-        'userprofile': user.userprofile
+        'userprofile': user
     }
     return render(request, 'accounts/profile_comments.html', ctx)
 
 
 def user_thread_list(request, username, filter_str, page):
-    userprofile = get_object_or_404(
-        UserProfile, user__username=username
+    user = get_object_or_404(
+        User, username=username
     )
-    if not userprofile.is_required_filter_owner(request.user, filter_str):
+    if not user.is_required_filter_owner(request.user, filter_str):
         raise Http404
-    user = userprofile.user
     thread_qs = Thread.objects.active()
     thread_data = get_filtered_threads(request, filter_str, thread_qs)
     thread_paginator = get_paginated_queryset(thread_data[1], 10, page)
     ctx = {
-        'userprofile': userprofile,
+        'userprofile': user,
         'threads': thread_paginator,
         'threads_url': '/accounts/%s/%s' % (username, thread_data[0]),
         'dropdown_active_text2': thread_data[0]
@@ -140,7 +142,6 @@ def signup(request):
         user = form.save(commit=False)
         user.is_active = False
         user.save()
-        UserProfile.objects.create(user=user)
         email_data = get_signup_email_confirm_form_entries(request, user)
         user.email_user(email_data['subject'], email_data['message'])
         return redirect('accounts:account_activation_sent')
@@ -156,10 +157,8 @@ def activate(request, uidb64, token):
         user = None
     if user and account_activation_token.check_token(user, token):
         user.is_active = True
+        user.email_confirmed = True
         user.save()
-        userprofile = user.userprofile
-        userprofile.email_confirmed = True
-        userprofile.save()
         # authenticate the new user by setting his/her plain text password to a
         # unique hash
         auth_login(request, user)
@@ -173,28 +172,26 @@ def account_activation_sent(request):
 
 @login_required
 def follow_user(request, username):
-    follower = request.user
-    user = get_object_or_404(User, username=username)
+    follower = request.user  # john
+    user = get_object_or_404(User, username=username)  # aia99
     if user == follower:
         raise Http404
-    user.userprofile.toggle_followers(follower)
-    follower.userprofile.toggle_following(user)
-    return redirect(user.userprofile.get_absolute_url())
+    user.toggle_followers(follower)
+    follower.toggle_following(user)
+    return redirect(user.get_absolute_url())
 
 
 def user_following(request, username):
-    userprofile = get_object_or_404(UserProfile, user__username=username)
     ctx = {
-        'userprofile': userprofile,
+        'userprofile': get_object_or_404(User, username=username),
         'dropdown_active_text2': 'user_following',
     }
     return render(request, 'accounts/profile_user_following.html', ctx)
 
 
 def user_followers(request, username):
-    userprofile = get_object_or_404(UserProfile, user__username=username)
     ctx = {
-        'userprofile': userprofile,
+        'userprofile': get_object_or_404(User, username=username),
         'dropdown_active_text2': 'user_followers',
     }
     return render(request, 'accounts/profile_user_followers.html', ctx)
@@ -202,13 +199,11 @@ def user_followers(request, username):
 
 def user_mention(request):
     username = request.GET.get('username')
+    user_queryset = User.objects.filter(username__startswith=username)
     if username:
-        userprofile_qs = UserProfile.objects.select_related('user').filter(
-            user__username__startswith=username
-        )
-        if userprofile_qs.exists():
-            userprofile_list = get_mentioned_users_context(userprofile_qs)
-            return JsonResponse({'user_list':  userprofile_list})
+        if user_queryset.exists():
+            user_list = get_mentioned_users_context(user_queryset)
+            return JsonResponse({'user_list':  user_list})
     return JsonResponse({'user_list': []})
 
 
@@ -217,10 +212,10 @@ def user_mention_list(request):
     if username_dict_list:
         username_list = [username_dict['username']
                          for username_dict in username_dict_list]
-        userprofile_qs = UserProfile.objects.select_related('user').filter(
-            user__username__in=username_list
+        user_qs = User.objects.select_related('user').filter(
+            username__in=username_list
         )
-        if userprofile_qs.exists():
-            userprofile_list = get_mentioned_users_context(userprofile_qs)
-            return JsonResponse({'user_list':  userprofile_list})
+        if user_qs.exists():
+            user_list = get_mentioned_users_context(user_qs)
+            return JsonResponse({'user_list':  user_list})
     return JsonResponse({'user_list': []})

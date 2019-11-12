@@ -4,8 +4,8 @@
 {% load forum_template_tags %}
 
 <div class="media">
-    {% if thread.userprofile.avatar_url %}
-    <img src="{{ thread.userprofile.avatar_url }}" height="60" width="60" class="mr-3 rounded-circle d-none d-md-block"
+    {% if thread.user.avatar_url %}
+    <img src="{{ thread.user.avatar_url }}" height="60" width="60" class="mr-3 rounded-circle d-none d-md-block"
         alt="..." style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
     {% else %}
     <img src="{% static 'img/avatar.svg' %}" height="60" width="60" class="mr-3 rounded-circle d-none d-md-block"
@@ -16,9 +16,11 @@
             <a href="{% thread_url thread.get_absolute_url thread.comment_count thread.new_c_id thread.new_c_num %}"
                 class="text-dark">{{ thread.title }}</a>
 
+            {% if not category %}
             <span class="badge badge-secondary py-1">
                 <small class="font-weight-bold ">{{ thread.category }}</small>
             </span>
+            {% endif %}
 
             {% if thread.new_c_num > 0 %}
             <span class="badge badge-info py-1 ml-2">
@@ -29,7 +31,7 @@
 
         <div class="media-footer text-muted">
             <small class="mr-4"><i class="far fa-comments"></i>
-                {% if thread.comment_count > 1 %}
+                {% if thread.comment_count %}
                 {{ thread.comment_count }}
                 {% else %}
                 0
@@ -37,13 +39,14 @@
             </small>
 
             {% if thread.final_comment_user %}
-            <a href="{{ thread.final_comment_user.userprofile.get_absolute_url }}" class="text-muted">
+            <a href="{{ thread.final_comment_user.get_absolute_url }}" class="text-muted">
                 <small class="mr-4"><i class="far fa-user"></i>
                     {{ thread.final_comment_user.username|capfirst }}</small>
             </a>
             {% else %}
-            <a href="{{ thread.user.userprofile.get_absolute_url }}">
-                <small class="mr-4"><i class="far fa-user"></i>{{ thread.user.username|capfirst }}</small>
+            <a href="{{ thread.user.get_absolute_url }}">
+                <small class="mr-4 text-muted"><i
+                        class="far fa-user text-muted mr-1"></i>{{ thread.user.username|capfirst }}</small>
             </a>
             {% endif %}
 

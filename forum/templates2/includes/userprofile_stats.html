@@ -1,0 +1,42 @@
+<span class="d-inline-block mt-1 mr-3">
+    <strong>{{ userprofile.comment_set.count }}</strong>
+    <span class="text-muted ml-1">
+        Comment{{ userprofile.comment_set.count|pluralize }}
+    </span>
+</span>
+
+<span class="d-inline-block mt-1 mr-3">
+    <strong>{{ userprofile.followers.count }}</strong>
+    <span class="text-muted ml-1">
+        Follower{{ userprofile.followers.count|pluralize }}
+    </span>
+</span>
+
+<span class="d-inline-block mt-1 mr-3">
+    <strong>{{ userprofile.following.count }}</strong>
+    <span class="text-muted ml-1">Following</span>
+</span>
+
+<span class="d-inline-block mt-1 mr-3">
+    <strong>{{ userprofile.thread_set.count }}</strong>
+    <span class="text-muted ml-1">
+        Thread{{ userprofile.thread_set.count|pluralize }}
+    </span>
+</span>
+
+<span class="d-inline-block mt-1 mr-3">
+    <strong>{{ userprofile.threadfollowership_set.count }}</strong>
+    <span class="text-muted ml-1">Thread Following</span>
+</span>
+
+<span class="d-inline-block mt-1 mr-3">
+    <strong>{{ total_upvotes }}</strong>
+    <span class="text-muted ml-1">
+        Upvote{{ total_upvotes|pluralize }}
+    </span>
+</span>
+
+<span class="d-inline-block mt-1 mr-3">
+    <strong>{{ total_upvoted }}</strong>
+    <span class="text-muted ml-1">Upvoted</span>
+</span>

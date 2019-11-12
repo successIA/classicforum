@@ -34,28 +34,16 @@
         <div class="nav-scroller border-top border-bottom">
 
             <nav class="nav nav-underline ">
-                {% get_profile_sidebar_list request userprofile dropdown_active_text2 %}
-                <!-- <a class="nav-link  mr-3" href="{% url 'accounts:user_stats' userprofile.user.username %}">
-                    Information
-                </a>
-                <a class="nav-link  mr-3" href="{% url 'accounts:user_notifs' userprofile.user.username %}">
-                    Notifications
-                    <span class="badge badge-pill bg-light align-text-bottom">27</span>
-                </a>
-                <a class="nav-link  mr-3" href="{% url 'accounts:user_edit' userprofile.user.username %}">Settings</a>
-                <a class="nav-link  mr-3"
-                    href="{% url 'accounts:user_comments' userprofile.user.username %}">Replies</a>
-                <a class="nav-link  mr-3" href="{% url 'accounts:thread_new' userprofile.user.username 'new' %}">New
-                    <span class="badge badge-pill bg-light align-text-bottom">14</span>
-                </a>
-                <a class="nav-link  mr-3"
-                    href="{% url 'accounts:thread_following' userprofile.user.username 'following' %}">Following</a>
-                <a class="nav-link  mr-3" href="{% url 'accounts:thread_user' userprofile.user.username 'me' %}">My
-                    Threads</a>
-                <a class="nav-link  mr-3" href="{% url 'accounts:user_following' userprofile.user.username %}">User
-                    Following</a>
-                <a class="nav-link  mr-3"
-                    href="{% url 'accounts:user_followers' userprofile.user.username %}">Followers</a> -->
+                <style scoped>
+                    a.nav-link:focus,
+                    a.nav-link:hover {
+                        background-color: hsl(204, 20%, 93%) !important;
+                    }
+                    .category-active{
+                        background-color: #cbd3da;
+                    }
+                </style>
+                {% get_profile_sidebar_list request userprofile dropdown_active_text2 %}                
             </nav>
         </div>
     </div>

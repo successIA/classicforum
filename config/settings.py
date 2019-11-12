@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'debug_toolbar',
     'compressor',
+    'django_seed',
 
     'forum.categories',
     'forum.comments',
@@ -153,7 +154,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-
+AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = 'acconts/login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
@@ -184,7 +185,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'forum', 'media')
 MEDIA_URL = '/media/'
 
 # crispy form
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'

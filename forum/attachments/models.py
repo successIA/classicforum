@@ -2,16 +2,15 @@ import os
 import uuid
 
 from django.db import models
-
 from django.utils.crypto import get_random_string
 from django.utils.text import slugify
 from django.core.files.storage import FileSystemStorage
+from django.conf import settings
 
 
 from forum.comments.models import Comment
 from forum.core.models import TimeStampedModel
 from forum.threads.models import Thread
-from forum.accounts.models import UserProfile
 
 
 class MediaFileSystemStorage(FileSystemStorage):
@@ -40,7 +39,7 @@ def upload_to(instance, filename):
     final_filename = '{new_filename}{ext}'.format(
         new_filename=new_filename, ext=ext
     )
-    if instance.has_userprofile:
+    if instance.is_avatar:
         return "avatars/{final_filename}".format(
             final_filename=final_filename
         )
@@ -81,26 +80,25 @@ class AttachmentQuerySet(models.query.QuerySet):
         for att in queryset.all():
             if att.url in urls:
                 att.comments.remove(comment)
-                if not att.userprofile and att.comments.all().count() < 1\
-                        and att.threads.all().count() < 1:
+                if not att.is_avatar and att.comments.all().count() < 1:
                     att.is_orphaned = True
                     att.save()
 
-    def create_with_userprofile(self, image, userprofile):
+    def create_avatar(self, image, user):
         from forum.attachments.utils import md5
 
         if not image:
             return
         md5sum = md5(image)
-        queryset = self.filter(md5sum=md5sum)
+        queryset = self.filter(md5sum=md5sum, is_avatar=True)
         if queryset.exists():
-            queryset.first().userprofiles.add(userprofile)
+            queryset.first().users.add(user)
             return queryset.first().image.url
         else:
             att = Attachment(image=image, filename=image.name,
-                             has_userprofile=True)
+                             is_avatar=True)
             att.save()
-            att.userprofiles.add(userprofile)
+            att.users.add(user)
             return att.image.url
 
 
@@ -110,11 +108,11 @@ class Attachment(models.Model):
     )
     filename = models.CharField(max_length=255)
     url = models.URLField(max_length=2000, blank=True)
-    comments = models.ManyToManyField(Comment, blank=True)
-    threads = models.ManyToManyField(Thread, blank=True)
-    userprofiles = models.ManyToManyField(UserProfile, blank=True)
+    comments = models.ManyToManyField("comments.Comment", blank=True)
+    # threads = models.ManyToManyField("threads.Thread", blank=True)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)
     md5sum = models.CharField(max_length=36, blank=True)
-    has_userprofile = models.BooleanField(default=False)
+    is_avatar = models.BooleanField(default=False)
     is_orphaned = models.BooleanField(default=True)
     objects = AttachmentQuerySet.as_manager()
 

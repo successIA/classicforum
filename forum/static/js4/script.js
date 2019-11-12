@@ -34,6 +34,34 @@ $(document).ready(function() {
     }
   });
 
+  function scrollHorizontalNavigation() {
+    // console.log(
+    //   $(".nav-scroller")
+    //     .find("a")
+    //     .data("target")
+    // );
+    var profileSidebarActiveLinkKeys = [
+      "stats",
+      "user_notifs",
+      "profile",
+      "replies",
+      "new",
+      "following",
+      "me",
+      "user_following",
+      "user_followers"
+    ];
+
+    $(".nav-scroller")
+      .find("a")
+      .each(function() {
+        console.log($(this).data("target"));
+      });
+    var left = $(document).outerWidth() - $(window).width();
+    $(".nav-scroller").scrollLeft(left);
+  }
+  // scrollHorizontalNavigation();
+
   function getImageChooser() {
     var $fakeImageChooser =
       $("#fake-image-chooser1").css("display") === "none"
@@ -50,7 +78,10 @@ $(document).ready(function() {
   function registerImageChooserChange() {
     // var $realImageChooser = $("#real-image-chooser");
     var $realImageChooser = $("#id_image");
+    var $realImageChooser = $("#id_image");
     $realImageChooser.css("display", "none");
+    $("#div_id_image").css("display", "none");
+
     $realImageChooser.change(function(e) {
       var fakeImageChooser2ImgTag1 = document.getElementById(
         "fake-image-chooser1"
@@ -79,6 +110,7 @@ $(document).ready(function() {
     var $realImageChooser = $("#id_image");
     console.log($realImageChooser);
     $realImageChooser.css("display", "none");
+    $("#div_id_image").css("display", "none");
     $fakeImageChooser.on("click", function() {
       $realImageChooser.click();
       registerImageChooserChange();
