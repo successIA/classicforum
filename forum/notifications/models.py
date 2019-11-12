@@ -1,7 +1,11 @@
+from math import ceil
+
 from django.db import models
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.exceptions import FieldError
+from django.utils import timezone
+from django.core.urlresolvers import reverse
 
 from forum.threads.models import Thread
 from forum.comments.models import Comment
@@ -42,7 +46,7 @@ class NotificationQuerySet(models.query.QuerySet):
                 queryset.first().delete()
 
     def notify_user_followers_for_thread_creation(self, thread):
-        for user in thread.user.userprofile.followers.all():
+        for user in thread.user.followers.all():
             self.create(
                 sender=thread.user,
                 receiver=user,
@@ -52,12 +56,12 @@ class NotificationQuerySet(models.query.QuerySet):
 
     def notify_thread_followers_for_modification(self, thread):
         other_followers = thread.followers.exclude(
-            threadfollowership__userprofile=thread.user.userprofile
+            threadfollowership__user=thread.user
         )
-        for userprofile in other_followers.all():
+        for user in other_followers.all():
             self.get_or_create(
                 sender=thread.user,
-                receiver=userprofile.user,
+                receiver=user,
                 thread=thread,
                 notif_type=Notification.THREAD_UPDATED
             )
@@ -80,12 +84,53 @@ class NotificationQuerySet(models.query.QuerySet):
         if queryset.exists():
             queryset.first().delete()
 
-    def get_for_user(self, username):
-        return Notification.objects.select_related(
-            'sender', 'receiver', 'comment').prefetch_related(
-            'sender__userprofile__attachment_set', 'comment__thread').filter(
-            receiver__username=username
+    def mark_as_read(self, receiver, notif_id_list):
+        # Be aware that the update() method is converted directly
+        # to an SQL statement. It is a bulk operation for direct updates.
+        # It doesn’t run any save() methods on your models,
+        # or emit the pre_save or post_save signals (which are a consequence
+        # of calling save()), or honor the auto_now field option.
+        # https://docs.djangoproject.com/en/1.11/topics/db/queries/#updating-multiple-objects-at-once
+        self.get_for_user(
+            receiver
+        ).filter(unread=True, id__in=notif_id_list).update(
+            unread=False, modified=timezone.now()
+        )
+
+    def get_receiver_url_and_count(self, receiver):
+        qs_receiver = self.get_for_user(receiver)
+        unread_qs = qs_receiver.filter(
+            unread=True
         ).order_by('-created')
+        position = 0
+        url = ''
+        if unread_qs.exists() and unread_qs.first():
+            for model in qs_receiver.all():
+                position = position + 1
+                if model.pk == unread_qs.first().pk:
+                    break
+            if position:
+                page_num = ceil(position / 3)
+                url = '%s?page=%s' % (
+                    reverse(
+                        'accounts:user_notifs',
+                        kwargs={'username': receiver.username}
+                    ),
+                    page_num
+                )
+        if not url:
+            url = reverse(
+                'accounts:user_notifs', kwargs={'username': receiver.username}
+            )
+        count = unread_qs.count()
+        return url, count
+
+    def get_for_user(self, user):
+        return Notification.objects.select_related(
+            'sender', 'receiver', 'thread', 'comment'
+        ).prefetch_related(
+            'thread__starting_comment', 'comment__thread'
+        ).filter(receiver=user).order_by('-created')
 
 
 class Notification(TimeStampedModel):
@@ -123,15 +168,17 @@ class Notification(TimeStampedModel):
         on_delete=models.CASCADE,
         related_name='receiver_notif'
     )
-    thread = models.ForeignKey(Thread, on_delete=models.CASCADE, null=True)
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
+    thread = models.ForeignKey(
+        "threads.Thread", on_delete=models.CASCADE, null=True, blank=True)
+    comment = models.ForeignKey(
+        "comments.Comment", on_delete=models.CASCADE, null=True, blank=True)
     notif_type = models.CharField(max_length=6, choices=NOTIF_TYPES)
     unread = models.BooleanField(default=True)
     objects = NotificationQuerySet.as_manager()
 
     def __str__(self):
-        return '%s (sender) - %s - %s(receiver)' % (
-            self.sender, self.notif_type, self.receiver
+        return '%s (sender) - %s - %s(receiver) #%s' % (
+            self.sender, self.notif_type, self.receiver, str(self.pk)
         )
 
     def save(self, *args, **kwargs):
@@ -149,7 +196,7 @@ class Notification(TimeStampedModel):
         super().save(*args, **kwargs)
 
     def get_description(self):
-        context = {'userprofile': self.sender.userprofile, 'notif': self}
+        context = {'userprofile': self.sender, 'notif': self}
         description_dict = {
             Notification.THREAD_CREATED: 'notifications/thread_create.html',
             Notification.THREAD_UPDATED: 'notifications/thread_update.html',
@@ -160,3 +207,13 @@ class Notification(TimeStampedModel):
             Notification.USER_FOLLOWED: 'notifications/thread_update.html',
         }
         return render_to_string(description_dict[self.notif_type], context)
+
+    def get_precise_url(self):
+        notif_qs = Notification.objects.filter(receiver=self.receiver)
+        position = 0
+        for notif in notif_qs:
+            position = position + 1
+            if notif.pk == self.pk:
+                break
+        page_num = ceil(position / 3)
+        return '%s?page=%s' % (reverse('accounts:user_notifs', kwargs={'username': self.receiver}), page_num)

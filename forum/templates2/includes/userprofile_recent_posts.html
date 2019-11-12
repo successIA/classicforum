@@ -1,0 +1,49 @@
+<ul class="nav nav-tabs border-bottom-0" id="myTab" role="tablist"
+    style="margin-left: -0.95rem; margin-right: -0.95rem;">
+    <li class="nav-item">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+            aria-controls="home" aria-selected="true">Comments</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+            aria-controls="profile" aria-selected="false">Threads</a>
+    </li>
+</ul>
+
+<!-- Tab Panel Content -->
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <!-- Comment Section -->
+        <ul class="list-group mb-4 comment-list-group">
+            {% for comment in recent_comments %}
+                <li class="list-group-item rounded-0">
+                    {% include "includes/comment.html" with comment=comment %}
+                </li>
+            {% empty %}
+                <div class="card">
+                    <div class="card-header text-dark text-center font-weight-bold bg-white">
+                        No comments yet
+                    </div>
+                </div>
+            {% endfor %}                
+        </ul><!-- Comment Section -->
+    </div>
+
+    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <!-- Thread Section -->
+        <ul class="list-group mb-4 thread-list-group">
+            {% for thread in recent_threads %}
+                <li class="list-group-item">
+                    {% include "includes/thread.html" with thread=thread %}
+                </li>
+            {% empty %}
+                <div class="card">
+                    <div class="card-header text-dark text-center font-weight-bold bg-white">
+                        No threads yet
+                    </div>
+                </div>
+            {% endfor %}
+        </ul><!-- Thread Section -->
+    </div>
+</div><!-- Tab Panel Content -->

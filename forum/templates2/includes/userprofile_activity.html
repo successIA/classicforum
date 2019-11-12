@@ -1,0 +1,28 @@
+{% load forum_template_tags %}
+
+{% if userprofile.is_online %}
+    <span class="d-inline-block mr-3 mt-2 mt-md-0"><i class="far fa-clock mr-2 text-muted"></i>Online</span>
+{% else %}
+    <span class="d-inline-block mr-3 mt-2 mt-md-0">
+        <i class="far fa-clock mr-2 text-muted"></i>{{ userprofile.last_seen|timesince|splittime }} (offline)
+    </span>
+{% endif %}
+
+<span class="d-inline-block mr-3 mt-2 mt-md-0">
+    <i class="far fa-comment mr-2 text-muted"></i>
+    {% if last_posted %}
+        {{ last_posted|timesince|splittime }}
+    {% else %}
+        No posts yet
+    {% endif %}
+</span>
+
+<span class="d-inline-block mr-3 mt-2 mt-md-0">
+    <i class="far fa-eye mr-2 text-muted"></i>139
+</span>
+
+{% if active_category %}
+    <span class="d-inline-block mr-3 mt-2 mt-md-0">
+        <i class="fas fa-bolt mr-2 text-muted"></i>{{ active_category }}
+    </span>
+{% endif %}

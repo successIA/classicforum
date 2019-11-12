@@ -137,7 +137,7 @@ def update_threadfollowership(user, thread, comment_paginator):
     if not user.is_authenticated:
         return
     threadfship = ThreadFollowership.objects.filter(
-        userprofile=user.userprofile,
+        user=user,
         thread=thread
     ).first()
     if not threadfship:

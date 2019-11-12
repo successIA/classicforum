@@ -101,9 +101,40 @@ profile_sidebar_dict = {
 
 
 @register.inclusion_tag('includes/profile_sidebar.html')
-def get_profile_sidebar_list(request, userprofile, dropdown_active_text2=None):
+def get_profile_sidebar_list(request, user, dropdown_active_text2=None):
     return {
         'request': request,
-        'userprofile': userprofile,
+        'userprofile': user,
         'dropdown_active_text2': dropdown_active_text2,
     }
+
+
+@register.inclusion_tag('forum/filter_dropdown_body.html')
+def get_filter_dropdown_body(dropdown_active_text, is_auth=False, category=None):
+    filter_list = None
+    if is_auth:
+        filter_list = [
+            ('new', 'New'),
+            ('following', 'Following'),
+            ('me', 'For Me'),
+        ]
+    else:
+        filter_list = [
+            ('trending', 'Trending'),
+            ('popular', 'Popular'),
+            ('fresh', 'No Replies')
+        ]
+    context = {
+        'filter_dropdown_list': filter_list,
+        'filter_dropdown_list_item_keys': [k for k, v in filter_list],
+        'dropdown_active_text': dropdown_active_text,
+        'filter_text': "Personalise" if is_auth else "Filter"
+    }
+    if category:
+        context.update({'category': category})
+    return context
+
+
+@register.filter
+def home_pagination_url(threads_url, page_num):
+    return "%s/%s" % (threads_url, page_num)

@@ -1,20 +1,36 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
-from forum.accounts.models import UserProfile
-from forum.threads.models import  Thread, ThreadFollowership
+from forum.accounts.models import User
+from forum.threads.models import Thread, ThreadFollowership
 
 
 class ThreadInline(admin.TabularInline):
     model = Thread
 
+
 class ThreadFollowershipInline(admin.TabularInline):
     model = ThreadFollowership
 
-class UserProfileAdmin(admin.ModelAdmin):
-    inlines = [
-        # ThreadInline,
-        # ThreadFollowershipInline
-    ]
+
+# class FollowersInline(admin.TabularInline):
+#     model =
 
 
-admin.site.register(UserProfile, UserProfileAdmin)
+# class ForumUserAdmin(UserAdmin):
+#     model = User
+#     list_display = [
+#         'username',
+#         'gender',
+#         'signature',
+#         'location',
+#         'website',
+#         # 'followers',
+#         # 'following',
+#         'last_seen',
+#         'email_confirmed',
+#         'avatar_url',
+#     ]
+
+
+admin.site.register(User, UserAdmin)

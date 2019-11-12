@@ -1,0 +1,27 @@
+<h4>{{ userprofile.username|capfirst }}</h4>
+
+<div class="profile-bio text-muted font-weight-light">
+    <span class="d-table-cell"><i class="far fa-calendar-alt mr-2"></i></span>
+    <span class="d-table-cell">Joined {{ userprofile.date_joined|date:"F, Y" }}</span>
+</div>
+
+{% if userprofile.signature %}
+    <div class="profile-bio text-muted font-weight-light">
+        <span class="d-table-cell"><i class="fas fa-book mr-2"></i></span>
+        <span class="d-table-cell">{{ userprofile.signature }}</span>
+    </div>
+{% endif %}
+
+{% if userprofile.location %}
+    <div class="profile-bio text-muted font-weight-light">
+        <span class="d-table-cell"><i class="fas fa-map-marker-alt mr-2"></i></span>
+        <span class="d-table-cell">{{ userprofile.location }}</span>
+    </div>
+{% endif %}
+
+{% if userprofile.website %}
+    <div class="profile-bio text-muted font-weight-light">
+        <span class="d-table-cell"><i class="fas fa-globe-africa mr-2"></i></span>
+        <span class="d-table-cell">{{ userprofile.website }}</span>
+    </div>
+{% endif %}

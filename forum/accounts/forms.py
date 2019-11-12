@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordChangeForm
-from forum.accounts.models import UserProfile
 
 
 User = get_user_model()
@@ -33,13 +32,13 @@ class UserSignUpForm(UserCreationForm):
         self.fields['username'].help_text = None
         self.fields['password1'].help_text = None
 
-
     def clean_email(self):
         email = self.cleaned_data.get('email')
         email_qs = User.objects.filter(email=email)
         if email_qs.exists():
-            raise forms.ValidationError('This email has already been registered')
-        return email 
+            raise forms.ValidationError(
+                'This email has already been registered')
+        return email
 
     def clean_email2(self):
         email = self.cleaned_data.get('email')
@@ -50,11 +49,12 @@ class UserSignUpForm(UserCreationForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    image = forms.ImageField(widget=forms.ClearableFileInput(), label='', required=False)
+    image = forms.ImageField(
+        widget=forms.ClearableFileInput(), label='', required=False)
 
     class Meta:
-        model = UserProfile
-        fields = ['image', 'gender', 'signature' , 'location', 'website']
+        model = User
+        fields = ['image', 'gender', 'signature', 'location', 'website']
         widgets = {
             'signature': forms.Textarea(attrs={'rows': 3})
         }
@@ -70,12 +70,9 @@ class UserProfileForm(forms.ModelForm):
             )
         return image
 
-
     # def clean(self):
     #     if not self.cleaned_data.get('image'):
     #         # print('form: ', self)
     #         raise forms.ValidationError(
     #             'Invalid picture or no picture selected. Choose another picture.'
     #         )
-
-

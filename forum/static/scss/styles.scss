@@ -4,10 +4,24 @@
 // @import "node_modules/@fortawesome/fontawesome-free/scss/solid";
 // @import "node_modules/@fortawesome/fontawesome-free/scss/v4-shims";
 
+// $primary: #9b27b062;
+
 $primary: #9c27b0;
 $breadcrumb-divider: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxwYXRoIGQ9Ik0yLjUgMEwxIDEuNSAzLjUgNCAxIDYuNSAyLjUgOGw0LTQtNC00eiIgZmlsbD0iY3VycmVudENvbG9yIi8+PC9zdmc+);
 // @import "node_modules/bootstrap/scss/bootstrap";
 @import "../bootstrap/bootstrap";
+
+/*-------------------------------------------
+GLOBAL STYLE
+-------------------------------------------*/
+.avatar {
+  object-fit: cover;
+  box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1);
+}
+
+/*-------------------------------------------
+GLOBAL STYLE
+-------------------------------------------*/
 
 body {
   overflow-x: hidden;
@@ -197,7 +211,12 @@ body {
     margin-right: -0.875rem;
   }
 }
-
+.comment-heading {
+  @media (min-width: 768px) {
+    margin-left: -0.875rem;
+    margin-right: -0.875rem;
+  }
+}
 .comment-list-group {
   margin-left: -15px;
   margin-right: -15px;

@@ -1,5 +1,5 @@
 <span>
-	<strong><a href="{% url 'accounts:user_stats' userprofile.user.username %}">
+	<strong><a href="{% url 'accounts:user_stats' userprofile.username %}">
 			{{ notif.sender }}</a></strong> created a <strong>
 		<a href="{{ notif.comment.get_precise_url }}">comment</a></strong> in
 	<strong>

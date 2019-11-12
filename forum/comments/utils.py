@@ -2,7 +2,7 @@ import re
 
 from django.shortcuts import get_object_or_404
 from django.utils.html import mark_safe
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch
 
 from forum.comments.models import Comment, CommentRevision
@@ -14,6 +14,9 @@ from forum.core.utils import convert_mention_to_link
 from markdown import markdown
 import bleach
 from bleach_whitelist import markdown_tags, markdown_attrs
+
+
+User = get_user_model()
 
 
 def get_rendered_message(comment):

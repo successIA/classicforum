@@ -6,14 +6,16 @@
         background-color: hsl(204, 20%, 93%) !important;
     }
 </style>
-<a href="{% url 'categories:category_detail' category.slug %}" class="list-group-item list-group-item-action 
-                   {% if current_category != category %}
-                       bg-light
-                   {% endif %}" style="{% if current_category == category %}
-                        background-color: #DAE0E5;
-                    {% endif %}">
+{% if current_category == category %}
+<a href="{% url 'categories:category_detail' category.slug %}"
+    class="list-group-item list-group-item-action category-active text-primary" style="background-color: #DAE0E5;">
     <i class="{{ category.icon }} mr-3"></i>{{ category.title }}
 </a>
+{% else %}
+<a href="{% url 'categories:category_detail' category.slug %}" class="list-group-item list-group-item-action bg-light">
+    <i class="{{ category.icon }} mr-3"></i>{{ category.title }}
+</a>
+{% endif %}
 {% endfor %}
 
 {% else %}

@@ -37,19 +37,19 @@
                     </h4>
                     <div class="dull-color mb-2 d-flex mt-2 align-items-end">
                         <small class="d-inline-block mr-4 dull-color"><i class="far fa-comments"></i>
-                            {% if thread.comment_count > 1 %}
-                            {{ thread.comment_count }} replies
+                            {% if thread.comment_count %}
+                            {{ thread.comment_count }} repl{{ thread.comment_count|pluralize:"y,ies" }}
                             {% else %}
                             No reply
                             {% endif %}
                         </small>
 
                         <small class="d-inline-block mr-auto dull-color"><i class="far fa-eye"></i>
-                            {{ thread.views }} view
+                            {{ thread.views }} view{{ thread.views|pluralize }}
                         </small>
 
                         <a href="{{ thread.get_thread_follow_url}}" class="btn btn-light text-muted btn-sm">
-                            {% if user.userprofile in thread.followers.all %}
+                            {% if user in thread.followers.all %}
                             Unfollow
                             {% else %}
                             Follow
@@ -61,35 +61,50 @@
                     </div>
                 </div><!-- Thread Heading -->
 
-                <!-- Comment Section -->
-                <ul class="list-group mb-4 comment-list-group">
-                    {% for comment in comments %}
-                    <li class="list-group-item">
-                        {% include "includes/comment.html" with comment=comment %}
+                {% if comments.number == 1 %}
+                <!-- Thread Starting Comment -->
+                <ul class="list-group mb-4 comment-list-group shadow-sm">
+
+                    {% if thread.starting_comment %}
+                    <li class="list-group-item" style="border: 1px solid #9b27b062;">
+                        {% include "includes/comment.html" with comment=thread.starting_comment %}
                     </li>
-                    {% empty %}
+                    {% else %}
                     <div class="card">
                         <div class="card-header text-dark text-center font-weight-bold bg-white">
                             Something went wrong. Please try updating the thread if you were the author.
                         </div>
                     </div>
-                    {% endfor %}
-
-                    {% if comments.count == 1 %}
-                    <div class="card mt-4">
-                        <div class="card-header text-dark text-center font-weight-bold bg-white">
-                            Be the first to comment
-                        </div>
-                    </div>
                     {% endif %}
+                </ul><!-- Comment Starting Comment -->
+                {% endif %}
 
+                {% if comments.number == 1 %}
+                <div class="comment-heading my-2">
+                    <h5>
+                        Comments
+                    </h5>
+                </div>
+                {% endif %}
+
+                <!-- Comment Section -->
+                <ul class="list-group mb-4 comment-list-group shadow-sm">
+                    {% for comment in comments %}
+                    <li class="list-group-item">
+                        {% include "includes/comment.html" with comment=comment %}
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-dark text-center font-weight-bold">
+                        Be the first to comment
+                    </li>
+                    {% endfor %}
                 </ul><!-- Comment Section -->
             </div>
         </div>
 
         <div class="row">
-            <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
-                {% include "includes/comment_pagination.html" with comments=comments %}
+            <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1 mt-4">
+                {% include "includes/pagination.html" with page_obj=comments use_page_txt=True %}
             </div>
         </div>
 

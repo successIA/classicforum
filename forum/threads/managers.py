@@ -7,6 +7,24 @@ from django.utils import timezone
 
 class ThreadQuerySet(models.query.QuerySet):
 
+    # def get_new_for_user2(self, user):
+    #     return self.get_related().filter(
+    #         reader=user, followers=user
+    #     ).annotate(
+    #         new_c_id=F('thread_activity__comment')
+    #         new_c_num=Count('thread_activity__comment')
+    #     )
+
+    # def get_all2(self, user):
+    #     qs1 = self.get_for_user2(user)
+    #     qs2 = queryset.get_related().exclude(
+    #         followers=user
+    #     ).annotate(
+    #         new_c_id=Value('0', output_field=CharField()),
+    #         new_c_num=Value('0', output_field=CharField())
+    #     )
+    #     return qs1.union(qs2)
+
     def get_all(self, cat_slug=None):
         if cat_slug:
             qs = self.active().filter(category__slug=cat_slug)
@@ -18,15 +36,14 @@ class ThreadQuerySet(models.query.QuerySet):
         queryset = self
         if not user.is_authenticated:
             return queryset.get_related()
-        userprofile = user.userprofile
         queryset1 = queryset.get_related().filter(
-            followers=userprofile
+            followers=user
         ).annotate(
             new_c_id=F('threadfollowership__final_comment'),
             new_c_num=F('threadfollowership__new_comment_count')
         )
         queryset2 = queryset.get_related().exclude(
-            followers=userprofile
+            followers=user
         ).annotate(
             new_c_id=Value('0', output_field=CharField()),
             new_c_num=Value('0', output_field=CharField())
@@ -40,9 +57,8 @@ class ThreadQuerySet(models.query.QuerySet):
         queryset = self
         if not user.is_authenticated:
             return queryset.get_related()
-        userprofile = user.userprofile
         queryset = queryset.get_related().filter(
-            followers=userprofile, threadfollowership__has_new_comment=True
+            followers=user, threadfollowership__has_new_comment=True
         ).annotate(
             new_c_id=F('threadfollowership__final_comment'),
             new_c_num=F('threadfollowership__new_comment_count')
@@ -53,9 +69,8 @@ class ThreadQuerySet(models.query.QuerySet):
         queryset = self
         if not user.is_authenticated:
             return queryset.get_related()
-        userprofile = user.userprofile
         queryset = queryset.get_related().filter(
-            followers=userprofile
+            followers=user
         ).annotate(
             new_c_id=F('threadfollowership__final_comment'),
             new_c_num=F('threadfollowership__new_comment_count')
@@ -66,9 +81,8 @@ class ThreadQuerySet(models.query.QuerySet):
         queryset = self
         if not user.is_authenticated:
             return queryset.get_related()
-        userprofile = user.userprofile
         queryset1 = queryset.get_related().filter(
-            user=user, threadfollowership__userprofile=userprofile
+            user=user, threadfollowership__user=user
         ).annotate(
             new_c_id=F('threadfollowership__final_comment'),
             new_c_num=F('threadfollowership__new_comment_count')
@@ -76,7 +90,7 @@ class ThreadQuerySet(models.query.QuerySet):
         queryset2 = queryset.get_related().filter(
             user=user
         ).exclude(
-            threadfollowership__userprofile=userprofile
+            threadfollowership__user=user
         ).annotate(
             new_c_id=Value('0', output_field=CharField()),
             new_c_num=Value('0', output_field=CharField())
@@ -86,7 +100,7 @@ class ThreadQuerySet(models.query.QuerySet):
 
     def get_recent_for_user(self, request, user, count=5):
         is_auth = request.user.is_authenticated
-        if is_auth and request.user.userprofile.is_owner(user):
+        if is_auth and request.user.is_owner(user):
             return self.get_only_for_user(
                 user
             ).order_by('-final_comment_time')[:count]
@@ -116,12 +130,9 @@ class ThreadQuerySet(models.query.QuerySet):
 
     def get_related(self):
         return self.select_related(
-            'user', 'category', 'final_comment_user', 'starting_comment', 'userprofile'
+            'user', 'category', 'final_comment_user', 'starting_comment'
         ).prefetch_related(
-            'user__userprofile',
-            'final_comment_user__userprofile',
-            # 'user__userprofile__attachment_set',
-            # 'userprofile__attachment_set'
+            'final_comment_user'
         )
 
     def active(self, *args, **kwargs):
