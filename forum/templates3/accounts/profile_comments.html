@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% load new_thread_tag %}
+{% load forum_template_tags %}
+{% load crispy_forms_tags %}
+
+
+{% block stylesheet %}
+      <link rel="stylesheet" type="text/css" href="{% static 'css/thread_style.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'css/profile_style.css' %}">
+
+{% endblock %}
+
+
+{% block sidebar_btn %}
+{% endblock sidebar_btn %}
+
+{% block sidebar %}
+     <nav id="sidebar">
+        {% get_profile_sidebar_list request userprofile dropdown_active_text2 %}             
+    </nav>  
+    {% endblock sidebar %}
+{% block row %}
+
+{% block content %}
+        
+  
+<!-- Date joined: {{ userprofile.user.date_joined }}
+Most Active in
+Total comments
+Total threads
+Online
+Last seen -->
+<div style="margin-top: -15px; background-color: #ECEFF1;" class="category-thread-header">
+    {% if comments %}
+        {% for comment in comments %}
+          {% include "includes/comment.html" with comment=comment %}    
+        {% endfor %}
+
+        {% if new_comment_count %}
+          {% include "includes/new_comment.html" with new_comment_count=new_comment_count new_comment_url=new_comment_url %} 
+        {% endif %}
+
+        {% include "includes/comment_pagination.html" with comments=comments %}
+
+    {% else %}
+      <ul style="margin-top: 1.7em;" class="list-group">
+        <li style="padding: 0;" class="list-group-item">
+          <h4 class="text-center">Be the first to comment</h4>
+        </li>
+      </ul>
+    {% endif %}
+</div>
+    
+  
+
+{% endblock content %}
+
+
+{% endblock row %}
+{% block javascript %}
+
+  <script>
+    $(document).ready(function() {
+
+    });
+  </script>
+{% endblock %}
+

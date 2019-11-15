@@ -2,35 +2,26 @@ import datetime
 import re
 
 from django.core.exceptions import PermissionDenied
-from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import (
-    HttpResponse, HttpResponseRedirect, Http404, HttpResponseForbidden
-)
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
-from django.utils.dateparse import parse_datetime
-from django.views import View
-from django.views.generic import DetailView, ListView
-from django.views.generic.edit import CreateView, FormMixin, UpdateView
+from django.db import connection
 
 from forum.core.utils import get_paginated_queryset
-from forum.threads.models import Thread, ThreadFollowership
+from forum.threads.models import (
+    Thread, ThreadActivity
+)
 from forum.threads.utils import (
     get_filtered_threads,
     get_additional_thread_detail_ctx,
-    update_threadfollowership,
-    update_thread_open_time
 )
 from forum.comments.models import Comment
 from forum.categories.models import Category
 from forum.categories.views import category_detail
 from forum.comments.forms import CommentForm
 from forum.threads.forms import ThreadForm
-from forum.threads.mixins import ThreadOwnerMixin, thread_owner_required
+from forum.threads.mixins import thread_owner_required
 from forum.core.constants import THREAD_PER_PAGE
 
 
@@ -84,7 +75,6 @@ def thread_list(request, filter_str=None, page=1, form=None):
         'form_action': form_action + '#comment-form',
         'dropdown_active_text': thread_data[0]
     }
-    # return render(request, 'categories/home.html', context)
     return render(request, 'home.html', context)
 
 
@@ -97,15 +87,13 @@ def create_thread(request, slug=None, filter_str=None, page=None):
         thread.user = request.user
         thread.category = form.cleaned_data.get('category')
         thread.save()
-        comment, created = Comment.objects.get_or_create(
+        comment = Comment.objects.create(
             message=form.cleaned_data.get('message'),
             thread=thread,
-            user=request.user,
+            user=thread.user,
             is_starting_comment=True
         )
-
-        thread.starting_comment = comment
-        thread.save()
+        Thread.objects.filter(pk=thread.pk).update(starting_comment=comment)
         return redirect(thread.get_absolute_url())
     else:
         category_qs = Category.objects.filter(slug=slug)
@@ -118,21 +106,22 @@ def create_thread(request, slug=None, filter_str=None, page=None):
 
 def thread_detail(request, thread_slug, form=None, form_action=None):
     thread = get_object_or_404(Thread, slug=thread_slug)
+    thread_followers = thread.followers.all()
+    print("thread_followers", thread_followers)
     ctx = {
         'thread': thread,
+        'thread_followers': thread_followers,
+        'starting_comment': thread.starting_comment,
         'form': form if form else CommentForm,
     }
     ctx.update(get_additional_thread_detail_ctx(request, thread, form_action))
-
-    # comment_pk_list = [comment.pk for comment in ctx['comments']]
-    # print("COMMENT_PK_LIST", comment_pk_list)
-    # url, count = get_unread_url_and_count(request.user, thread)
-    # if request.user.is_authenticated:
-    #     CommentActivity.objects.mark_as_read(
-    #         request.user, thread, comment_id_list, url
-    #     )
-    update_threadfollowership(request.user, thread, ctx['comments'])
-    update_thread_open_time(request.session, thread)
+    if request.user.is_authenticated:
+        is_thread_follower = request.user in thread_followers
+        ctx.update({'is_thread_follower': is_thread_follower})
+        if is_thread_follower:
+            ThreadActivity.objects.update_activity_actions(
+                request.user, thread, ctx['comments']
+            )
     return render(request, 'threads/thread_detail.html', ctx)
 
 
@@ -151,7 +140,7 @@ def update_thread(request, thread_slug, thread=None):
             thread.message = form.cleaned_data.get('message')
             thread.save()
             return HttpResponseRedirect(thread.get_absolute_url())
-    form_action = thread.get_thread_update_url()
+    form_action = thread.get_thread_update_form_action()
     return thread_detail(
         request, thread_slug, form=form, form_action=form_action
     )
@@ -160,22 +149,5 @@ def update_thread(request, thread_slug, thread=None):
 @login_required
 def follow_thread(request, thread_slug):
     thread = get_object_or_404(Thread, slug=thread_slug)
-    thread_key = str(thread.slug) + '_thread_detail_time'
-    open_time = request.session.get(thread_key, None)
-    if open_time:
-        open_time = parse_datetime(open_time)
-    if open_time:
-        # Use the opening time of the thread so as to allow the user to
-        # to get notified of newly added comments if the user stayed on
-        # the thread page for some time before clicking on follow btn.
-        # toggle_thread_followership(user, thread, open_time)
-        ThreadFollowership.objects.toggle_thread_followership(
-            request.user, thread, open_time
-        )
-
-    else:
-        # toggle_thread_followership(user, thread, timezone.now())
-        ThreadFollowership.objects.toggle_thread_followership(
-            user, thread, open_time
-        )
+    thread.toggle_follower(request.user)
     return redirect(thread.get_absolute_url())

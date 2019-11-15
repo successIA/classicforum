@@ -1,74 +1,125 @@
 {% extends "base.html" %}
-{% load humanize %}
-{% load crispy_forms_tags %}
-{% load new_thread_tag %}
-
 {% load static %}
 
+{% load forum_template_tags %}
+{% load crispy_forms_tags %}
+
+{% load humanize %}
+
+
 {% block title %}
-    {{ thread.title }}
+{{ thread.title }}
 {% endblock title %}
 
-{% block stylesheet %}
-      <link rel="stylesheet" type="text/css" href="{% static 'css/thread_style.css' %}">
-{% endblock %}
-
-{% block row %}
-
-{% block breadcrumb %}
-    <ol class="breadcrumb">
-      <li><a href="{% url 'home' %}">Home</a></li>
-      <li><a href="{{ category.get_absolute_url }}">{{ category.title }}</a></li>
-      <li class="active"><a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a></li>
-      {% if comments.number > 1 %}
-        <li><a href="{{ thread.get_absolute_url }}?page={{ comments.number }}">{{ comments.number }}</a></li>
-      {% endif %}
-    </ol>
-{% endblock breadcrumb %}
 
 {% block content %}
-      <br>
-        <!-- THREAD INFORMATION -->
-        <div class="thread">
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="d-none d-md-block">
+    <ol class="breadcrumb bg-white border-bottom justify-content-end rounded-0 py-2">
+        <li class="breadcrumb-item"><a href="{{ category.get_absolute_url }}"><small
+                    class="font-weight-bold text-muted">{{ category }}</small></a></li>
+        <li class="breadcrumb-item"><a href="{{ thread.get_absolute_url }}"><small
+                    class="font-weight-bold text-secondary">{{ thread.title }}</a></small></li>
+        <li class="breadcrumb-item active text-muted" aria-current="page"><small
+                class="font-weight-bold">{{ comments.number }}</small></li>
+    </ol>
+</nav><!-- Breadcrumb -->
 
-          <p class="thread-title">
-            <a>{{ thread.title }}</a><br /> by <span class="thread-user-info"><a href="{{ thread.user.userprofile.get_absolute_url }}">{{ thread.user.username }}</a> created at: {{ thread.created}} / updated at: {{ thread.modified }}</span>
-          </p>
+<main>
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+                <!-- Thread Heading -->
+                <div class="thread-heading">
+                    <h4 class="mt-0 mb-0">
+                        <a href="{{ thread.get_absolute_url }}" class="text-dark">{{ thread.title }}</a>
+                    </h4>
+                    <div class="dull-color mb-2 d-flex mt-2 align-items-end">
+                        <small class="d-inline-block mr-4 dull-color"><i class="far fa-comments"></i>
+                            {% if thread.comment_count %}
+                            {{ thread.comment_count }} repl{{ thread.comment_count|pluralize:"y,ies" }}
+                            {% else %}
+                            No reply
+                            {% endif %}
+                        </small>
 
-          <!-- thread action -->
-          <div class="thread-ctrl">
-              <a href="#"><button class="thread-btn reply"><i class="fas fa-reply"></i> Reply</button></a> <a href="{{ comment.get_absolute_url }}">&nbsp;&nbsp;<a href="#"><button class="thread-btn like"><i class="fas fa-thumbs-up"></i> Like 3600</button></a></a>
-             {% if request.user == thread.user %}
-              <a href="{% thread_edit_url thread.get_absolute_url comments.number %}"><button class="thread-btn reply-modify-thread-btn"><i class="fa fa-edit"></i> Modify</button></a>
-             {% endif %}
-             <a  href="{{ thread.get_thread_follow_url}}">{% if user.userprofile in thread.followers.all %}<button class="thread-btn" id="unfollow-thread-btn"><i class="fa fa-users"></i> Unfollow {{ thread.followers.count }}</button> {% else %}<button class="thread-btn" id="follow-thread-btn">Follow <i class="fa fa-users"></i></button>{% endif %}</a>
-          </div>
-          <!-- end of thread action -->
+                        <small class="d-inline-block mr-auto dull-color"><i class="far fa-eye"></i>
+                            {{ thread.views }} view{{ thread.views|pluralize }}
+                        </small>
 
+                        <a href="{{ thread.get_thread_follow_url}}" class="btn btn-light text-muted btn-sm">
+                            {% if is_thread_follower %}
+                            Unfollow
+                            {% else %}
+                            Follow
+                            {% endif %}
+                            <span>
+                                {{ thread_followers.count }}
+                            </span>
+                        </a>
+                    </div>
+                </div><!-- Thread Heading -->
+
+                {% if comments.number == 1 %}
+                <!-- Thread Starting Comment -->
+                <ul class="list-group mb-4 comment-list-group shadow-sm">
+
+                    {% if starting_comment %}
+                    <li class="list-group-item" style="border: 1px solid #9b27b062;">
+                        {% include "includes/comment.html" with comment=starting_comment %}
+                    </li>
+                    {% else %}
+                    <div class="card">
+                        <div class="card-header text-dark text-center font-weight-bold bg-white">
+                            Something went wrong. Please try updating the thread if you were the author.
+                        </div>
+                    </div>
+                    {% endif %}
+                </ul><!-- Comment Starting Comment -->
+                {% endif %}
+
+                {% if comments.number == 1 %}
+                <div class="comment-heading my-2">
+                    <h5>
+                        Comments
+                    </h5>
+                </div>
+                {% endif %}
+
+                <!-- Comment Section -->
+                <ul class="list-group mb-4 comment-list-group shadow-sm">
+                    {% for comment in comments %}
+                    <li class="list-group-item">
+                        {% include "includes/comment.html" with comment=comment %}
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-dark text-center font-weight-bold">
+                        Be the first to comment
+                    </li>
+                    {% endfor %}
+                </ul><!-- Comment Section -->
+            </div>
         </div>
-        <!-- END OF THREAD INFORMATION -->
 
-        {% if comments %}
-            {% for comment in comments %}
-              {% include "includes/comment.html" with comment=comment %}    
-            {% endfor %}
+        <div class="row">
+            <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1 mt-4">
+                {% include "includes/pagination.html" with page_obj=comments use_page_txt=True %}
+            </div>
+        </div>
 
-            {% if new_comment_count %}
-              {% include "includes/new_comment.html" with new_comment_count=new_comment_count new_comment_url=new_comment_url %} 
-            {% endif %}
-
-            {% include "includes/comment_pagination.html" with comments=comments %}
-            
-        {% else %}
-          <ul style="margin-top: 1.7em;" class="list-group">
-            <li style="padding: 0;" class="list-group-item">
-              <h4 class="text-center">Be the first to comment</h4>
-            </li>
-          </ul>
-        {% endif %}
-      
-        {% include "includes/comment_form.html" with form=form form_action=form_action %}       
-
-        <br>
-    {% endblock content %}
-{% endblock row %}
+        <style scoped>
+            @media (max-width: 480px) {
+                .form-small {
+                    margin-left: .60rem;
+                    margin-right: .60rem;
+                }
+            }
+        </style>
+        <div class="form-small row">
+            <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+                {% include "includes/comment_form.html" with form=form form_action=form_action %}
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock content %}

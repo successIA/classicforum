@@ -1,2 +1,8 @@
-<div class="col-sm-4"><img width="50" height="50" src="{{ notif.sender.userprofile.get_avatar_url }}"></div>
-<div class="col-sm-8"><strong><a href="{% url 'accounts:user_stats' userprofile.user.username %}">{{ notif.sender }}</a></strong> is now following you</div><span>
+<div class="col-sm-4">
+    <img width="50" height="50" src="{{ notif.sender.avatar_url }}">
+</div>
+<div class="col-sm-8">
+    <strong>
+        <a href="{% url 'accounts:user_stats' userprofile.user.username %}">{{ notif.sender }}</a>
+    </strong> is now following you</div>
+<span>

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% load new_thread_tag %}
+{% load forum_template_tags %}
+{% load crispy_forms_tags %}
+
+
+
+{% block stylesheet %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/profile_style.css' %}">
+  <style type="text/css">
+    
+  </style>
+
+{% endblock stylesheet %}
+
+
+{% block sidebar_btn %}
+{% endblock sidebar_btn %}
+
+{% block sidebar %}
+    <nav id="sidebar">
+        {% get_profile_sidebar_list request userprofile dropdown_active_text2 %}             
+    </nav>    
+{% endblock sidebar %}
+
+{% block row %}
+
+{% block content %}
+        
+<div>   
+
+    <div class="col-sm-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">User Following</h3>
+          </div>
+          <div class="panel-body">
+            {% for person in userprofile.following.all %}
+                <div class="col-sm-2 user-follow">
+                    {% if person.userprofile.attachment_set.count > 0 %}
+                        <img src="{{ person.userprofile.attachment_set.first.image.url }}">
+                    {% else %}
+                        <img src="{% static 'img/avatar.svg' %}"> 
+                    {% endif %}
+                    <h4 class="text-center"><a href="{{ person.userprofile.get_absolute_url }}">{{ person.userprofile.user.username }}</a></h4>
+
+                    {% if request.user.is_authenticated and request.user != person  %}
+                        {% if request.user in person.userprofile.following.all %}
+                            <span class="profile-user-follow"><a class="following btn" type="button" href="{{ person.userprofile.get_user_follow_url }}"><span style="font-size: 12px;"><i class="glyphicon glyphicon-ok"></i></span> Following</a></span>
+                        {% else %}
+                           <span class="profile-user-follow"><a class="follow btn" type="button" href="{{ person.userprofile.get_user_follow_url }}"> Follow</a></span>
+                        {% endif %}
+                    {% endif %}    
+                </div>
+            {% endfor %}
+            
+          </div>
+        </div>
+    </div>
+
+</div>
+    
+  
+
+{% endblock content %}
+
+
+{% endblock row %}
+{% block javascript %}
+
+  <script>
+    $(document).ready(function() {
+  </script>
+{% endblock %}
+

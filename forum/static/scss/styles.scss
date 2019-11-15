@@ -377,6 +377,7 @@ blockquote {
       margin: 1em auto;
     }
     .comment-message img {
+      display: block;
       border-radius: 4px;
       max-width: 100%;
       margin-top: 1rem;
@@ -385,3 +386,101 @@ blockquote {
   }
 }
 /*--- Comment Body Markdown Styling ---*/
+
+/* USERNAME SUGGEST STYLING */
+.username-suggest {
+  position: absolute;
+  z-index: 9;
+  width: auto;
+  padding: 0;
+  background-color: #fff;
+  /*border: 1px solid #ECEFF1;*/
+  /*box-shadow: 0px 2px 3px #B1B1B1;*/
+  display: none;
+}
+
+.username-suggest > ul {
+  padding: 0;
+  margin: 0;
+}
+
+.username-suggest > ul > li {
+  list-style-type: none;
+  padding: 5px 8px;
+  cursor: pointer;
+  border-bottom: 1px solid #b1b1b1;
+  border: 1px solid #eceff1;
+}
+
+.username-suggest > ul > li:hover {
+  color: #fff;
+  background-color: #337ab7;
+  border: 0px solid #eceff1;
+}
+
+.username-suggest > ul > li > a > img {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  margin: 0 8px 0 0;
+  border-radius: 50%;
+  /*border: 1px solid #ECEFF1;*/
+  object-fit: cover;
+}
+
+.username-suggest > ul > li > a > span {
+  position: relative;
+  bottom: -1px;
+}
+
+.item-active {
+  /*border: 0px solid rgba(41, 98, 255, 1);*/
+  color: #fff;
+  background-color: rgba(41, 98, 255, 1);
+  /*transition: background-color 5s ease-in 3s;
+    transition: color 0s ease-in;*/
+  transition-property: background-color, color;
+  transition-duration: 0.1s, 0s, 0.3s;
+  transition-timing-function: linear, ease-out;
+}
+
+/* END OF USERNAME SUGGEST STYLING */
+
+/* MESSAGE PREVIEW STYLING */
+a.mention {
+  display: inline-block;
+  font-weight: 600;
+  // color: rgb(41, 98, 255);
+  color: $primary;
+
+  /*background: #A6A6A6;*/
+  border-radius: 4px;
+  /*text-decoration: none;*/
+}
+
+a.mention:hover {
+  text-decoration: underline;
+}
+/* END OF MESSAGE PREVIEW STYLING */
+
+/* MESSAGE THUMBNAIL STYLING */
+
+.img-thumbnails {
+  background-color: #eeeeee;
+  position: relative;
+  padding: -25px;
+  margin: 10px 0px 10px 0px;
+  border-radius: 4px;
+}
+
+.thumbnail-btn-ctrl {
+  position: absolute;
+  top: 30px;
+  right: 10px;
+}
+
+.img-thumbnail-holder {
+  margin-top: 3.8em;
+}
+
+/* END MESSAGE THUMBNAIL STYLING */

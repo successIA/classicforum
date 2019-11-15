@@ -2,18 +2,33 @@ from django.utils import timezone
 
 from forum.accounts.models import User
 from forum.categories.models import Category
-from forum.threads.models import Thread
+from forum.threads.models import Thread, ThreadActivity
 from forum.comments.models import Comment
 from forum.attachments.models import Attachment
 from forum.notifications.models import Notification
+from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch, Sum
+
 
 from faker import Faker
 fake = Faker()
 
 usr = User.objects.get(id=1)
-cat = Category.objects.get(slug="programming")
+usr2 = User.objects.get(id=2)
+usr3 = User.objects.get(id=3)
 
-for i in range(20):
+cat = Category.objects.all().first()
+th = Thread.objects.all().first()
+
+
+	
+for i in range(72):
+     m = ''.join(fake.texts())
+     if (isinstance(m, str)):
+             Comment.objects.create(message=m, user=usr, thread=th, created=timezone.now(), modified=timezone.now())
+
+
+
+for i in range(72):
     t = fake.sentence()
     m = ''.join(fake.texts())
     if (isinstance(t, str)) and (isinstance(m, str)):
@@ -21,13 +36,15 @@ for i in range(20):
         co, cr = Comment.objects.get_or_create(message=m, user=usr, thread=th, is_starting_comment=True, created=timezone.now(), modified=timezone.now())
         th.starting_comment = co
         th.save()
-
-	
-for i in range(72):
-     m = ''.join(fake.texts())
-     if (isinstance(m, str)):
-             Comment.objects.create(message=m, user=usr, thread=th, created=timezone.now(), modified=timezone.now())
 			 
+
+th = Thread.objects.create(title="Python Discussion", body="NA", category=cat, user=usr)
+
+sc = Comment.objects.create(message=''.join(fake.texts()), thread=th, user=usr, is_starting_comment=True)
+
+c = Comment.objects.create(message=''.join(fake.texts()), thread=th, user=usr)
+
+
 report user
 report inappropiate thread
 report inappropiate comment

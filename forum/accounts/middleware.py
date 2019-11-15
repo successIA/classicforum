@@ -16,6 +16,7 @@ class UserLastSeenMiddleware(object):
             notif_url, notif_count = Notification.objects.get_receiver_url_and_count(
                 request.user
             )
-            request.user.notif_url = notif_url
-            request.user.notif_count = notif_count
+            request.user.update_notification_info(
+                request, notif_url, notif_count
+            )
         return self.get_response(request)

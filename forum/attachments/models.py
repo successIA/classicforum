@@ -7,10 +7,12 @@ from django.utils.text import slugify
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
-
-from forum.comments.models import Comment
 from forum.core.models import TimeStampedModel
-from forum.threads.models import Thread
+from forum.attachments.utils import find_images_in_message
+from forum.attachments.utils import (
+    get_unreferenced_image_srcs_in_message
+)
+from forum.attachments.utils import md5
 
 
 class MediaFileSystemStorage(FileSystemStorage):
@@ -49,57 +51,52 @@ def upload_to(instance, filename):
 
 
 class AttachmentQuerySet(models.query.QuerySet):
-    def sync_with_comment(self, comment, comment_rev=None):
-        from forum.attachments.utils import find_images_in_message
-
-        if comment_rev:
-            self._detach_from_comment(comment, comment_rev)
+    def sync_with_comment(self, comment, prev_message=None):
+        if prev_message:
+            self._detach_from_comment(comment, prev_message)
         image_url_list = find_images_in_message(comment.message)
         for url in image_url_list:
             url = url.replace('http://127.0.0.1:8000', "")
+            instance_list = None
             if url:
-                attachment_qs = self.filter(url=url)
-            if attachment_qs.exists():
-                attachment = attachment_qs.first()
-                attachment.comments.add(comment)
-                attachment.is_orphaned = False
-                attachment.save()
+                instance_list = list(self.filter(url=url))
+            if instance_list:
+                instance = instance_list[0]
+                instance.comments.add(comment)
+                instance.is_orphaned = False
+                instance.save()
 
-    def _detach_from_comment(self, comment, comment_rev):
-        from forum.attachments.utils import (
-            get_unreferenced_attachment_urls_in_message
-        )
+    def _detach_from_comment(self, comment, prev_message):
         '''
         Detach comment from all its attachments if there is any
         change in the image urls in the message
         '''
-        urls = get_unreferenced_attachment_urls_in_message(
-            comment_rev.message, comment.message
+        urls = get_unreferenced_image_srcs_in_message(
+            prev_message, comment.message
         )
-        queryset = comment.attachment_set
-        for att in queryset.all():
-            if att.url in urls:
-                att.comments.remove(comment)
-                if not att.is_avatar and att.comments.all().count() < 1:
-                    att.is_orphaned = True
-                    att.save()
+        for instance in comment.attachment_set.all():
+            if instance.url in urls:
+                instance.comments.remove(comment)
+                count = instance.comments.count()
+                is_avatar = instance.is_avatar
+                if not is_avatar and count < 1:
+                    instance.is_orphaned = True
+                    instance.save()
 
     def create_avatar(self, image, user):
-        from forum.attachments.utils import md5
-
         if not image:
             return
         md5sum = md5(image)
-        queryset = self.filter(md5sum=md5sum, is_avatar=True)
-        if queryset.exists():
-            queryset.first().users.add(user)
-            return queryset.first().image.url
+        queryset_list = list(self.filter(md5sum=md5sum, is_avatar=True))
+        if queryset_list:
+            queryset_list[0].users.add(user)
+            return queryset_list[0].image.url
         else:
-            att = Attachment(image=image, filename=image.name,
-                             is_avatar=True)
-            att.save()
-            att.users.add(user)
-            return att.image.url
+            instance = self.create(
+                image=image, filename=image.name, is_avatar=True
+            )
+            instance.users.add(user)
+            return instance.image.url
 
 
 class Attachment(models.Model):
@@ -108,7 +105,7 @@ class Attachment(models.Model):
     )
     filename = models.CharField(max_length=255)
     url = models.URLField(max_length=2000, blank=True)
-    comments = models.ManyToManyField("comments.Comment", blank=True)
+    comments = models.ManyToManyField('comments.Comment', blank=True)
     # threads = models.ManyToManyField("threads.Thread", blank=True)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)
     md5sum = models.CharField(max_length=36, blank=True)

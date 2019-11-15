@@ -1,10 +1,30 @@
+from math import ceil
+
 from django import template
 from datetime import datetime, timedelta
 from django.utils.timesince import timesince
-
+from forum.core.constants import COMMENT_PER_PAGE
 from forum.categories.models import Category
 
 register = template.Library()
+
+
+@register.simple_tag
+def thread_url(
+    thread_absolute_url, comment_count, new_comment_id, new_comment_count
+):
+    try:
+        if int(comment_count) <= 0 or int(new_comment_count) <= 0:
+            return thread_absolute_url
+        count = int(comment_count) - int(new_comment_count)
+        page_num = ceil(count / COMMENT_PER_PAGE)
+        if (count % COMMENT_PER_PAGE) == 0:
+            page_num = page_num + 1
+    except ValueError:
+        return thread_absolute_url
+    return '%s?page=%s&read=True#comment%s' % (
+        thread_absolute_url, str(page_num), str(new_comment_id)
+    )
 
 
 @register.filter
@@ -12,7 +32,7 @@ def splittime(value):
     return value.split(", ")[0].replace(" ago", "") + " ago"
 
 
-@register.inclusion_tag('forum/categories_template.html')
+@register.inclusion_tag('includes/categories_template.html')
 def get_category_list(category=None):
     if category:
         return {
@@ -20,84 +40,6 @@ def get_category_list(category=None):
             'current_category': category
         }
     return {'category_list': Category.objects.all()}
-
-
-DEFAULT_FILTER_TEXT = 'Filter'
-
-RECENT = 'recent'
-TRENDING = 'trending'
-POPULAR = 'popular'
-SOLVED = 'solved'
-UNSOLVED = 'unsolved'
-NO_REPLY = 'fresh'
-
-all_dropdown_text_dict = {
-    RECENT: 'Recent',
-    TRENDING: 'Trending (this week)',
-    POPULAR: 'Trending (all time)',
-    SOLVED: 'Solved',
-    UNSOLVED: 'Unsolved',
-    NO_REPLY: 'No Response Yet',
-}
-
-NEW = 'new'
-FOLLOWING = 'following'
-ME = 'me'
-UNREAD = 'unread'
-
-user_dropdown_text_dict = {
-    NEW: 'New',
-    FOLLOWING: 'Following',
-    ME: 'For Me',
-    UNREAD: 'Unread'
-}
-
-
-@register.inclusion_tag('forum/all_threads_dropdown_template.html')
-def get_all_threads_dropdown_list(dropdown_active_text=None, category=None):
-    return {
-        'all_dropdown_text_dict': all_dropdown_text_dict,
-        'dropdown_active_text': dropdown_active_text,
-        'category': category
-    }
-
-
-@register.filter
-def dropdown_text_value(key):
-    text = all_dropdown_text_dict.get(key, None)
-    if not text:
-        return DEFAULT_FILTER_TEXT
-    return text
-
-
-@register.inclusion_tag('forum/user_threads_dropdown_template.html')
-def get_user_threads_dropdown_list(dropdown_active_text2=None, category=None):
-    return {
-        'user_dropdown_text_dict': user_dropdown_text_dict,
-        'dropdown_active_text2': dropdown_active_text2,
-        'category': category
-    }
-
-
-@register.filter
-def dropdown_text_value2(key):
-    text = user_dropdown_text_dict.get(key, None)
-    if not text:
-        return DEFAULT_FILTER_TEXT
-    return text
-
-
-profile_sidebar_dict = {
-    'stats': 'Profile Info',
-    'notifications': 'Notifications',
-    'profile': 'Settings',
-    'replies': 'Replies',
-    'new': 'New',
-    'following': 'Following',
-    'me': 'Threads',
-    'user_following': 'User Following',
-    'user_followers': 'User Following',
-}
 
 
 @register.inclusion_tag('includes/profile_sidebar.html')
@@ -109,7 +51,7 @@ def get_profile_sidebar_list(request, user, dropdown_active_text2=None):
     }
 
 
-@register.inclusion_tag('forum/filter_dropdown_body.html')
+@register.inclusion_tag('includes/filter_dropdown_body.html')
 def get_filter_dropdown_body(dropdown_active_text, is_auth=False, category=None):
     filter_list = None
     if is_auth:
@@ -135,6 +77,8 @@ def get_filter_dropdown_body(dropdown_active_text, is_auth=False, category=None)
     return context
 
 
-@register.filter
-def home_pagination_url(threads_url, page_num):
-    return "%s/%s" % (threads_url, page_num)
+@register.simple_tag
+def url_with_page_num(url, page_number):
+    return '%s?page=%s#comment-form' % (
+        url, page_number
+    )
