@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load humanize %}
+
+{% load forum_template_tags %}
+
+{% block content %}
+<div class="container-fluid border-bottom">
+  <div class="row align-items-center">
+    {% include 'includes/thread_filter_ctrl.html' with dropdown_active_text=dropdown_active_text %}
+  </div>
+</div>
+
+<main>
+  <div class="container">
+    <div class="row mt-4">
+      <div class="col-sm-12 col-md-10 offset-md-1 col-lg-9 col-xl-8 offset-lg-1">
+        <ul class="list-group mb-4 thread-list-group shadow-sm">
+          {% for thread in threads %}
+          <li class="list-group-item">
+            {% include "includes/thread.html" with thread=thread %}
+          </li>
+          {% empty %}
+            {% if dropdown_active_text == 'recent' %}            
+            <li class="list-group-item text-primary text-center font-weight-bold">
+                No Available threads at this moment. Start a new thread or check back later.
+            </li>
+            {% else %}
+              <li class="list-group-item text-primary text-center font-weight-bold">
+                No Available threads for the current selection.
+              </li>              
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+        {% include "includes/pagination.html" with page_obj=threads  %}
+      </div>
+    </div>
+
+    <style scoped>
+      @media (max-width: 480px) {
+        .form-small {
+          margin-left: .60rem;
+          margin-right: .60rem;
+        }
+      }
+    </style>
+    <div class="form-small row">
+      <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+        {% include "includes/comment_form.html" with form=form form_action=form_action %}
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

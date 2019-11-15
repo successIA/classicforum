@@ -1,4 +1,6 @@
+import random
 import re
+import string
 
 from django.http import HttpResponseRedirect
 from django.utils.html import mark_safe
@@ -8,19 +10,27 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from markdown import markdown
 
 
+def get_random_string():
+    s = ''.join(
+        [random.choice(string.ascii_lowercase + string.digits)
+         for i in range(10)]
+    )
+    return s.lower()
+
+
 def find_images_in_message(message):
     img_regex = r'<img(?:.+?)src="(?P<src>.+?)"(?:.*?)>'
     message = mark_safe(markdown(message, safe_mode='escape'))
     return re.findall(img_regex, message)
 
 
-def convert_mention_to_link(message, user_qs):
-    print('user_qs.all(): ', user_qs.all())
+def convert_mention_to_link(message, user_value_list):
     new_message = message
-    for user in user_qs.all():
-        patt = r'@' + user.username
-        html = '<a class="mention" href="' + user.get_absolute_url() + '">' + \
-            user.username + '</a>'
+    for user in user_value_list:
+        patt = r'@' + user['username']
+        html = '<a class="mention" href="%s">%s</a>' % (
+            user['url'], user['username']
+        )
         new_message = re.sub(patt, html, new_message)
     return new_message
 

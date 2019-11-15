@@ -1,39 +1,26 @@
 import json
 
-from django.contrib.auth import login as auth_login
-from django.core.urlresolvers import reverse
-from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
-from django.contrib.auth import get_user_model
-from django.views import View
-from django.shortcuts import get_object_or_404, render, redirect
-from django.http import Http404
-from django.contrib.sites.shortcuts import get_current_site
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template.loader import render_to_string
 from django.contrib import messages
-from django.contrib.auth.views import PasswordChangeDoneView
+from django.contrib.auth import get_user_model
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch, Sum
-from django.http import JsonResponse
-# from django.utils import timezone
+from django.core.urlresolvers import reverse
+from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.views import View
 
+from forum.accounts.forms import UserProfileForm, UserSignUpForm
+from forum.accounts.mixins import profile_owner_required
 from forum.accounts.tokens import account_activation_token
-from forum.accounts.forms import UserProfileForm
-from forum.accounts.forms import UserSignUpForm
-from forum.threads.utils import get_filtered_threads
-from forum.threads.models import ThreadFollowership, Thread
-from forum.notifications.models import Notification
+from forum.accounts.utils import (get_mentioned_users_context,
+                                  get_signup_email_confirm_form_entries)
 from forum.comments.models import Comment
 from forum.core.utils import get_paginated_queryset
-from forum.accounts.mixins import profile_owner_required
-from forum.accounts.utils import (
-    get_mentioned_users_context,
-    get_signup_email_confirm_form_entries
-)
-
+from forum.notifications.models import Notification
+from forum.threads.models import Thread
+from forum.threads.utils import get_filtered_threads
 
 User = get_user_model()
 
@@ -41,11 +28,20 @@ User = get_user_model()
 def user_profile_stats(request, username):
     user = get_object_or_404(User, username=username)
     comment_qs = Comment.objects.active()
+    comment_count = user.comment_set.count()
+    active_category = comment_qs.get_user_active_category(
+        user, comment_count
+    )
     ctx = {
         'userprofile': user,
         'dropdown_active_text2': 'stats',
+        'thread_count': user.thread_set.count(),
+        'thread_following': user.thread_following.count(),
+        'comment_count': comment_count,
+        'followers': user.followers.count(),
+        'following': user.following.count(),
         'last_posted': comment_qs.get_user_last_posted(user),
-        'active_category': comment_qs.get_user_active_category(user),
+        'active_category': active_category,
         'total_upvotes': comment_qs.get_user_total_upvotes(user),
         'total_upvoted': comment_qs.filter(upvoters=user).count(),
         'recent_comments': comment_qs.get_recent_for_user(user, 5),
@@ -62,9 +58,11 @@ def user_notification_list(request, username):
     notif_qs = Notification.objects.get_for_user(request.user)
     notifs = get_paginated_queryset(notif_qs, 3, page)
     notif_id_list = [notif.pk for notif in notifs]
-    print("NOTIF_IDS", notif_id_list)
-    # Notification.objects.mark_all_as_read_for_receiver(request.user)
     Notification.objects.mark_as_read(request.user, notif_id_list)
+    notif_url, notif_count = Notification.objects.get_receiver_url_and_count(
+        request.user
+    )
+    request.user.update_notification_info(request, notif_url, notif_count)
     ctx = {
         'userprofile': request.user,
         'dropdown_active_text2': 'user_notifs',
@@ -100,7 +98,7 @@ def user_profile_edit(request, username):
         'dropdown_active_text2': 'profile',
         'form': form
     }
-    return render(request, 'accounts/profile_info.html', ctx)
+    return render(request, 'accounts/profile_edit.html', ctx)
 
 
 def user_comment_list(request, username):
@@ -108,7 +106,6 @@ def user_comment_list(request, username):
     comment_qs = Comment.objects.filter(user=user).exclude(
         is_starting_comment=True
     ).get_related().order_by('id')
-    print("COUNT CQS", comment_qs.count())
     comments = get_paginated_queryset(comment_qs, 10, request.GET.get('page'))
     ctx = {
         'comments': comments,
@@ -122,6 +119,8 @@ def user_thread_list(request, username, filter_str, page):
     user = get_object_or_404(
         User, username=username
     )
+    # The userprofile must belong to the current user to access
+    # the personalised filters.
     if not user.is_required_filter_owner(request.user, filter_str):
         raise Http404
     thread_qs = Thread.objects.active()
@@ -182,16 +181,22 @@ def follow_user(request, username):
 
 
 def user_following(request, username):
+    user = get_object_or_404(User, username=username)
+    user_following = user.following.prefetch_related('following').all()
     ctx = {
-        'userprofile': get_object_or_404(User, username=username),
+        'userprofile': user,
+        'user_following': user_following,
         'dropdown_active_text2': 'user_following',
     }
     return render(request, 'accounts/profile_user_following.html', ctx)
 
 
 def user_followers(request, username):
+    user = get_object_or_404(User, username=username)
+    user_followers = user.followers.prefetch_related('followers').all()
     ctx = {
-        'userprofile': get_object_or_404(User, username=username),
+        'userprofile': user,
+        'user_followers': user_followers,
         'dropdown_active_text2': 'user_followers',
     }
     return render(request, 'accounts/profile_user_followers.html', ctx)

@@ -1,74 +1,121 @@
 {% load static %}
 {% load humanize %}
-{% load new_thread_tag %}
-<!-- BEGINNING OF COMMENT -->
-<div class="comment" id="comment{{ comment.id }}">
-  <div class="comment-profile-img">
-    {% if comment.user.userprofile.attachment_set.count > 0 %}
-    <a href="{{ comment.user.userprofile.get_absolute_url }}"><img style="display: inline"
-        src="{{ comment.user.userprofile.attachment_set.all.first.image.url }}" width="50" height="50" alt=""
-        class="profile-img"></a>
-    {% else %}
-    <a href="{{ comment.user.userprofile.get_absolute_url }}"><img style="display: inline"
-        src="{% static 'img/avatar.svg' %}" width="50" height="50" alt="" class="profile-img"></a>
-    {% endif %}
+{% load forum_template_tags %}
 
-  </div>
+<!--COMMENT HISTORY MODAL -->
+{% include "includes/comment_history.html" with comment=comment %}
+<!--COMMENT HISTORY MODAL -->
 
-  <div class="comment-message">
-    <!-- COMMENT-MESSAGE -->
-    <div style="color: #448AFF" class="text-muted username"><a
-        href="{{ comment.user.userprofile.get_absolute_url }}">{{ comment.user.username }}</a> {% if comment.parent %}
-      <i class="glyphicon glyphicon-triangle-right"></i> <span><a href="{{ comment.parent.get_precise_url }}">
-          {{ comment.parent.user.username }}</a></span> {% endif %} <span
-        class="text-muted comment-created">{{ comment.created|date:"M d, Y, g:i:s a" }}</span></div>
-    <!-- date:"M d, Y, g:i:s a" -->
-    <div>
-      {{ comment.marked_message|safe }}
-      <div class="comment-ctrl">
-        <div class="comment-action-btns">
-          <a class="btn btn-default" type="button"><i class="material-icons md-16">reply</i> Reply</a>
-          <a class="btn btn-default" type="button"><i class="material-icons md-16">edit</i> Modify</a>
-          <a class="btn btn-default" type="button"><i class="material-icons md-16">history</i> View Edits</a>
+<div class="media flex-column flex-md-row" id="comment{{ comment.id }}">
+    <div class="d-flex mb-2">
+        <a href="{{ comment.user.get_absolute_url }}">
+            <img src="{%if comment.user.avatar_url %}
+                        {{ comment.user.avatar_url }}
+                      {% else %}
+                        {% static 'img/avatar.svg' %}
+                      {% endif %}" width="60" height="60" class="mr-3 rounded-circle" alt="..."
+                style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+        </a>
 
-          <a href="{% comment_edit_url comment.get_reply_url comments.number %}"><button class="thread-btn reply"><span
-                style="position: relative; bottom: -1.9px;"><i class="material-icons">reply</i></span>
-              Reply</button></a> <a
-            href="{{ comment.get_upvote_url }} ">&nbsp;&nbsp;{% if comment.user != request.user %}
-            <button {% if request.user in comment.upvoters.all %} style="color: #9C27B0;" {% endif %}
-              class="thread-btn like"><span style="font-size: 11.46px"><i
-                  class="glyphicon glyphicon-arrow-up"></i></span> Upvote {% if comment.upvoters.count > 0 %}
-              {{ comment.upvoters.count }}
-              {% endif %}</button></a><a href="{{ comment.get_downvote_url }}">&nbsp;&nbsp;<button
-              {% if request.user in comment.downvoters.all %} style="color: #9C27B0;" {% endif %}
-              class="thread-btn like"><span style="font-size: 11.46px"><i
-                  class="glyphicon glyphicon-arrow-down"></i></span> Downvote {% if comment.downvoters.count > 0 %}
-              {{ comment.downvoters.count }}
-              {% endif %}</button></a>
-          {% endif %}
-          {% if request.user == comment.user %}
-          {% if comment.is_starting_comment %}
-          <a href="{% thread_edit_url comment.thread.get_absolute_url comments.number %}"><button
-              class="thread-btn reply-modify-thread-btn"><span style="font-size: 11.46px;"><i
-                  class="material-icons md-18">edit</i></span> Modify</button></a>
-          {% else %}
-          <a href="{% comment_edit_url comment.get_update_url comments.number %}"><button
-              class="thread-btn reply-modify-thread-btn"><span style="font-size: 11.46px;"><i
-                  class="glyphicon glyphicon-pencil"></i></span> Modify</button></a>
-          {% endif %}
-          {% endif %}
-
-          <button type="button" class="thread-btn reply-modify-thread-btn" data-toggle="modal"
-            data-target="#myModal{{ comment.pk }}"><span style="font-size: 11.46px"><i
-                class="material-icons md-21">history</i></span> View History</button>
+        <div class="d-flex d-md-none align-items-center">
+            <h6>
+                <a href="{{ comment.user.get_absolute_url }}" style="color: inherit; text-decoration: none;">
+                    {{ comment.user.username }}
+                </a>
+                <span class="comment-time text-muted"><span class="time-dot"></span>
+                    <small class="d-inline-block font-weight-bold">{{ comment.created|naturaltime|splittime }}</small>
+                    {% if comment.unread %}<span class="badge badge-info">New</span>{% endif %}
+                </span>
+            </h6>
         </div>
-        {% include "includes/comment_history.html" with comment=comment %}
-        <a class="text-muted thread-title-bottom" href="{{ comment.thread.get_absolute_url }}#"><i
-            class="fas fa-long-arrow-alt-up"></i> {{ comment.thread.title|truncatechars:50 }}</a>
-      </div>
     </div>
 
-  </div> <!-- END OF COMMENT-MESSAGE-->
+    <div class="media-body w-100">
+        <h6 class="d-md-block d-none font-weight-bold">
+            <a href="{{ comment.user.get_absolute_url }}" style="color: inherit; text-decoration: none;">
+                {{ comment.user.username }}
+            </a>
+            <span class="comment-time text-muted"><span class="time-dot"></span>
+                <small class="d-inline-block font-weight-bold">{{ comment.created|naturaltime|splittime }}</small>
+            </span>
+            {% if comment.unread %}<span class="badge badge-info">New</span>{% endif %}
+        </h6>
 
+        <div class="btn-group position-absolute more-option">
+            <a class="dropdown-toggle nav-profile-img text-dark" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false" href="#">
+                <i class="fas fa-ellipsis-h text-muted d-inline-block px-2 py-2"></i>
+            </a>
+            <div class="dropdown-menu shadow dropdown-menu-right">
+                <a class="dropdown-item py-2" href="#">
+                    <i class="far fa-flag mr-3"></i>Report
+                </a>
+                {% if request.user.is_authenticated and request.user != comment.user  %}
+                    {% if request.user in comment.user.followers %}
+                    <a class="dropdown-item py-2" href="{{ comment.user.get_user_follow_url }}">
+                        <i class="fas fa-user-friends"></i>Unfollow
+                    </a>
+                    {% else %}
+                    <a class="dropdown-item py-2" href="{{ comment.user.get_user_follow_url }}">
+                        <i class="fas fa-user-friends"></i>Follow
+                    </a>
+                    {% endif %}
+                {% endif %}
+
+                {% if request.user.is_authenticated and request.user == comment.user %}
+                    {% if comment.is_starting_comment %}
+                    <a class="dropdown-item py-2" href="{% url_with_page_num thread.get_update_url comments.number %}">
+                        <i class="far fa-edit"></i>Update
+                    </a>
+                    {% else %}
+                    <a class="dropdown-item py-2" href="{% url_with_page_num comment.get_update_url comments.number %}">
+                        <i class="far fa-edit"></i>Update
+                    </a>
+                    {% endif %}
+                {% endif %}
+
+
+                <a class="dropdown-item py-2" href="#" data-toggle="modal"
+                    data-target="#commentHistoryModal{{ comment.pk }}">
+                    <i class="fas fa-history mr-3"></i>See edits
+                </a>
+            </div>
+        </div>
+
+
+        <div class="mb-1 comment-message">
+            {{ comment.marked_message|safe }}
+        </div>
+
+        <div id="comment-control-wrapper" class=" media-footer d-flex justify-content-between justify-content-md-start">
+            <div>
+                <a href="{% url_with_page_num comment.get_reply_url comments.number %}"
+                    class="btn btn-link btn-sm control-btn mr-3 text-muted">
+                    <i class="fas fa-reply mr-1"></i> Reply
+                </a>
+            </div>
+            <div>
+                <a href="{{ comment.get_upvote_url }}" class="btn btn-link btn-sm control-btn mr-3 
+                                   {% if request.user in comment.upvoters.all %} 
+                                        text-primary 
+                                   {% else %} 
+                                        text-muted 
+                                   {% endif %}">
+                    <i class="fas fa-chevron-up mr-1"></i><span class="d-none d-sm-inline-block">Upvote</span>
+                    {{ comment.upvoters.count }}
+                </a>
+            </div>
+            <div>
+                <a href="{{ comment.get_downvote_url }}" class="btn btn-link btn-sm control-btn mr-3 
+                                   {% if request.user in comment.downvoters.all %} 
+                                        text-danger 
+                                   {% else %} 
+                                        text-muted 
+                                   {% endif %}">
+                    <i class="fas fa-chevron-down mr-1"></i><span class="d-none d-sm-inline-block">Downvote</span>
+                    {{ comment.downvoters.count }}
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
-<!-- END OF COMMENT -->

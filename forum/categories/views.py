@@ -1,23 +1,14 @@
-from django.views.generic.edit import CreateView, UpdateView
-from django.views.generic import DetailView, ListView
-from django.views import View
-from django.shortcuts import get_object_or_404, render, redirect
-from django.http import HttpResponse, Http404, HttpResponseRedirect
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.urlresolvers import reverse
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
 
 from forum.categories.models import Category
 from forum.categories.utils import get_additional_category_detail_ctx
 from forum.threads.forms import ThreadForm
+
 # from forum.threads.views import create_thread
 
 
 def category_detail(request, slug, filter_str=None, page=1, form=None):
-    print('category_detail called: ')
-    print('slug: ', slug)
-    print('filter_str', filter_str)
     # form = ThreadForm(request.POST or None)
 
     # if form.is_valid():

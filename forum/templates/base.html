@@ -1,210 +1,161 @@
 <!DOCTYPE html>
 {% load static %}
+{% load compress %}
 {% load forum_template_tags %}
 
-<html>
-<!--
-TODOS
-Move the add thread button to the table then use 2px solid blue border button and improve the table
-work on followed users in user profile
-work on statistics
-trending topics
-quote
-like
-views
-visible threads
-suspend users
-hide comments
-spam comments
-image upload
-user admin stats
-footer
-deployment
+<html lang="en">
 
--->
 <head>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-    <!-- <link rel="stylesheet" type="text/css" href="{% static 'css/simplemde.css' %}"> -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-    <link rel="stylesheet" type="text/css" href="{% static 'css/recommended-styles.css' %}">
-
-<!--     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
- --><!--     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
- -->
-    <!-- <script type="text/javascript" src="{% static 'js/fontawesome-v5.0.8-solid.js' %}"></script> -->
-
-<!--     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
- -->
-<!--     <script type="text/javascript" src="{% static 'js/fontawesome-5.0.8.min.js' %}"></script>
- -->    
-    <!--<link href="https://cdn.quilljs.com/1.0.0/quill.snow.css" rel="stylesheet">-->
-
-    <!-- <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css"> -->
-
-    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-    {% block stylesheet %}
-    {% endblock %}
-    <style type="text/css">
-      /* Tell the nav to stick to the top left */
-      nav { padding: 0 4em 0 1em }
-     /* img .comment-image{ width: 50%; } */
-
-     
-     .category-active {
-        color: #2962FF;
-        /*font-size: 1.1105em;*/
-     }
-      .navbar {
-        background-color: #2962FF;
-
-      }
-
-      .navbar-default .navbar-brand {
-        color: #FFF;
-        font-size: 1.5em;
-      }
-
-      .navbar-default .navbar-nav > li > a {
-        color: #FFF;
-        font-weight: bold;
-        line-height: 1.7em;
-      }
-
-
-      .breadcrumb {
-        /*margin-top: 65px;*/
-        background-color: #FFF;
-        margin-bottom: -10px; /* Override bootstrap margin-bottom: 20px*/
-      }
-
-
-     
-      .non-field-errors {
-        position: absolute;
-        top: 1em;
-        right: 2em;
-        opacity: .9;
-      }
-
-   /*   .dropdown-menu {
-        z-index: 9999;
-        display: block;
-      }*/
-
-/*      .CodeMirror-focused div.CodeMirror-cursors {
-          visibility: visible;
-      }
-*/
-    </style>
-
-    <title>{% block title %}Forum{% endblock %}</title>
+  <!-- <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    /> -->
+  <!-- <script src="https://kit.fontawesome.com/50165bb753.js" crossorigin="anonymous"></script> -->
+  <link href="{% static 'css/fontawesome/all.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+  {% compress css %}
+  <link type="text/x-scss" href="{% static 'scss/styles.scss' %}" rel="stylesheet" media="screen" />
+  {% endcompress %}
+  <title>{% block title %}Forum{% endblock %}</title>
 </head>
+
 <body>
-
-<div class="wrapper">
-    <!-- Sidebar Holder -->
+  <!-- Overlay -->
+  <div class="sidebar-overlay"></div>
+  <div class="d-flex" id="wrapper">
     {% block sidebar %}
-    <nav id="sidebar">
-        <ul class="list-unstyled components">            
-            <li>
-              <h4>Categories</h4>
-                {% if category %}
-                      {% get_category_list category %}
+    <!-- Sidebar -->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+      <div class="sidebar-heading font-weight-bold">
+        <span class="d-inline-block d-md-none" id="close-sidebar">&times;</span>
 
-                      {% else %}
-                          {% get_category_list %}
-                    {% endif %}
-            </li>
-        </ul>
-    </nav>  
-    {% endblock sidebar %}
-    
-    <!-- Page Content Holder -->
-        <div  class="container">
-
-        <nav style="margin-left: -269px; margin-right: -16px;" class="navbar navbar-default navbar-static-top">
-            <div class="container-fluid">
-
-                <div style="position: static; left: 30px; top: 20px;" class="navbar-header">
-                    {% block sidebar_btn %}
-                      <button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn">
-                        <i class="glyphicon glyphicon-menu-hamburger"></i>
-                         <!--<span>Toggle Sidebar</span>--> 
-                      </button>
-                    {% endblock sidebar_btn %}
-                    
-                    <a style="margin-left: 19px; color: #FFF; font-size: 22px; font-weight: 600" href="/">Forum</a>
-                    
-                </div>
-
-
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav navbar-right">
-                      <form class="navbar-form navbar-left" action="/action_page.php">
-                        <div class="form-group">
-                          <input type="text" class="form-control" placeholder="Search">
-                        </div>
-                        <button type="submit" class="btn btn-default">Submit</button>
-                      </form>
-                    {% if user.is_authenticated %}
-                        <li class="dropdown">
-                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.username }}<span class="caret"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="{{ user.userprofile.get_absolute_url }}">My account</a></li>
-                            <li><a href="{% url 'accounts:password_change' %}">Change password</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="{% url 'accounts:logout' %}">Log out</a></li>
-                          </ul>
-                        </li>
-                        
-                      {% else %}
-                          <form class="form-inline pull-right" style="margin-top: 7px">
-                            <a href="{% url 'accounts:login' %}" class="btn btn-default">Log in</a>
-                            <a href="{% url 'accounts:signup' %}" class="btn btn-primary">Sign up</a>
-                          </form>
-                      {% endif %}
-                    </ul>
-                </div>
-            </div>
-
-        </nav>
-        {% block subheader %}
-
-        {% endblock subheader %}        
-
-      <div style="margin-top: 90px;" class="main row">
-        <div class="col-md-12">     
-        {% block row %}
-
-          {% block breadcrumb %}
-              
-          {% endblock breadcrumb %}
-
-          {% block content %}
-
-          {% endblock content %}
-
-                  
-        {% endblock row %}
-            {% block footer %}
-                <div class="col-sm-12">
-                  <footer style="margin-top: 2em">
-                    <div>
-                      <p class="text-center">&copy Forum {% now "Y" %}. All rights reserved.</p>
-                    </div>
-                  </footer>
-                </div>
-              
-         {% endblock footer %} 
-          </div>
+        <a class="navbar-brand" href="/">
+          <img src="{% static 'assets/bootstrap-solid.svg' %}" width="30" height="30" alt="" />
+          <span>Bootstrap</span>
+        </a>
       </div>
-          
-        </div>
+      <div class="list-group list-group-flush">
+        {% if category %}
+        {% get_category_list category %}
+        {% else %}
+        {% get_category_list %}
+        {% endif %}
+      </div>
+    </div><!-- Sidebar -->
+    {% endblock sidebar %}
 
+    <!-- Sidebar Fix -->
+    <div class="sidebar-wrapper-fix">
+      <div class="list-group">
+        <a class="list-group-item" href="#"></a>
+      </div>
+    </div><!-- Sidebar Fix -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+      <!-- Navigation -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="menu-toggle">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="d-flex d-lg-none justify-content-start align-items-center ml-2 ml-lg-0 mr-auto">
+          <a class="navbar-brand" href="/">
+            <img src="{% static 'assets/bootstrap-solid.svg' %}" width="30" height="30" alt="" />
+            <span class="d-none d-md-inline-block">Bootstrap</span>
+          </a>
+        </div>
+        <form class="form-inline my-2 my-lg-0 justify-content-end d-none d-md-flex position-relative mr-lg-auto">
+          <i class="fas fa-search search-abs"></i>
+          <input class="form-control mr-sm-4 search-pl" type="search" placeholder="Search" aria-label="Search" />
+        </form>
+
+        <div class="d-flex justify-content-end align-items-center">
+          {% if request.user.is_authenticated %}
+          <span class="d-inline-block d-md-none mr-4 text-dark"><i class="fas fa-search"></i></span>
+          {% endif %}
+
+          {% if request.user.is_authenticated %}
+          <span class="mr-4 position-relative d-flex justify-content-center align-items-center">
+            <a class="text-decoration-none text-dark" href="{{ request.user.notif_url }}">
+              <i style="font-size: 1.5rem;""
+                class=" far fa-bell"></i>
+              {% if request.user.notif_count %}
+              <span style="font-size: 0.7rem; position: absolute; top: -.67rem; right: -.63rem; min-width: 1em; 
+                                padding: .25em .4em; text-align: center;"
+                class="bg-primary text-center rounded-circle text-white">
+                {{ request.user.notif_count }}
+              </span>
+              {% endif %}
+            </a>
+          </span>
+          <div class="btn-group">
+            <a class="dropdown-toggle nav-profile-img text-dark" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false" href="#">
+              {% if request.user.avatar_url %}
+              <img src="{{ request.user.avatar_url }}" height="38" width="38" class="mr-1 mr-md-2 rounded-circle"
+                alt="..." style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+              {% else %}
+              <img src="{% static 'img/avatar.svg' %}" height="38" width="38" class="mr-1 mr-md-2 rounded-circle"
+                alt="..." style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+              {% endif %}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right w-50">
+              <a class="dropdown-item" href="{{ user.get_absolute_url }}">My account</a>
+              <a class="dropdown-item" href="{% url 'accounts:user_edit' request.user.username %}">
+                Update profile
+              </a>
+              <a class="dropdown-item" href="{% url 'accounts:password_change' %}">Change password</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a>
+            </div>
+          </div>
+          {% else %}
+          <!-- Login/Register navigation for Desktop/Tablet -->
+          <div class="d-none d-md-flex justify-content-end align-items-center">
+            <span class="d-inline-block d-lg-none mr-3 text-dark"><i class="fas fa-search"></i></span>
+            <!-- Search Icon for Tablet -->
+            <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn mr-2">
+              Register
+            </a>
+            <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary">
+              Login
+            </a>
+
+
+          </div>
+          {% endif %}
+        </div>
+      </nav>
+      {% if not request.user.is_authenticated %}
+      <!-- Login/Register and Search Icon navigation for mobile devices -->
+      <div class="container-fluid d-block d-md-none">
+        <div class="row">
+          <div class="col-12 py-2">
+            <div class="d-flex  align-items-center">
+              <span class="d-inline-block d-lg-none mr-auto text-dark"><i class="fas fa-search"></i></span>
+              <a href="{% url 'accounts:signup' %}" class="btn btn-primary mr-2">
+                Register
+              </a>
+              <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary">
+                Login
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+
+      {% block content %} {% endblock content %}
     </div>
-<!-- </div> -->
+  </div>
+
+
 
 <div class="username-suggest">
  <!--  <ul>
@@ -213,170 +164,22 @@ deployment
     <li><a href="#">Buy</a></li>
   </ul> -->
 </div>
-<!-- <script src="https://cdn.quilljs.com/1.0.0/quill.js"></script>
- -->
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
-    <!-- <script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script> -->
+  <script src="{% static 'js4/jquery.min.js' %}"></script>
+  <script src="{% static 'js4/popper.min.js' %}"></script>
+  <script src="{% static 'js4/bootstrap.min.js' %}"></script>
 
-   <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
-
-   <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-    <!-- <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script> -->
-
-    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-    <!-- <link type="text/javascript" href="{% static 'js/simplemde.js' %}"> -->
+      <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
     <!-- <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script> -->
-    <script src="{% static 'js/bbcode_blockquote_to_html_converter.js' %}"></script>    
+    <script src="{% static 'js4/bbcode_blockquote_to_html_converter.js' %}"></script>    
     
-    <script src="{% static 'js/script.js' %}"></script>
 
-    <script src="{% static 'js/bootstrap-typeahead.js' %}"></script>
-    <script src="{% static 'js/mention.js' %}"></script>    
-
-    <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
-    <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
-    <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script type="text/javascript">
-      var textHolder = ''
-    </script>
-
-    {% block javascript %}{% endblock %}
-
-    <script type="text/javascript">
-      $(document).ready(function () {
-        
-        // console.log(new SimpleMDE({ element: $('textarea')}))
-            // if ($('#edit-message').attr('id') === 'edit-message') {
-            //     // cache textarea as we need it more than once
-            //     var textarea = $("textarea"),
-            //     val = textarea.val();              
-            //     textarea.focus()
-            //     simplemde.value("")
-            //     textarea.val(val);   
-            // }
-
-                // $("textarea").mention({
-                //     delimiter: '@',
-                //     users: [{
-                //         username: "ashley"
-                //     }, { 
-                //         username: "roger"
-                //     }, { 
-                //         username: "frecklefart123"
-                //     }]
-                // });
-
-                // $('.dropdown-menu').attr('style', 'display: block;')
-
-                // $(".CodeMirror").on('keypress', function (e) {
-                  //  // var code = e.keyCode || e.which;
-                  // // console.log('alpha_num: ' + String.fromCharCode(code))
-                  // var div = '<div style="position: absolute; background-color: red; width: 60px; z-index: 9;" class="suggest">BLAH BLAH BLAH</div>'
-                  // $('body').append(div);
-
-                  
-                  // // var code = e.keyCode || e.which;
-                  // // if (code === 64 && textHolder === '') {
-                  // //   textHolder = String.fromCharCode(code)
-                  // // }
-                  // // else if (textHolder.startsWith('@')) {
-                  // //   if (String.fromCharCode(code).match(/\w/g)) {
-                  // //       textHolder = textHolder + String.fromCharCode(code)
-                  // //   } else {
-                  // //     textHolder = ''
-                  // //   }
-                  // // }
-                  // // // console.log('code' + code)
-
-                  // // console.log(simplemde.value())
-                  // console.log(simplemde.value())
-                  // var m_regex1 = /.*?@(?<username>[\w]+)/g
-                  // var m_regex2 = /@(?<username>[\w]+)(?![\s\S]*?@[\w]+)/g
-                  // var m_regex = /@(?<username>[\w]+)$/gm
-
-
-                  // pos = simplemde.codemirror.getCursor();
-
-                  // m_res = m_regex.exec(simplemde.value().substring(0, pos.ch))
-
-                  // // console.log('m_res: ', m_res)
-
-                  // if (m_res !== null && m_res !== "" && m_res.groups.username !== "") {
-                  //   console.log('username: ' + m_res.groups.username)
-                    
-                  // }
-
-                  // // m_res = m_regex.exec(textHolder)
-                  // // console.log('m_res: ', m_res)
-                  // // if (m_res !== null && m_res !== "" && m_res.groups.username !== "") {
-                  // //   console.log('username: ' + m_res.groups.username)
-                    
-                  // // }
-
-
-
-                  // pos = simplemde.codemirror.getCursor();
-                  // // console.log(pos)
-                  // // simplemde.codemirror.setSelection(pos, pos);
-                  // // console.log('SCROLL TOP: ' + $(window).scrollTop())
-                  // var offset = $(this).offset()
-                  // var cursorOffsetX = pos.ch === 0 ? 13 : ((pos.ch * 9.48) + 13)
-                  // var cursorOffsetY = pos.line === 0 ? 35 : ((pos.line * 20) + 35) 
-                  // // console.log(offset)
-                  // $('.suggest').css({
-                  //   left: offset.left + cursorOffsetX,
-                  //   top: offset.top + cursorOffsetY
-                  // })
-                  // // var code = e.keyCode || e.which;
-                  // // console.log(code);
-                  //   // $.ajax({
-                  //   //     url: "{% url 'accounts:user_mention' %}",
-                  //   //     data: { 'username':  String.fromCharCode(code) },
-                  //   //     dataType: 'json',
-                  //   //     success: function(data, status) {
-                  //   //           console.log(data)
-                  //   //     }
-                  //   // }); 
-                // })
-
-                var is_main_visible = true
-                 $('#sidebarCollapse').on('click', function () {
-                     $('#sidebar').toggleClass('active');
-                     // document.getElementById("mySidebar").style.width = "250px";
-                     if (is_main_visible) {
-                        // $('.main').toggleClass('main-toggle')
-                        $( ".main" ).animate({
-                            marginLeft: "-=160",
-                          }, 300, function() {
-                            // Animation complete.
-                          });
-                        is_main_visible = false
-                     } else {
-                      is_main_visible = true;
-                      console.log('show')
-                        // $('.main').toggleClass('main-toggle')
-                        // document.getElementsByClassName("main")[0].style.marginLeft = "250";
-                        $( ".main" ).animate({
-                            marginLeft: "+=160",
-                          }, 300, function() {
-                            // Animation complete.
-                          });                     
-                      }
-                 });
-             });
-
-      document.getElementsByTagName('img').width = '300'
-      document.getElementsByTagName('img').height = '200'
-      // $(document).ready(function() {
-      //   $('.non-field-errors').append(document.createTextNode('X'))
-      // });
-    </script>
+    <script src="{% static 'js4/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+    <script src="{% static 'js4/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
+    <script src="{% static 'js4/jquery-file-upload/jquery.fileupload.js' %}"></script>
+  <script src="{% static 'js4/script.js' %}"></script>
+  <script src="{% static 'js4/script2.js' %}"></script>
 
 </body>
+
 </html>

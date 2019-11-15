@@ -3,27 +3,25 @@ from datetime import timedelta
 from django.db import models
 from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch
 from django.utils import timezone
+from django.utils.text import slugify
+
+from forum.core.utils import get_random_string
 
 
 class ThreadQuerySet(models.query.QuerySet):
-
-    # def get_new_for_user2(self, user):
-    #     return self.get_related().filter(
-    #         reader=user, followers=user
-    #     ).annotate(
-    #         new_c_id=F('thread_activity__comment')
-    #         new_c_num=Count('thread_activity__comment')
-    #     )
-
-    # def get_all2(self, user):
-    #     qs1 = self.get_for_user2(user)
-    #     qs2 = queryset.get_related().exclude(
-    #         followers=user
-    #     ).annotate(
-    #         new_c_id=Value('0', output_field=CharField()),
-    #         new_c_num=Value('0', output_field=CharField())
-    #     )
-    #     return qs1.union(qs2)
+    def generate_slug(self, instance, new_slug=None):
+        slug = None
+        if new_slug:
+            slug = new_slug
+        elif instance.slug:
+            slug = slugify(instance.slug)
+        else:
+            slug = slugify(instance.title)
+        qs = self.filter(slug=slug)
+        if qs.exists():
+            new_slug = '%s-%s' % (slug, get_random_string())
+            return self.generate_slug(instance, new_slug=new_slug)
+        return slug
 
     def get_all(self, cat_slug=None):
         if cat_slug:
@@ -32,71 +30,67 @@ class ThreadQuerySet(models.query.QuerySet):
                 return qs, qs.first().category
         return self.active(), False
 
-    def get_for_user(self, user):
-        queryset = self
-        if not user.is_authenticated:
-            return queryset.get_related()
-        queryset1 = queryset.get_related().filter(
-            followers=user
+    def get_by_activity(self, user):
+        return self.get_related().filter(
+            readers=user
         ).annotate(
-            new_c_id=F('threadfollowership__final_comment'),
-            new_c_num=F('threadfollowership__new_comment_count')
+            new_c_id=Min('threadactivity__comment'),
+            new_c_num=Count('threadactivity__comment')
         )
-        queryset2 = queryset.get_related().exclude(
-            followers=user
+
+    def get_for_user(self, user):
+        qs = self.get_by_activity(user)
+        qs2 = self.get_related().exclude(
+            readers=user
         ).annotate(
             new_c_id=Value('0', output_field=CharField()),
             new_c_num=Value('0', output_field=CharField())
         )
-        return queryset1.union(queryset2)
+        return qs.union(qs2)
 
     def get_recent(self, user):
         return self.get_for_user(user).order_by('-final_comment_time')
 
     def get_new_for_user(self, user):
-        queryset = self
-        if not user.is_authenticated:
-            return queryset.get_related()
-        queryset = queryset.get_related().filter(
-            followers=user, threadfollowership__has_new_comment=True
-        ).annotate(
-            new_c_id=F('threadfollowership__final_comment'),
-            new_c_num=F('threadfollowership__new_comment_count')
-        ).order_by('threadfollowership__final_comment__created')
-        return queryset
+        return self.get_by_activity(user)
 
     def get_following_for_user(self, user):
         queryset = self
-        if not user.is_authenticated:
-            return queryset.get_related()
-        queryset = queryset.get_related().filter(
-            followers=user
+        qs = queryset.get_related().filter(
+            readers=user, followers=user
         ).annotate(
-            new_c_id=F('threadfollowership__final_comment'),
-            new_c_num=F('threadfollowership__new_comment_count')
+            new_c_id=Min('threadactivity__comment'),
+            new_c_num=Count('threadactivity__comment')
         )
-        return queryset.order_by('-comment_count')
 
-    def get_only_for_user(self, user):
-        queryset = self
-        if not user.is_authenticated:
-            return queryset.get_related()
-        queryset1 = queryset.get_related().filter(
-            user=user, threadfollowership__user=user
-        ).annotate(
-            new_c_id=F('threadfollowership__final_comment'),
-            new_c_num=F('threadfollowership__new_comment_count')
-        )
-        queryset2 = queryset.get_related().filter(
-            user=user
-        ).exclude(
-            threadfollowership__user=user
+        qs2 = queryset.get_related().exclude(
+            readers=user
+        ).filter(
+            followers=user
         ).annotate(
             new_c_id=Value('0', output_field=CharField()),
             new_c_num=Value('0', output_field=CharField())
         )
-        queryset = queryset1.union(queryset2)
-        return queryset.order_by('-comment_count')
+        return qs.union(qs2).order_by('-comment_count')
+
+    def get_only_for_user(self, user):
+        queryset = self
+        qs = queryset.get_related().filter(
+            user=user, readers=user
+        ).annotate(
+            new_c_id=Min('threadactivity__comment'),
+            new_c_num=Count('threadactivity__comment')
+        )
+
+        qs2 = queryset.get_related().filter(
+            user=user
+        ).exclude(
+            readers=user
+        ).annotate(
+            new_c_id=Value('0', output_field=CharField()),
+            new_c_num=Value('0', output_field=CharField())
+        )
+        return qs.union(qs2).order_by('-comment_count')
 
     def get_recent_for_user(self, request, user, count=5):
         is_auth = request.user.is_authenticated
@@ -131,8 +125,6 @@ class ThreadQuerySet(models.query.QuerySet):
     def get_related(self):
         return self.select_related(
             'user', 'category', 'final_comment_user', 'starting_comment'
-        ).prefetch_related(
-            'final_comment_user'
         )
 
     def active(self, *args, **kwargs):

@@ -5,30 +5,26 @@ from django.utils.html import mark_safe
 from django.contrib.auth import get_user_model
 from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch
 
-from forum.comments.models import Comment, CommentRevision
-from forum.comments.forms import CommentForm
-from forum.core.utils import find_mentioned_usernames
+# from forum.core.utils import find_mentioned_usernames
 from forum.core.bbcode_quote import bbcode_quote
 from forum.core.utils import convert_mention_to_link
+from forum.comments.forms import CommentForm
 
 from markdown import markdown
-import bleach
-from bleach_whitelist import markdown_tags, markdown_attrs
-
 
 User = get_user_model()
 
 
-def get_rendered_message(comment):
-    message = convert_mention_to_link(comment.message, comment.mentioned_users)
+def get_rendered_message(message, user_value_list):
+    message = convert_mention_to_link(message, user_value_list)
     text, comment_info_list = bbcode_quote(message)
     text = markdown(text, safe_mode='escape')
     return mark_safe(text)
 
 
-def get_mentioned_users(message):
-    username_set = find_mentioned_usernames(message)
-    return User.objects.filter(username__in=username_set)
+# def get_mentioned_users(message):
+#     username_set = find_mentioned_usernames(message)
+#     return User.objects.filter(username__in=username_set).all()
 
 
 def get_bbcode_message_quote(parent_comment):
@@ -36,7 +32,9 @@ def get_bbcode_message_quote(parent_comment):
         parent_comment.user.username, parent_comment.id
     )
     quote_close = '\n[/quote] \n'
-    return '%s%s%s' % (quote_open, parent_comment.message, quote_close)
+    return '%s%s%s' % (
+        quote_open, parent_comment.message, quote_close
+    )
 
 
 def get_comment_reply_form(comment):
@@ -76,9 +74,3 @@ def normalize_comment_info_list(comment_info_list):
             key_list.append(key)
             normalized_list.append(comment_info)
     return normalized_list
-
-
-def set_just_commented(request, comment):
-    key = '%s%s' % (str(comment.thread.slug), '_just_commented')
-    request.session[key] = True
-    return request

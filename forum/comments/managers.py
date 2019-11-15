@@ -1,4 +1,3 @@
-
 from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch
 from django.db import models
 
@@ -20,12 +19,12 @@ class CommentQuerySet(models.query.QuerySet):
         return queryset.order_by('created').all()
 
     def get_user_last_posted(self, user):
-        queryset = self.filter(user=user)
-        if queryset.count() > 0:
-            return queryset.latest('created').created
+        queryset = list(self.filter(user=user).all())
+        if len(queryset) > 0:
+            return queryset[-1].created
 
-    def get_user_active_category(self, user):
-        if user.comment_set.count() > 0:
+    def get_user_active_category(self, user, comment_count):
+        if comment_count > 0:
             return self.values('thread').filter(
                 user=user
             ).annotate(category=F('thread__category__title')).annotate(
@@ -48,6 +47,7 @@ class CommentQuerySet(models.query.QuerySet):
         return self.select_related(
             'thread', 'user', 'parent'
         ).prefetch_related(
+            'user__followers',
             'revisions',
             'parent__user',
             'parent__thread',

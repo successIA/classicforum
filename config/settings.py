@@ -87,7 +87,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join('forum', 'templates2'), os.path.join('forum', 'templates')],
+        'DIRS': [os.path.join('forum', 'templates')],
         # 'DIRS': [os.path.join('forum', 'templates'), os.path.join('forum', 'templates2')],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -101,8 +101,6 @@ TEMPLATES = [
             ],
             'libraries': {
                 'forum_template_tags': 'forum.templatetags.forum_template_tags',
-                'form_tags': 'forum.templatetags.form_tags',
-                'new_thread_tag': 'forum.templatetags.new_thread_tag',
             }
         },
     },

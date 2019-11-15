@@ -1,31 +1,57 @@
 <!-- Modal -->
-<div id="myModal{{ comment.pk }}" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title"> Comment History</h4>
-      </div>
-      <div class="modal-body">
-        {% if comment.is_starting_comment %}
-            {% for rev_thread in comment.thread.revisions.all %}
-            <h3>{{ rev_thread.title }}</h3>
-            {{ rev_thread.marked_message|safe }}
-            <hr>
-            {% endfor %}
-        {% else %}
-            {% for rev in comment.revisions.all %}
-              {{ rev.marked_message|safe }}
-              <hr>
-            {% endfor %}
-        {% endif %}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
+<div class="modal fade" id="commentHistoryModal{{ comment.pk }}" tabindex="-1" role="dialog"
+    aria-labelledby="commentHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerModalLabel">Edit History</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% if comment.is_starting_comment %}
+                <ul class="list-group">
+                    {% for rev_thread in comment.thread.revisions.all %}
+                    <li class="list-group-item">
+                        <h6 class="text-secondary">{{ rev_thread.created|date:"D, d M Y" }} @
+                            {{ rev_thread.created|date:"g:iA" }}</h6 class="text-secondary">
+                        <h3>{{ rev_thread.title }}</h3>
+                        {{ rev_thread.marked_message|safe }}
+                    </li>
+                    {% empty %}
+                    <div class="card">
+                        <div class="card-header text-primary text-center font-weight-bold bg-white">
+                            Yet to update thread.
+                        </div>
+                    </div>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <ul class="list-group">
+                    {% for rev in comment.revisions.all %}
+                    <li class="list-group-item">
+                        <small class="inline-block text-secondary font-weight-bold"
+                            style="font-size: .8rem;">{{ rev.created|date:"D, d M Y" }}
+                            @
+                            {{ rev.created|date:"g:iA" }}</small>
+                        {{ rev.marked_message|safe }}
+                    </li>
+                    {% empty %}
+                    <div class="card">
+                        <div class="card-header text-primary text-center font-weight-bold bg-white">
+                            Yet to update comment.
+                        </div>
+                    </div>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    Cancel
+                </button>
+            </div>
+        </div>
     </div>
-
-  </div>
-</div>
+</div><!-- Modal-->

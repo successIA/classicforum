@@ -1,30 +1,15 @@
 import re
-from markdown import markdown
-from math import ceil
 
 from django.contrib.auth.decorators import login_required
-from django.views.generic.edit import CreateView, UpdateView
-from django.views.generic import DetailView, ListView
-from django.views import View
-from django.shortcuts import get_object_or_404, render, redirect
-from django.http import HttpResponse, Http404, HttpResponseRedirect
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.urlresolvers import reverse
-from django.utils import timezone
-from django.utils.html import mark_safe
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 
-from forum.comments.utils import (
-    set_just_commented,
-    get_comment_reply_form
-)
-from forum.threads.models import Thread
-from forum.comments.models import Comment
 from forum.comments.forms import CommentForm
-from forum.comments.mixins import (
-    comment_owner_required,
-    vote_perm_required
-)
+from forum.comments.mixins import comment_owner_required, vote_perm_required
+from forum.comments.models import Comment
+from forum.comments.utils import get_comment_reply_form
+from forum.threads.models import Thread
 from forum.threads.views import thread_detail
 
 
@@ -37,7 +22,6 @@ def create_comment(request, thread_slug):
             form.instance.user = request.user
             form.instance.thread = thread
             comment = form.save()
-            set_just_commented(request, comment)
             return HttpResponseRedirect(comment.get_precise_url())
     return thread_detail(request, thread_slug, form=form)
 
