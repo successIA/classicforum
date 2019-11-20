@@ -90,16 +90,18 @@ class Thread(TimeStampedModel):
         return reverse('thread_detail', kwargs={'thread_slug': self.slug})
 
     def get_update_url(self):
-        return "%sedit/" % (self.get_absolute_url())
+        return reverse('thread_update', kwargs={'thread_slug': self.slug})
 
     def get_thread_update_form_action(self):
-        return "%s" % (
-            reverse('thread_update', kwargs={'thread_slug': self.slug})
-        )
+        return self.get_update_url()
 
     def get_comment_create_form_action(self, page_num):
-        return '%scomments/add/?page=%s#comment-form' % (
-            self.get_absolute_url(), str(page_num)
+        return '%s?page=%s#comment-form' % (
+            reverse(
+                'comments:comment_create',
+                kwargs={'thread_slug': self.slug}
+            ),
+            page_num
         )
 
     def get_thread_follow_url(self):
@@ -108,7 +110,7 @@ class Thread(TimeStampedModel):
 
 class ThreadRevisionQuerySet(models.query.QuerySet):
     def create_from_thread(self, thread):
-        self.create(
+        return self.create(
             thread=thread,
             starting_comment=thread.starting_comment,
             title=thread.title,
@@ -146,7 +148,8 @@ class ThreadActivityQuerySet(models.query.QuerySet):
                     user=user, thread=thread, comment=comment
                 )
             )
-        self.bulk_create(activities)
+        if activities:
+            self.bulk_create(activities)
 
     def update_activity_actions(self, user, thread, comments):
         queryset = self.filter(
@@ -173,5 +176,5 @@ class ThreadActivity(TimeStampedModel):
     )
     objects = ThreadActivityQuerySet.as_manager()
 
-    # def __str__(self):
-    #     return "%s - %s - %s" % (self.user.username, self.thread.title[:30], self.comment.id)
+    class Meta:
+        verbose_name_plural = 'Thread Activities'

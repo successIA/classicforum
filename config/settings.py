@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'compressor',
     'django_seed',
+    'background_task',
 
     'forum.categories',
     'forum.comments',
@@ -153,7 +154,7 @@ USE_L10N = True
 USE_TZ = True
 
 AUTH_USER_MODEL = 'accounts.User'
-LOGIN_URL = 'acconts/login'
+LOGIN_URL = '/accounts/auth/login/'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
@@ -179,6 +180,7 @@ COMPRESS_PRECOMPILERS = (
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'forum', 'media')
+TEST_MEDIA_ROOT = os.path.join(BASE_DIR, 'forum', 'testmedia')
 
 MEDIA_URL = '/media/'
 

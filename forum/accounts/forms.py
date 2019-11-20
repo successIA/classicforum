@@ -50,7 +50,8 @@ class UserSignUpForm(UserCreationForm):
 
 class UserProfileForm(forms.ModelForm):
     image = forms.ImageField(
-        widget=forms.ClearableFileInput(), label='', required=False)
+        widget=forms.ClearableFileInput(), label='', required=False
+    )
 
     class Meta:
         model = User
@@ -60,19 +61,10 @@ class UserProfileForm(forms.ModelForm):
         }
 
     def clean_image(self):
-        image = self.cleaned_data['image']
-        if not image:
-            return image
-        limit = 2048 * 1024  # 2 MegaBytes 2048 KiloBytes 2097152 Bytes
-        if image.size > limit:
+        image = self.cleaned_data.get('image')
+        limit = 500 * 1024  # 2 MegaBytes 2048 KiloBytes 2097152 Bytes
+        if image and image.size > limit:
             raise forms.ValidationError(
                 'File too large. Size should not exceed 500 KB.'
             )
         return image
-
-    # def clean(self):
-    #     if not self.cleaned_data.get('image'):
-    #         # print('form: ', self)
-    #         raise forms.ValidationError(
-    #             'Invalid picture or no picture selected. Choose another picture.'
-    #         )

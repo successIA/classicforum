@@ -16,6 +16,10 @@ from django.http import (
     HttpResponse, HttpResponseRedirect, Http404, HttpResponseForbidden
 )
 
+from markdown import markdown
+import bleach
+from bleach_whitelist import markdown_tags, markdown_attrs
+
 from forum.core.models import TimeStampedModel
 from forum.core.constants import COMMENT_PER_PAGE
 from forum.comments.managers import CommentQuerySet
@@ -23,11 +27,10 @@ from forum.attachments.models import Attachment
 from forum.threads.models import ThreadActivity
 from forum.notifications.models import Notification
 from forum.accounts.models import User
-
 from forum.core.utils import find_mentioned_usernames
-from markdown import markdown
-import bleach
-from bleach_whitelist import markdown_tags, markdown_attrs
+from forum.threads.tasks import (
+    create_thread_activities, sync_attachment_with_comment
+)
 
 
 class Comment(TimeStampedModel):
@@ -74,7 +77,6 @@ class Comment(TimeStampedModel):
         from forum.comments.utils import get_rendered_message
 
         new_instance = False
-
         if self.pk:
             prev_instance = self.__class__.objects.filter(pk=self.pk).first()
             if prev_instance:
@@ -100,11 +102,14 @@ class Comment(TimeStampedModel):
         super(Comment, self).save(*args, **kwargs)
 
         if new_instance:
-            Attachment.objects.sync_with_comment(self)
+            # Attachment.objects.sync_with_comment(self)
+            sync_attachment_with_comment(self.pk)
             if not self.is_starting_comment:
                 self.thread.sync_with_comment(self)
                 self.thread.followers.add(self.user)
-                ThreadActivity.objects.create_activities(self.thread, self)
+                # ThreadActivity.objects.create_activities(self.thread, self)
+                create_thread_activities(self.thread.pk, self.pk)
+
             if self.parent and self.parent.user != self.user:
                 Notification.objects.notify_receiver_for_reply(self)
         self.mentioned_users.add(*mentioned_user_list)
@@ -149,35 +154,47 @@ class Comment(TimeStampedModel):
         )
 
     def get_reply_url(self):
-        return '%scomments/%s/reply/' % (
-            self.thread.get_absolute_url(), self.pk
+        return reverse(
+            'comments:comment_reply',
+            kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}
         )
 
     def get_update_url(self):
-        return '%scomments/%s/' % (
-            self.thread.get_absolute_url(), self.pk
+        return reverse(
+            'comments:comment_update',
+            kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}
         )
 
     def get_upvote_url(self):
-        return '%scomments/%s/upvote/' % (
-            self.thread.get_absolute_url(), self.pk
+        return reverse(
+            'comments:upvote',
+            kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}
         )
 
     def get_downvote_url(self):
-        return '%scomments/%s/downvote/' % (
-            self.thread.get_absolute_url(), self.pk
+        return reverse(
+            'comments:downvote',
+            kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}
         )
 
     def get_reply_form_action(self):
         page_num = ceil(self.position / COMMENT_PER_PAGE)
-        return '%scomments/%s/reply/?page=%s#comment-form' % (
-            self.thread.get_absolute_url(), self.pk, page_num
+        return '%s?page=%s#comment-form' % (
+            reverse(
+                'comments:comment_reply',
+                kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}
+            ),
+            page_num
         )
 
     def get_update_form_action(self):
         page_num = ceil(self.position / COMMENT_PER_PAGE)
-        return '%scomments/%s/?page=%s#comment-form' % (
-            self.thread.get_absolute_url(), self.pk, page_num
+        return '%s?page=%s#comment-form' % (
+            reverse(
+                'comments:comment_update',
+                kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}
+            ),
+            page_num
         )
 
 
@@ -190,7 +207,8 @@ class CommentRevisionQuerySet(models.query.QuerySet):
         )
         mentioned_users = comment.mentioned_users.all()
         instance.mentioned_users.add(*mentioned_users)
-        Attachment.objects.sync_with_comment(comment, instance.message)
+        # Attachment.objects.sync_with_comment(comment, instance.message)
+        sync_attachment_with_comment(comment.pk, message=instance.message)
 
 
 class CommentRevision(models.Model):

@@ -1,8 +1,6 @@
-from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404
 from django.http import Http404
+from django.core.exceptions import PermissionDenied
 
 from forum.comments.models import Comment
 from forum.threads.models import Thread
@@ -32,4 +30,3 @@ def vote_perm_required(function):
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap
-

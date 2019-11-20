@@ -176,7 +176,6 @@ def follow_user(request, username):
     if user == follower:
         raise Http404
     user.toggle_followers(follower)
-    follower.toggle_following(user)
     return redirect(user.get_absolute_url())
 
 
@@ -217,7 +216,7 @@ def user_mention_list(request):
     if username_dict_list:
         username_list = [username_dict['username']
                          for username_dict in username_dict_list]
-        user_qs = User.objects.select_related('user').filter(
+        user_qs = User.objects.filter(
             username__in=username_list
         )
         if user_qs.exists():

@@ -32,8 +32,8 @@ for i in range(72):
     t = fake.sentence()
     m = ''.join(fake.texts())
     if (isinstance(t, str)) and (isinstance(m, str)):
-        th, cr = Thread.objects.get_or_create(title = t, body="NA", user=usr, category=cat, created=timezone.now(), modified=timezone.now())
-        co, cr = Comment.objects.get_or_create(message=m, user=usr, thread=th, is_starting_comment=True, created=timezone.now(), modified=timezone.now())
+        th = Thread.objects.create(title = t, body="NA", user=usr, category=cat, created=timezone.now(), modified=timezone.now())
+        co = Comment.objects.create(message=m, user=usr, thread=th, is_starting_comment=True, created=timezone.now(), modified=timezone.now())
         th.starting_comment = co
         th.save()
 			 

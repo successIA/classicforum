@@ -16,8 +16,9 @@ from forum.threads.views import thread_detail
 @login_required
 def create_comment(request, thread_slug):
     thread = get_object_or_404(Thread, slug=thread_slug)
-    form = CommentForm(request.POST, extra='edit-message')
+    form = CommentForm(extra='edit-message')
     if request.method == 'POST':
+        form = CommentForm(request.POST, extra='edit-message')
         if form.is_valid():
             form.instance.user = request.user
             form.instance.thread = thread
