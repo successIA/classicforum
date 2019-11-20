@@ -25,7 +25,8 @@ def get_filtered_threads(request, filter_str=None, thread_qs=None):
     # if there is no thread for the current selection. So also perform check
     # for that situation to avoid getting recent threads for valid filters
     # with no threads
-    if not threads_dict.get(filter_str) and filter_str not in all_filter_list:
+    if filter_str not in list(threads_dict.keys()):
+        # if not threads_dict.get(filter_str) and filter_str not in all_filter_list:
         return [RECENT, threads_dict[RECENT]]
     return [filter_str, threads_dict[filter_str]]
 

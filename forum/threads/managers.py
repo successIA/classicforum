@@ -39,6 +39,10 @@ class ThreadQuerySet(models.query.QuerySet):
         )
 
     def get_for_user(self, user):
+        queryset = self
+        if not user.is_authenticated:
+            return queryset.get_related()
+
         qs = self.get_by_activity(user)
         qs2 = self.get_related().exclude(
             readers=user
@@ -52,10 +56,17 @@ class ThreadQuerySet(models.query.QuerySet):
         return self.get_for_user(user).order_by('-final_comment_time')
 
     def get_new_for_user(self, user):
+        queryset = self
+        if not user.is_authenticated:
+            return queryset.get_related()
+
         return self.get_by_activity(user)
 
     def get_following_for_user(self, user):
         queryset = self
+        if not user.is_authenticated:
+            return queryset.get_related()
+
         qs = queryset.get_related().filter(
             readers=user, followers=user
         ).annotate(
@@ -75,6 +86,9 @@ class ThreadQuerySet(models.query.QuerySet):
 
     def get_only_for_user(self, user):
         queryset = self
+        if not user.is_authenticated:
+            return queryset.get_related()
+
         qs = queryset.get_related().filter(
             user=user, readers=user
         ).annotate(

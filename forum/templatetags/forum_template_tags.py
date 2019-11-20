@@ -23,7 +23,7 @@ def thread_url(
     except ValueError:
         return thread_absolute_url
     return '%s?page=%s&read=True#comment%s' % (
-        thread_absolute_url, str(page_num), str(new_comment_id)
+        thread_absolute_url, page_num, new_comment_id
     )
 
 

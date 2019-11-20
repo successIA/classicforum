@@ -25,39 +25,6 @@ from forum.threads.mixins import thread_owner_required
 from forum.core.constants import THREAD_PER_PAGE
 
 
-# def thread_list(request, filter_str=None, page=1):
-#     form = ThreadForm(request.POST or None)
-#     if form.is_valid():
-#         if not request.user.is_authenticated:
-#             raise PermissionDenied
-#         return thread_create(request, form)
-#     thread_data = get_filtered_threads(request, filter_str)
-#     thread_paginator = get_paginated_queryset(
-#         thread_data[1], THREAD_PER_PAGE, page
-#     )
-#     form_action = reverse(
-#         'threads:thread_list_filter',
-#         kwargs={'filter_str': thread_data[0], 'page': page}
-#     )
-#     context = {
-#         'threads': thread_paginator,
-#         'threads_url': "threads/%s" % (thread_data[0]),
-#         'form': form,
-#         'form_action': form_action + '#comment-form',
-#         'dropdown_active_text': thread_data[0]
-#     }
-#     return render(request, 'categories/home.html', context)
-
-
-# @login_required
-# def create_thread(request, form):
-#     if request.method == 'POST' and form.is_valid():
-#         thread = create_thread(form, request.user)
-#         return redirect(thread.get_absolute_url())
-#     else:
-#         raise PermissionDenied
-
-
 def thread_list(request, filter_str=None, page=1, form=None):
     thread_qs = Thread.objects.active()
     thread_data = get_filtered_threads(request, filter_str, thread_qs)
@@ -78,36 +45,39 @@ def thread_list(request, filter_str=None, page=1, form=None):
     return render(request, 'home.html', context)
 
 
+@login_required
 def create_thread(request, slug=None, filter_str=None, page=None):
-    if request.method == 'GET':
-        raise PermissionDenied
-    form = ThreadForm(request.POST or None)
-    if form.is_valid():
-        thread = form.save(commit=False)
-        thread.user = request.user
-        thread.category = form.cleaned_data.get('category')
-        thread.save()
-        comment = Comment.objects.create(
-            message=form.cleaned_data.get('message'),
-            thread=thread,
-            user=thread.user,
-            is_starting_comment=True
-        )
-        Thread.objects.filter(pk=thread.pk).update(starting_comment=comment)
-        return redirect(thread.get_absolute_url())
+    form = ThreadForm
+    if request.method == 'POST':
+        form = ThreadForm(request.POST)
+        if form.is_valid():
+            thread = form.save(commit=False)
+            thread.user = request.user
+            thread.category = form.cleaned_data.get('category')
+            thread.save()
+            comment = Comment.objects.create(
+                message=form.cleaned_data.get('message'),
+                thread=thread,
+                user=thread.user,
+                is_starting_comment=True
+            )
+            Thread.objects.filter(pk=thread.pk).update(
+                starting_comment=comment
+            )
+            return redirect(thread.get_absolute_url())
+    category_list = list(Category.objects.filter(slug=slug))
+    if category_list:
+        category = category_list[0]
+        if request.method == 'GET':
+            form = ThreadForm(initial={'category': category})
+        return category_detail(request, category.slug, filter_str, page, form)
     else:
-        category_qs = Category.objects.filter(slug=slug)
-        if category_qs.count() > 0:
-            slug = category_qs.first().slug
-            return category_detail(request, slug, filter_str, page, form)
-        else:
-            return thread_list(request, filter_str, page, form)
+        return thread_list(request, filter_str, page, form)
 
 
 def thread_detail(request, thread_slug, form=None, form_action=None):
     thread = get_object_or_404(Thread, slug=thread_slug)
     thread_followers = thread.followers.all()
-    print("thread_followers", thread_followers)
     ctx = {
         'thread': thread,
         'thread_followers': thread_followers,

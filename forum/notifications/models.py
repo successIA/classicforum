@@ -22,9 +22,9 @@ class NotificationQuerySet(models.query.QuerySet):
 
     def notify_mentioned_users(self, comment, mentioned_user_list):
         users = [usr for usr in mentioned_user_list if usr.pk != comment.user.pk]
-        model_list = []
+        instance_list = []
         for user in users:
-            model_list.append(
+            instance_list.append(
                 self.model(
                     sender=comment.user,
                     receiver=user,
@@ -32,12 +32,13 @@ class NotificationQuerySet(models.query.QuerySet):
                     notif_type=Notification.USER_MENTIONED
                 )
             )
-        self.bulk_create(model_list)
+        if instance_list:
+            self.bulk_create(instance_list)
 
     def notify_user_followers_for_thread_creation(self, thread):
-        model_list = []
+        instance_list = []
         for user in thread.user.followers.all():
-            model_list.append(
+            instance_list.append(
                 self.model(
                     sender=thread.user,
                     receiver=user,
@@ -45,7 +46,8 @@ class NotificationQuerySet(models.query.QuerySet):
                     notif_type=Notification.THREAD_CREATED
                 )
             )
-        self.bulk_create(model_list)
+        if instance_list:
+            self.bulk_create(instance_list)
 
     def notify_thread_followers_for_modification(self, thread):
         other_followers = [usr for usr in thread.followers.all()
@@ -67,12 +69,14 @@ class NotificationQuerySet(models.query.QuerySet):
         )
 
     def delete_comment_upvote_notification(self, sender, receiver, comment):
-        queryset = self.filter(
+        instance = self.filter(
             sender=sender,
             receiver=receiver,
             comment=comment,
             notif_type=Notification.COMMENT_UPVOTED
-        ).first().delete()
+        ).first()
+        if instance:
+            instance.delete()
 
     def mark_as_read(self, receiver, notif_id_list):
         if notif_id_list:
@@ -179,11 +183,11 @@ class Notification(TimeStampedModel):
         description_dict = {
             Notification.THREAD_CREATED: 'notifications/thread_create.html',
             Notification.THREAD_UPDATED: 'notifications/thread_update.html',
-            Notification.COMMENT_CREATED: 'notifications/comment_create.html',
+            # Notification.COMMENT_CREATED: 'notifications/comment_create.html',
             Notification.COMMENT_UPVOTED: 'notifications/comment_upvote.html',
             Notification.COMMENT_REPLIED: 'notifications/comment_reply.html',
             Notification.USER_MENTIONED: 'notifications/comment_mention.html',
-            Notification.USER_FOLLOWED: 'notifications/thread_update.html',
+            # Notification.USER_FOLLOWED: 'notifications/thread_update.html',
         }
         return render_to_string(description_dict[self.notif_type], context)
 

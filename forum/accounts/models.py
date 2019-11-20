@@ -23,11 +23,11 @@ class User(AbstractUser):
     location = models.CharField(max_length=32, blank=True)
     website = models.URLField(max_length=50, blank=True)
     followers = models.ManyToManyField(
-        'self', related_name='followers', blank=True
+        'self', related_name='following', symmetrical=False, blank=True
     )
-    following = models.ManyToManyField(
-        'self', related_name='following', blank=True
-    )
+    # following = models.ManyToManyField(
+    #     'self', related_name='followers',  blank=True
+    # )
     last_seen = models.DateTimeField(default=timezone.now)
     email_confirmed = models.BooleanField(default=False)
     avatar_url = models.CharField(max_length=255, blank=True, null=True)
@@ -49,27 +49,17 @@ class User(AbstractUser):
         return self.is_owner(user)
 
     def get_avatar_url(self):
-        return self.attachment_set.first().image.url
+        return self.avatar_url
 
     def update_notification_info(self, request, url, count):
         request.user.notif_url = url
         request.user.notif_count = count
 
     def toggle_followers(self, follower):
-        print("USER TO FOLLOW:", self)
-        print("FOLLOWER:", follower)
         if follower not in self.followers.all():
             self.followers.add(follower)
         else:
             self.followers.remove(follower)
-
-    def toggle_following(self, user):
-        print("USER:", self)
-        print("FOLLOWING:", user)
-        if user not in self.following.all():
-            self.following.add(user)
-        else:
-            self.following.remove(user)
 
     def get_absolute_url(self):
         return reverse('accounts:user_stats', kwargs={'username': self.username})
@@ -79,7 +69,7 @@ class User(AbstractUser):
 
     def get_userprofile_update_url(self):
         return reverse(
-            'accounts:user_profile_update', kwargs={'username': self.username}
+            'accounts:user_edit', kwargs={'username': self.username}
         )
 
     def get_login_url(self):

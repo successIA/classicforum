@@ -8,7 +8,7 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
 from forum.core.models import TimeStampedModel
-from forum.attachments.utils import find_images_in_message
+from forum.attachments.utils import get_image_sources_from_message
 from forum.attachments.utils import (
     get_unreferenced_image_srcs_in_message
 )
@@ -16,45 +16,31 @@ from forum.attachments.utils import md5
 
 
 class MediaFileSystemStorage(FileSystemStorage):
-    def get_available_name(self, name, max_length=None):
-        if max_length and len(name) > max_length:
-            raise(Exception("name's length is greater than max_length"))
-        return name
-
-    def _save(self, name, content):
-        if self.exists(name):
-            # if the file exists, do not call the superclasses _save method
-            return name
-        # if the file is new, DO call it
-        return super(MediaFileSystemStorage, self)._save(name, content)
+    pass
 
 
-def get_filename_ext(filepath):
+def get_extension(filepath):
     base_name = os.path.basename(filepath)
-    name, ext = os.path.splitext(base_name)
-    return name, ext
+    name, extension = os.path.splitext(base_name)
+    return extension
 
 
 def upload_to(instance, filename):
-    name, ext = get_filename_ext(filename)
+    extension = get_extension(filename)
     new_filename = instance.md5sum
-    final_filename = '{new_filename}{ext}'.format(
-        new_filename=new_filename, ext=ext
-    )
+    final_filename = new_filename + extension
     if instance.is_avatar:
-        return "avatars/{final_filename}".format(
-            final_filename=final_filename
-        )
-    return "uploads/{final_filename}".format(
-        final_filename=final_filename
-    )
+        return "avatars/%s" % final_filename
+    return "uploads/%s" % final_filename
 
 
 class AttachmentQuerySet(models.query.QuerySet):
-    def sync_with_comment(self, comment, prev_message=None):
-        if prev_message:
-            self._detach_from_comment(comment, prev_message)
-        image_url_list = find_images_in_message(comment.message)
+
+    def sync_with_comment(self, comment, previous_message=None):
+        if previous_message:
+            self._remove_comment_from_instance(comment, previous_message)
+        image_url_list = get_image_sources_from_message(comment.message)
+
         for url in image_url_list:
             url = url.replace('http://127.0.0.1:8000', "")
             instance_list = None
@@ -66,20 +52,19 @@ class AttachmentQuerySet(models.query.QuerySet):
                 instance.is_orphaned = False
                 instance.save()
 
-    def _detach_from_comment(self, comment, prev_message):
+    def _remove_comment_from_instance(self, comment, previous_message):
         '''
         Detach comment from all its attachments if there is any
         change in the image urls in the message
         '''
-        urls = get_unreferenced_image_srcs_in_message(
-            prev_message, comment.message
+        unreferenced_image_sources = get_unreferenced_image_srcs_in_message(
+            previous_message, comment.message
         )
         for instance in comment.attachment_set.all():
-            if instance.url in urls:
+            url_with_domain = 'http://127.0.0.1:8000%s' % instance.url
+            if url_with_domain in unreferenced_image_sources:
                 instance.comments.remove(comment)
-                count = instance.comments.count()
-                is_avatar = instance.is_avatar
-                if not is_avatar and count < 1:
+                if not instance.is_avatar and instance.comments.count() == 0:
                     instance.is_orphaned = True
                     instance.save()
 
@@ -101,12 +86,12 @@ class AttachmentQuerySet(models.query.QuerySet):
 
 class Attachment(models.Model):
     image = models.ImageField(
-        upload_to=upload_to, storage=MediaFileSystemStorage()
+        upload_to=upload_to
+        # , storage=MediaFileSystemStorage()
     )
-    filename = models.CharField(max_length=255)
     url = models.URLField(max_length=2000, blank=True)
+    filename = models.CharField(max_length=255)
     comments = models.ManyToManyField('comments.Comment', blank=True)
-    # threads = models.ManyToManyField("threads.Thread", blank=True)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)
     md5sum = models.CharField(max_length=36, blank=True)
     is_avatar = models.BooleanField(default=False)
@@ -117,13 +102,12 @@ class Attachment(models.Model):
         return str(self.filename)
 
     def save(self, *args, **kwargs):
-        from hashlib import md5
-        if not self.pk:  # file is new
-            md5 = md5()
-            for chunk in self.image.chunks():
-                md5.update(chunk)
-            self.md5sum = md5.hexdigest()
+
+        if not self.pk and not self.md5sum:  # file is new
+            self.md5sum = md5(self.image)
         self.filename = self.image.name
         super().save(*args, **kwargs)
         self.url = self.image.url
+        kwargs['force_update'] = True
+        kwargs['force_insert'] = False
         super().save(*args, **kwargs)
