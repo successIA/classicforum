@@ -3,6 +3,7 @@
 *.pyc
 __pycache__
 db.sqlite3 
+db.json
 media
 staticfiles
 
@@ -23,6 +24,8 @@ staticfiles
 .idea/**/gradle.xml 
 .idea/**/libraries 
 *.iws /out/ 
+
+*.iml
 
 # Python # 
 *.py[cod] 
