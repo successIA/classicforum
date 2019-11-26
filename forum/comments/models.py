@@ -24,12 +24,13 @@ from forum.core.models import TimeStampedModel
 from forum.core.constants import COMMENT_PER_PAGE
 from forum.comments.managers import CommentQuerySet
 from forum.attachments.models import Attachment
-from forum.threads.models import ThreadActivity
+from forum.threads.models import ThreadFollowership
 from forum.notifications.models import Notification
 from forum.accounts.models import User
 from forum.core.utils import find_mentioned_usernames
 from forum.threads.tasks import (
-    create_thread_activities, sync_attachment_with_comment
+    sync_attachment_with_comment,
+    sync_comment_with_thread_followership
 )
 
 
@@ -50,10 +51,10 @@ class Comment(TimeStampedModel):
         related_name='comment_mention'
     )
     upvoters = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name='upvoted_comments'
+        settings.AUTH_USER_MODEL, blank=True, related_name='upvoted_comments'
     )
     downvoters = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name='downvoted_comments'
+        settings.AUTH_USER_MODEL, blank=True, related_name='downvoted_comments'
     )
     # voters = models.ManyToManyField(
     #     settings.AUTH_USER_MODEL,
@@ -102,14 +103,13 @@ class Comment(TimeStampedModel):
         super(Comment, self).save(*args, **kwargs)
 
         if new_instance:
-            # Attachment.objects.sync_with_comment(self)
             sync_attachment_with_comment(self.pk)
             if not self.is_starting_comment:
                 self.thread.sync_with_comment(self)
-                self.thread.followers.add(self.user)
-                # ThreadActivity.objects.create_activities(self.thread, self)
-                create_thread_activities(self.thread.pk, self.pk)
-
+                # sync_comment_with_thread_followership(self.thread.pk, self.pk)
+                ThreadFollowership.objects.sync_with_comment(
+                    self.thread, self
+                )
             if self.parent and self.parent.user != self.user:
                 Notification.objects.notify_receiver_for_reply(self)
         self.mentioned_users.add(*mentioned_user_list)

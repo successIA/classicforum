@@ -93,6 +93,7 @@ def user_profile_edit(request, username):
             return HttpResponseRedirect(
                 reverse('accounts:user_edit', kwargs={'username': username})
             )
+
     ctx = {
         'userprofile': request.user,
         'dropdown_active_text2': 'profile',
@@ -144,6 +145,7 @@ def signup(request):
         email_data = get_signup_email_confirm_form_entries(request, user)
         user.email_user(email_data['subject'], email_data['message'])
         return redirect('accounts:account_activation_sent')
+
     ctx = {'form': form}
     return render(request, 'accounts/signup.html', ctx)
 

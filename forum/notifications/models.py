@@ -87,7 +87,7 @@ class NotificationQuerySet(models.query.QuerySet):
             )
 
     def get_receiver_url_and_count(self, receiver):
-        qs_receiver = self.filter(receiver=receiver)
+        qs_receiver = self.filter(receiver=receiver).select_related('receiver')
         unread_qs = list(qs_receiver.filter(
             unread=True
         ).order_by('-created'))

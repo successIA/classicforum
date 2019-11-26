@@ -41,6 +41,7 @@ def update_comment(request, thread_slug, pk, comment=None):
             form.instance.thread = comment.thread
             comment = form.save()
             return HttpResponseRedirect(comment.get_precise_url())
+
     form_action = comment.get_update_form_action()
     kwargs = {'form': form, 'form_action': form_action}
     return thread_detail(request, thread_slug, **kwargs)
@@ -58,6 +59,7 @@ def reply_comment(request, thread_slug, pk):
             form.instance.thread = parent_comment.thread
             comment = form.save()
             return HttpResponseRedirect(comment.get_precise_url())
+
     form_action = parent_comment.get_reply_form_action()
     kwargs = {'form': form, 'form_action': form_action}
     return thread_detail(request, thread_slug, **kwargs)

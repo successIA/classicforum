@@ -18,6 +18,8 @@ class CommentQuerySet(models.query.QuerySet):
         ).exclude(is_starting_comment=True)
         return queryset.order_by('created').all()
 
+    # def get_for_thread_(self, thread):
+
     def get_user_last_posted(self, user):
         queryset = list(self.filter(user=user).all())
         if len(queryset) > 0:
