@@ -10,11 +10,11 @@ from django.db import connection
 
 from forum.core.utils import get_paginated_queryset
 from forum.threads.models import (
-    Thread, ThreadActivity
+    Thread, ThreadFollowership
 )
 from forum.threads.utils import (
     get_filtered_threads,
-    get_additional_thread_detail_ctx,
+    get_additional_thread_detail_ctx
 )
 from forum.comments.models import Comment
 from forum.categories.models import Category
@@ -65,6 +65,7 @@ def create_thread(request, slug=None, filter_str=None, page=None):
                 starting_comment=comment
             )
             return redirect(thread.get_absolute_url())
+
     category_list = list(Category.objects.filter(slug=slug))
     if category_list:
         category = category_list[0]
@@ -77,21 +78,33 @@ def create_thread(request, slug=None, filter_str=None, page=None):
 
 def thread_detail(request, thread_slug, form=None, form_action=None):
     thread = get_object_or_404(Thread, slug=thread_slug)
-    thread_followers = thread.followers.all()
     ctx = {
         'thread': thread,
-        'thread_followers': thread_followers,
         'starting_comment': thread.starting_comment,
         'form': form if form else CommentForm,
     }
+
     ctx.update(get_additional_thread_detail_ctx(request, thread, form_action))
+
+    comments = ctx['comments']
+    thread_fship = None
+    count = 0
     if request.user.is_authenticated:
-        is_thread_follower = request.user in thread_followers
-        ctx.update({'is_thread_follower': is_thread_follower})
-        if is_thread_follower:
-            ThreadActivity.objects.update_activity_actions(
-                request.user, thread, ctx['comments']
-            )
+        thread_fship, count = ThreadFollowership.objects.get_instance_and_count(
+            thread, user=request.user
+        )
+
+        if thread_fship and thread_fship.first_new_comment:
+            if comments[-1].created >= thread_fship.first_new_comment.created:
+                thread_fship.update_comment_fields(comments)
+
+        ctx.update({'is_thread_follower': True if thread_fship else False})
+    else:
+        thread_fship, count = ThreadFollowership.objects.get_instance_and_count(
+            thread, user=None
+        )
+
+    ctx.update({'thread_followers_count': count})
     return render(request, 'threads/thread_detail.html', ctx)
 
 
@@ -119,5 +132,6 @@ def update_thread(request, thread_slug, thread=None):
 @login_required
 def follow_thread(request, thread_slug):
     thread = get_object_or_404(Thread, slug=thread_slug)
-    thread.toggle_follower(request.user)
+    # thread.toggle_follower(request.user)
+    ThreadFollowership.objects.toggle(request.user, thread)
     return redirect(thread.get_absolute_url())

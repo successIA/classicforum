@@ -11,7 +11,7 @@ from forum.categories.tests.utils import make_category
 from forum.comments.forms import CommentForm
 from forum.threads.forms import ThreadForm
 from forum.threads.models import (
-    Thread, ThreadRevision, ThreadActivity
+    Thread, ThreadRevision
 )
 from forum.comments.tests.utils import make_comment
 from forum.threads.tests.utils import make_threads, make_only_thread
@@ -240,7 +240,7 @@ class ThreadDetailViewTest(ThreadsViewsTest):
         self.assertIn(report, response.content.decode())
 
         self.assertEquals(response.context['thread'], thread)
-        self.assertIn('thread_followers', response.context)
+        self.assertIn('thread_followers_count', response.context)
         self.assertEquals(
             response.context['starting_comment'], thread.starting_comment
         )
@@ -382,10 +382,9 @@ class FollowThreadViewTest(ThreadsViewsTest):
         self.assertRedirects(response, redirect_url)
 
     def test_submit_success_for_authenticated_user(self):
+        current_count = self.thread.followers.count()
         second_user = self.make_user('second_user')
         login(self, second_user, 'password')
-        self.thread.followers.clear()
-        self.assertEquals(self.thread.followers.count(), 0)
         response = self.client.get(self.follow_url)
         self.assertEquals(response.status_code, 302)
-        self.assertEquals(self.thread.followers.count(), 1)
+        self.assertEquals(self.thread.followers.count(), current_count + 1)

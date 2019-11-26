@@ -11,6 +11,7 @@ from django.urls import reverse
 from test_plus import TestCase
 
 from forum.notifications.models import Notification
+from forum.threads.models import ThreadFollowership
 
 from forum.comments.models import Comment, CommentRevision
 from forum.comments.tests.utils import make_comment
@@ -192,7 +193,7 @@ class NotificationQuerySetManagerTest(TestCase):
 
     def test_notify_user_followers_for_thread_creation(self):
         user = self.make_user('user')
-        self.thread.followers.add(user)
+        ThreadFollowership.objects.create(user=user, thread=self.thread)
         for receiver in self.receiver_list:
             self.sender.followers.add(receiver)
         Notification.objects.notify_user_followers_for_thread_creation(
@@ -212,7 +213,9 @@ class NotificationQuerySetManagerTest(TestCase):
         user = self.make_user('user')
         self.sender.followers.add(user)
         for receiver in self.receiver_list:
-            self.thread.followers.add(receiver)
+            ThreadFollowership.objects.create(
+                user=receiver, thread=self.thread
+            )
         Notification.objects.notify_thread_followers_for_modification(
             self.thread
         )

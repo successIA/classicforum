@@ -1,3 +1,4 @@
+
 from django.utils import timezone
 
 from forum.accounts.models import User
@@ -21,10 +22,11 @@ th = Thread.objects.all().first()
 
 
 	
-for i in range(72):
-     m = ''.join(fake.texts())
-     if (isinstance(m, str)):
-             Comment.objects.create(message=m, user=usr, thread=th, created=timezone.now(), modified=timezone.now())
+for i in range(13):
+    m = ''.join(fake.texts())
+    if (isinstance(m, str)):
+        Comment.objects.create(message=m, user=usr, thread=th, created=timezone.now(), modified=timezone.now())
+        th.refresh_from_db()
 
 
 
@@ -83,4 +85,43 @@ Report
 	{'description': "inappropiate comment"}
 
 To hide a comment or thread, make it active field be False
+
+spam and
+
+if user.ban_period > timezone.now():
+	redirect('accounts:messages')
+
+
+You have banned for 3 days from posting or voting on classic forum because
+you the violated rule 3
+	- Spam
+3 days remaining for the ban to be lifted
+
+class User
+	ban_period
+
+class Report(TimeStampedModel):
+	rules = 
+	reporter =
+	violator = 
+	comment = 
+	action_taken = 
+	ban_period = 
+
+post => /report/321/
+        
+delete comment
+delete thread
+hide thread
+
+class Moderation
+	moderator 
+	category
+	hide threads
+	hide comments
+	ban user who are not moderators
+
+
+
+
 
