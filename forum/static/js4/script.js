@@ -4,7 +4,16 @@ $(document).ready(function() {
   //       transition: "margin 0s ease-in"
   //     });
   //   });
-
+  $('.notif-icon').on('click', function(e) {
+    e.preventDefault();
+    var self = $(this);
+    window.setTimeout(function() {
+      self.css('background-color', current_bg_color);
+    }, 400)
+    var current_bg_color = $(this).css('background-color')
+    self.css('background-color', 'hsla(219, 59%, 80%, 0.78)');    
+  });
+  
   $("#menu-toggle").click(function(e) {
     e.preventDefault();
     $(".sidebar-overlay").toggleClass("overlay-show");

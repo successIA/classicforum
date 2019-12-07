@@ -73,11 +73,15 @@ class ThreadRevisionQuerySetTest(ThreadModelTest):
         comment = make_comment(
             self.user, self.thread, is_starting_comment=True
         )
-        Thread.objects.filter(pk=self.thread.pk).update(
-            starting_comment=comment
-        )
-        self.thread.refresh_from_db()
+        self.thread.starting_comment = comment
+        self.thread.save()
+        comment.message = 'Updated message'
+        comment.save()
+        self.thread.title = 'Updated title'
+        self.thread.save()
+
         revision = ThreadRevision.objects.create_from_thread(self.thread)
+        self.assertIsNotNone(revision)
         self.assertEquals(self.thread, revision.thread)
 
 

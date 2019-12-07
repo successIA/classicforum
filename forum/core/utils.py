@@ -50,3 +50,8 @@ def get_paginated_queryset(queryset, PER_PAGE, page_num):
     except EmptyPage:
         evaluted_qs = paginator.page(paginator.num_pages)
     return evaluted_qs
+
+
+def strip_leading_slash(text):
+    leading_slash_patt = r'^/'
+    return re.sub(leading_slash_patt, '', text)

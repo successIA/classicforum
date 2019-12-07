@@ -16,7 +16,9 @@
     /> -->
   <!-- <script src="https://kit.fontawesome.com/50165bb753.js" crossorigin="anonymous"></script> -->
   <link href="{% static 'css/fontawesome/all.css' %}" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+      <link rel="stylesheet" href="{% static 'css/easymde.min.css' %}">
+  {% comment %} <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css"> {% endcomment %}
+
   {% compress css %}
   <link type="text/x-scss" href="{% static 'scss/styles.scss' %}" rel="stylesheet" media="screen" />
   {% endcompress %}
@@ -81,15 +83,32 @@
 
           {% if request.user.is_authenticated %}
           <span class="mr-4 position-relative d-flex justify-content-center align-items-center">
-            <a class="text-decoration-none text-dark" href="{{ request.user.notif_url }}">
-              <i style="font-size: 1.5rem;""
-                class=" far fa-bell"></i>
+            <a class="notif-icon text-decoration-none text-dark" href="{{ request.user.notif_url }}">
+              <i style="font-size: 1.5rem;"
+                class="notif-icon far fa-bell"></i>
               {% if request.user.notif_count %}
-              <span style="font-size: 0.7rem; position: absolute; top: -.67rem; right: -.63rem; min-width: 1em; 
-                                padding: .25em .4em; text-align: center;"
-                class="bg-primary text-center rounded-circle text-white">
-                {{ request.user.notif_count }}
-              </span>
+                {% comment %} <span style="font-size: 0.7rem; position: absolute; top: -.67rem; right: -.63rem; min-width: 1em; 
+                                  padding: .25em .4em; text-align: center;"
+                  class="bg-primary text-center rounded-circle text-white"> {% endcomment %}                  
+                <style scoped>
+                  .notif-badge {
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    position: absolute;
+                    bottom: 18px;
+                    left: 12px;
+                    padding: 0.5px 5px;
+                  }
+                  .notif-badge span {
+                    display: inline-block;
+                  }
+                  .notif-icon:active {
+                    background-color: blue;
+                  }
+                </style>
+                <div class="notif-badge bg-primary text-center rounded-circle text-white">
+                  <span>{{ request.user.notif_count }}</span>
+                </div>
               {% endif %}
             </a>
           </span>
@@ -157,28 +176,49 @@
 
 
 
+<style scoped>
+  .add-thread-btn-small {
+    width: 50px;
+    height: 50px;
+    position: fixed; 
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 2;
+  }
+</style>
+<div class="rounded-circle bg-secondary add-thread-btn add-thread-btn-small d-flex d-md-none align-items-center justify-content-center text-white">
+  <i class="fas fa-pen"></i>
+</div>
+
+<ul class="mention-dropdown"></ul>
+{% comment %} 
 <div class="username-suggest">
  <!--  <ul>
     <li><a href="#">Buy</a></li>
     <li><a href="#">Buy</a></li>
     <li><a href="#">Buy</a></li>
   </ul> -->
-</div>
-  <script src="{% static 'js4/jquery.min.js' %}"></script>
+</div> {% endcomment %}
+  {% comment %} <script src="{% static 'js4/jquery.min.js' %}"></script> {% endcomment %}
+  <script src="{% static 'js4/jquery-3.4.1.min.js' %}"></script>
   <script src="{% static 'js4/popper.min.js' %}"></script>
   <script src="{% static 'js4/bootstrap.min.js' %}"></script>
 
-      <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+      {% comment %} <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script> {% endcomment %}
 
-    <!-- <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script> -->
-    <script src="{% static 'js4/bbcode_blockquote_to_html_converter.js' %}"></script>    
+    {% comment %} <!-- <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script> --> {% endcomment %}
+    {% comment %} <script src="{% static 'js4/bbcode_blockquote_to_html_converter.js' %}"></script>     {% endcomment %}
     
 
     <script src="{% static 'js4/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
     <script src="{% static 'js4/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
     <script src="{% static 'js4/jquery-file-upload/jquery.fileupload.js' %}"></script>
-  <script src="{% static 'js4/script.js' %}"></script>
-  <script src="{% static 'js4/script2.js' %}"></script>
+
+    <script src="{% static 'js4/easymde.min.js' %}"></script>
+    <script src="{% static 'js4/easymde-custom.js' %}"></script>
+    <script src="{% static 'js4/script.js' %}"></script>
+    <script src="{% static 'js4/script2.js' %}"></script>
+    {% block javascript %} {% endblock javascript %}
 
 </body>
 

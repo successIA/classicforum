@@ -37,8 +37,7 @@ for i in range(72):
         th = Thread.objects.create(title = t, body="NA", user=usr, category=cat, created=timezone.now(), modified=timezone.now())
         co = Comment.objects.create(message=m, user=usr, thread=th, is_starting_comment=True, created=timezone.now(), modified=timezone.now())
         th.starting_comment = co
-        th.save()
-			 
+        Thread.objects.filter(pk=th.pk).update(starting_comment=co)	 
 
 th = Thread.objects.create(title="Python Discussion", body="NA", category=cat, user=usr)
 
@@ -117,8 +116,8 @@ hide thread
 class Moderation
 	moderator 
 	category
-	hide threads
-	hide comments
+	hidden threads
+	hidden comments
 	ban user who are not moderators
 
 
