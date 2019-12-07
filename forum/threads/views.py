@@ -4,7 +4,7 @@ import re
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db import connection
 
@@ -57,12 +57,19 @@ def create_thread(request, slug=None, filter_str=None, page=None):
             thread.save()
             comment = Comment.objects.create(
                 message=form.cleaned_data.get('message'),
+
+                # Django form class trims out any trailing newlines that will needed for
+                # rendering bbcode quote close tag to html blockquote. 
+                # To prevent this, we have to use message sent
+                # by the client as is.
+                # message=request.POST.get('message'),
                 thread=thread,
                 user=thread.user,
                 is_starting_comment=True
             )
             Thread.objects.filter(pk=thread.pk).update(
-                starting_comment=comment
+                starting_comment=comment,
+                final_comment_time=comment.created
             )
             return redirect(thread.get_absolute_url())
 
@@ -118,6 +125,11 @@ def update_thread(request, thread_slug, thread=None):
         if form.is_valid():
             comment = thread.starting_comment
             comment.message = form.cleaned_data.get('message')
+
+            # retreive to message to enable proper parsing by 
+            # bbcode_quote see `forum.views.thread_create`
+            # message=request.POST.get('message')
+            
             comment.save()
             thread.title = form.cleaned_data.get('title')
             thread.message = form.cleaned_data.get('message')
@@ -132,6 +144,8 @@ def update_thread(request, thread_slug, thread=None):
 @login_required
 def follow_thread(request, thread_slug):
     thread = get_object_or_404(Thread, slug=thread_slug)
-    # thread.toggle_follower(request.user)
     ThreadFollowership.objects.toggle(request.user, thread)
+    followers_count = thread.followers.count()
+    if request.is_ajax():
+        return JsonResponse({'followers_count':followers_count})
     return redirect(thread.get_absolute_url())

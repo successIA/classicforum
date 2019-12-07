@@ -205,9 +205,12 @@ def user_followers(request, username):
 
 def user_mention(request):
     username = request.GET.get('username')
-    user_queryset = User.objects.filter(username__startswith=username)
+    user_queryset = User.objects.filter(
+        username__istartswith=username
+    ).order_by('username')[:8]
     if username:
         if user_queryset.exists():
+            print(user_queryset)
             user_list = get_mentioned_users_context(user_queryset)
             return JsonResponse({'user_list':  user_list})
     return JsonResponse({'user_list': []})

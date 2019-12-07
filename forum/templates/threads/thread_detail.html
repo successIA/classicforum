@@ -47,13 +47,15 @@
                             {{ thread.views }} view{{ thread.views|pluralize }}
                         </small>
 
-                        <a href="{{ thread.get_thread_follow_url}}" class="btn btn-light text-muted btn-sm">
-                            {% if is_thread_follower %}
-                            Unfollow
-                            {% else %}
-                            Follow
-                            {% endif %}
-                            <span>
+                        <a href="{{ thread.get_thread_follow_url}}" class="btn btn-light text-muted btn-sm thread-follow-btn">
+                            <span class="toggle">
+                                {% if is_thread_follower %}
+                                Unfollow
+                                {% else %}
+                                Follow
+                                {% endif %}
+                            </span>
+                            <span class="count">
                                 {{ thread_followers_count }}
                             </span>
                         </a>
@@ -123,3 +125,7 @@
     </div>
 </main>
 {% endblock content %}
+
+{% block javascript %} 
+    <script src="{% static 'js4/thread-detail.js' %}"></script>
+{% endblock javascript %}

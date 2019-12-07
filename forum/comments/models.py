@@ -97,9 +97,11 @@ class Comment(TimeStampedModel):
         )
         user_value_list = [{'username': usr.username, 'url': usr.get_absolute_url()}
                            for usr in mentioned_user_list]
+        
         self.marked_message = get_rendered_message(
             self.message, user_value_list
         )
+        
         super(Comment, self).save(*args, **kwargs)
 
         if new_instance:

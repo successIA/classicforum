@@ -108,6 +108,10 @@ class Thread(TimeStampedModel):
     def get_thread_follow_url(self):
         return reverse('thread_follow', kwargs={'thread_slug': self.slug})
 
+    
+    def get_follow_url(self):
+        return reverse('thread_follow', kwargs={'thread_slug': self.slug})
+
 
 class ThreadFollowershipQuerySet(models.query.QuerySet):
     def get_instance_and_count(self, thread, user=None):
@@ -210,13 +214,22 @@ class ThreadFollowership(TimeStampedModel):
 
 class ThreadRevisionQuerySet(models.query.QuerySet):
     def create_from_thread(self, thread):
-        return self.create(
-            thread=thread,
-            starting_comment=thread.starting_comment,
-            title=thread.title,
-            message=thread.starting_comment.message,
-            marked_message=thread.starting_comment.marked_message
-        )
+        from forum.comments.models import CommentRevision
+        
+        # Attributes of thread.starting_comment will not be in sync with old the thread
+        # so we have to fetch it from CommentRevision. This is due to the 
+        # starting_comment getting updated before the thread.
+        comment_revision = CommentRevision.objects.filter(
+            comment=thread.starting_comment,
+        ).last()
+        if comment_revision:
+            return self.create(
+                thread=thread,
+                starting_comment=comment_revision.comment,
+                title=thread.title,
+                message=comment_revision.message,
+                marked_message=comment_revision.marked_message
+            )
 
 
 class ThreadRevision(models.Model):

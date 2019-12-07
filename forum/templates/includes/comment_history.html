@@ -11,6 +11,7 @@
             </div>
             <div class="modal-body">
                 {% if comment.is_starting_comment %}
+                <style scoped>ul { list-style-type: disc;} </style>
                 <ul class="list-group">
                     {% for rev_thread in comment.thread.revisions.all %}
                     <li class="list-group-item">
