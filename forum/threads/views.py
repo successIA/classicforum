@@ -57,12 +57,6 @@ def create_thread(request, slug=None, filter_str=None, page=None):
             thread.save()
             comment = Comment.objects.create(
                 message=form.cleaned_data.get('message'),
-
-                # Django form class trims out any trailing newlines that will needed for
-                # rendering bbcode quote close tag to html blockquote. 
-                # To prevent this, we have to use message sent
-                # by the client as is.
-                # message=request.POST.get('message'),
                 thread=thread,
                 user=thread.user,
                 is_starting_comment=True
@@ -125,11 +119,6 @@ def update_thread(request, thread_slug, thread=None):
         if form.is_valid():
             comment = thread.starting_comment
             comment.message = form.cleaned_data.get('message')
-
-            # retreive to message to enable proper parsing by 
-            # bbcode_quote see `forum.views.thread_create`
-            # message=request.POST.get('message')
-            
             comment.save()
             thread.title = form.cleaned_data.get('title')
             thread.message = form.cleaned_data.get('message')

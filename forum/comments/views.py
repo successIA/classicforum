@@ -18,17 +18,8 @@ def create_comment(request, thread_slug):
     thread = get_object_or_404(Thread, slug=thread_slug)
     form = CommentForm(extra='edit-message')
     if request.method == 'POST':
-        # print('precheck message start')
-        # print(repr(request.POST.get('message')))
-        # print('precheck message end')
-        
         form = CommentForm(request.POST, extra='edit-message')
         if form.is_valid():
-            # Any trailing newline character gets trimmed out by the CommentForm validator.
-            # This will prevent bbcode_quote from matching the last close quote tag. 
-            # We have to get the message as it was entered. markdown will
-            # eventually trim the message.
-            # form.instance.message = request.POST.get('message')
             form.instance.user = request.user
             form.instance.thread = thread
             comment = form.save()

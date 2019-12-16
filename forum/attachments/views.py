@@ -13,12 +13,12 @@ from forum.core.utils import strip_leading_slash
 @ajax_required
 def upload(request):
     if request.method == "POST":
-        print('post received')
+        # print('post received')
         data = {}
-        print('files:', request.FILES)
+        # print('files:', request.FILES)
         form = AttachmentForm(request.POST, request.FILES)
         if form.is_valid():
-            print('form is valid')
+            # print('form is valid')
             attachment = form.save(commit=False)
             md5sum = md5(attachment.image)
             attachment_list = list(Attachment.objects.filter(md5sum=md5sum))

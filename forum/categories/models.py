@@ -1,15 +1,8 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-# from django.conf import settings
-# from django.db.models.signals import pre_save
 from django.utils.text import slugify
-# from django.contrib.contenttypes.fields import GenericRelation
-
-# from django.utils.html import mark_safe
 from forum.core.models import TimeStampedModel
 
-# import random
-# import string
 
 
 class CategoryQuerySet(models.query.QuerySet):
