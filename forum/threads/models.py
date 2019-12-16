@@ -70,13 +70,12 @@ class Thread(TimeStampedModel):
                 final_comment_time=comment.created,
                 comment_count=F('comment_count') + 1
             )
-        else:
-            if self.comment_count > 0:
+        elif self.comment_count > 0:
                 self.__class__.objects.filter(pk=self.pk).update(
                     final_comment_user=comment.user,
                     final_comment_time=comment.created,
                     comment_count=F('comment_count') - 1
-                )
+            )
 
     # def toggle_follower(self, follower):
     #     if follower not in self.followers.all():

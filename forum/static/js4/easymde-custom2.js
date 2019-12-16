@@ -54,42 +54,16 @@ var BBCodeQuoteRenderer = {
     rOpenAndCloseTag: /((\[quote(?![A-Za-z\n])(?:[^\]]*?)?\])(?![\s\S]*?\[quote(?![A-Za-z\n])(?:[^\]]*?)?\][\s\S]*?\[\/quote\])([\s\S]*?)(\[\/quote\]))/g,
 
     render: function(plainText) {
-        var t0 = performance.now();
-        // console.log(plainText)
-        var openTagCount = this.getMatchCount(plainText, this.rOpenTag)
-        var openTagWithCaptureCount = this.getMatchCount(plainText, this.rOpenTagWithCapture)
-        var closeTagCount = this.getMatchCount(plainText, this.rCloseTag)
-
-        var openTagTotal = openTagCount + openTagWithCaptureCount;
-
-        var length = openTagTotal <= closeTagCount ? openTagTotal : closeTagCount;
-
-        for (var i = 0; i < length; i++) {
-            var openTagCount = this.getMatchCount(plainText, this.rOpenTag)
-            var openTagWithCaptureCount = this.getMatchCount(plainText, this.rOpenTagWithCapture)
-            var closeTagCount = this.getMatchCount(plainText, this.rCloseTag)
-            if ((openTagCount && closeTagCount) || (openTagWithCaptureCount && closeTagCount)) {
-                plainText = this.replaceMatchWithHtmlBlockquote(plainText, openTagCount, closeTagCount);
-            } else { 
-                break;
-            }            
-        }
+        plainText = this.replaceMatchWithHtmlBlockquote2(plainText);
         var strippedPlainTextWithBlockquote = this.stripOutUnwantedNewLineChars(plainText);
         console.log(strippedPlainTextWithBlockquote)
-        var t1 = performance.now();
-
-        console.log('time: ' + (t1 - t0));
         return editor.markdown(strippedPlainTextWithBlockquote);
     },
 
-    getMatchCount: function(text, regex) {
-        return (text.match(regex) || []).length;
-    },
-
-    replaceMatchWithHtmlBlockquote: function(plainText, openTagCount, closeTagCount) {
-        if(!plainText) return plainText;
-        var counter = 0;
+    replaceMatchWithHtmlBlockquote2: function(plainText) {
+        if (!plainText) return plainText;
         var self = this;
+        var counter = 0;
         var replacedText = plainText.replace(this.rOpenAndCloseTag, 
             function(match, fullCapture, openTag, text, closeTag) 
         { 
@@ -99,28 +73,28 @@ var BBCodeQuoteRenderer = {
             // Used to reset regex.exec.
             self.rOpenTagWithCapture.lastIndex = 0; 
 
-            // if (result && result.groups.username) {
             if (result && result.length) {
-                // var username = result.groups.username;
-                // var id = result.groups.id;
                 var username = result[3];
                 var id = result[7];
                 var blockquote = '<br><aside class="quote"><blockquote>'
                         + '<div class="title">' + username + ' said:</div>'
                         + text.trim()
-                        +'</blockquote></aside>';
-                return blockquote;
-            } else if (openTagCount && closeTagCount) {
-                var blockquote = '<br><aside class="quote"><blockquote>'
-                                 + text.trim() 
-                                + '</blockquote></aside>';
+                        + '</blockquote></aside>';
                 return blockquote;
             } else {
-                return openTag + text + closeTag;
+                return '<br><aside class="quote"><blockquote>'
+                            + text.trim() 
+                        + '</blockquote></aside>';
             }
         });
-        console.log('counter:' + (counter))
-        return replacedText;
+
+        console.log(counter);
+
+        if (counter > 0) {
+            return self.replaceMatchWithHtmlBlockquote2(replacedText)
+        } else {
+            return replacedText;
+        }
     },
 
     stripOutUnwantedNewLineChars: function(plainText) {    

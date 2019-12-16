@@ -27,7 +27,7 @@ class BBCodeQuoteWithMarkdownParser:
     def parse(self):
         self._gather_comment_pk_from_text(self.text)
         self.text_comment_qs = self._get_comment_queryset()
-        text = self._render_as_quotes_as_html(self.text)
+        text = self._render_quotes_as_html(self.text)
         text = self._replace_three_newlines_with_two(text)
         text = self._get_markdown_ext(text)
         return text
@@ -89,12 +89,12 @@ class BBCodeQuoteWithMarkdownParser:
                 pass        
         return f'<aside class="quote"><blockquote>{marked_text}</blockquote></aside>'
 
-    def _render_as_quotes_as_html(self, text):
+    def _render_quotes_as_html(self, text):
         replaced_text, num_of_matches = re.subn(
             self.open_and_close_tag_regex, self._replace_with_blockquote, text
         )
         if num_of_matches > 0:
-            return self._render_as_quotes_as_html(replaced_text)
+            return self._render_quotes_as_html(replaced_text)
         else:
             return replaced_text
         
