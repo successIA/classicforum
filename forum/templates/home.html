@@ -9,9 +9,7 @@
 <div class="container-fluid border-bottom">
   <div class="row align-items-center">
     {% include 'includes/thread_filter_ctrl.html' with dropdown_active_text=dropdown_active_text %}
-    <div class="ml-auto mr-4 d-none d-md-block">
-      <button href="#" class="btn btn-secondary btn-sm add-thread-btn"><i class="fas fa-pen mr-1"></i>Add new thread</button>
-    </div>
+    {% include 'includes/thread_add_partial.html' %}
   </div>
  
 </div>
