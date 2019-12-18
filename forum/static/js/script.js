@@ -40,7 +40,10 @@ $(document).ready(function() {
   var ShowPostFormScroll = {
     $commentForm: $('#comment-form'),
 
-    init: function() {
+    init: function() {      
+      // If there is no comment-form, it means that the user is a
+      // guest
+      if(!this.$commentForm[0]) return;
       this.bindAddThreadBtnClick();  
     },
 
@@ -48,7 +51,7 @@ $(document).ready(function() {
         var self = this;
         $('.add-thread-btn').on('click', function(e) {
             e.preventDefault();
-            $('.add-thread-btn-small').hide();
+            // $('.add-thread-btn-small').hide();
             self.$commentForm.show();
             $('html,body').animate(
                 { scrollTop: self.$commentForm.offset().top },
@@ -58,6 +61,40 @@ $(document).ready(function() {
     }
   }
   ShowPostFormScroll.init();
+
+  
+  var AddThreadMobileBtnToggler = {
+
+    init: function() {      
+      // If there is no comment-form, it means that the user is a
+      // guest
+      if(!$('#comment-form')[0]) return;
+      console.log($('#comment-form'));
+      // To prevent flashing button when the browser is refreshed
+      // at a point the button is meant to be invisible
+      setTimeout(this.toggleAddThreadMobileBtn, 200)
+
+      this.toggleAddThreadMobileBtn();
+      this.bindWindowScrollEvent();
+    },
+
+    bindWindowScrollEvent: function() {     
+      var self = this;
+      $(window).on('scroll', function() {
+        self.toggleAddThreadMobileBtn();
+      }) 
+    },
+
+    toggleAddThreadMobileBtn: function() {
+      var $fixedBtn = $('.add-thread-btn-small');
+      var fixedBtnBottom = $fixedBtn.offset().top + $fixedBtn.height();
+      var $textWrapper = $('#div_id_message');
+      var textWrapperBottom = $textWrapper.offset().top + $textWrapper.height();
+      fixedBtnBottom >= textWrapperBottom ? $fixedBtn.css('opacity', 0)
+                                          : $fixedBtn.css('opacity', 1); 
+    }
+  }
+  AddThreadMobileBtnToggler.init();
 
   var SideBarToggler = {
     $menuToggle: $('#menu-toggle'),
@@ -106,32 +143,4 @@ $(document).ready(function() {
   }
   SideBarToggler.init();
 
-  var AddThreadMobileBtnToggler = {
-
-    init: function() {      
-      // To prevent flashing button when the browser is refreshed
-      // at a point the button is meant to be invisible
-      setTimeout(this.toggleAddThreadMobileBtn, 200)
-
-      this.toggleAddThreadMobileBtn();
-      this.bindWindowScrollEvent();
-    },
-
-    bindWindowScrollEvent: function() {     
-      var self = this;
-      $(window).on('scroll', function() {
-        self.toggleAddThreadMobileBtn();
-      }) 
-    },
-
-    toggleAddThreadMobileBtn: function() {
-      var $fixedBtn = $('.add-thread-btn-small');
-      var fixedBtnBottom = $fixedBtn.offset().top + $fixedBtn.height();
-      var $textWrapper = $('#div_id_message');
-      var textWrapperBottom = $textWrapper.offset().top + $textWrapper.height();
-      fixedBtnBottom >= textWrapperBottom ? $fixedBtn.css('opacity', 0)
-                                          : $fixedBtn.css('opacity', 1); 
-    }
-  }
-  AddThreadMobileBtnToggler.init();
 });

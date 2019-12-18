@@ -44,20 +44,20 @@
       </div>
     </div>
 
-    <style scoped>
-      @media (max-width: 480px) {
-        .form-small {
-          margin-left: .60rem;
-          margin-right: .60rem;
-        }
-      }
-    </style>
     {% if request.user.is_authenticated %}
-      <div class="form-small row">
-        <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
-          {% include "includes/comment_form.html" with form=form form_action=form_action %}
+      <style scoped>
+        @media (max-width: 480px) {
+          .form-small {
+            margin-left: .60rem;
+            margin-right: .60rem;
+          }
+        }
+      </style>
+        <div class="form-small row">
+          <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+            {% include "includes/comment_form.html" with form=form form_action=form_action %}
+          </div>
         </div>
-      </div>
     {% endif %}
   </div>
 </main>

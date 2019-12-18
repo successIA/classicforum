@@ -1,6 +1,5 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
-from django.conf import settings
 from django.shortcuts import reverse
 
 from forum.categories.models import Category
@@ -11,7 +10,7 @@ from forum.threads.utils import (
     get_filtered_threads
 )
 from forum.core.constants import THREAD_PER_PAGE
-
+from forum.core.utils import get_post_login_redirect_url
 
 def category_detail(request, slug, filter_str=None, page=1, form=None):
     
@@ -33,7 +32,7 @@ def category_detail(request, slug, filter_str=None, page=1, form=None):
         'form': form,
         'dropdown_active_text': thread_data[0],
         'threads': thread_paginator,
-        'scroll_or_login': f'{settings.LOGIN_URL}?next={category_url}/#comment-form',
+        'scroll_or_login': get_post_login_redirect_url(category_url),
         'threads_url': "/categories/%s/%s" % (category.slug, thread_data[0]),
         'form_action': category.get_thread_form_action(thread_data[0], page),
     }

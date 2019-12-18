@@ -1,4 +1,8 @@
+// var 
+// var easyMDE = new EasyMDE({element: $('#id_message')[0]});
+
 var easyMDE = new EasyMDE({
+    element: $('#id_message')[0],
     autoDownloadFontAwesome: false,
     // uploadImage: true,
     // imageUploadEndpoint: '/upload/',

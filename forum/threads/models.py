@@ -88,7 +88,7 @@ class Thread(TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse('thread_detail', kwargs={'thread_slug': self.slug})
-    
+
     @staticmethod
     def get_precise_url(filter_str, page):
         return reverse(
