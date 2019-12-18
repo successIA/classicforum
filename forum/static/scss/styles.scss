@@ -513,8 +513,15 @@ margin-bottom: 2px;
     -2em is used to bridge the gap created by the <br> tag in
     the easymde-custom.js BBCodeRenderer object 
     */
-    margin: -2em auto 1em;
+    // margin: -2em auto 1em;
 
+  }
+  p {
+    /**
+    Used to bridge the gap created by the <br> tag in
+    the easymde-custom.js BBCodeRenderer object 
+    */
+    margin-bottom: 0;
   }
 } 
 /* END OF MESSAGE PREVIEW STYLING */

@@ -210,7 +210,6 @@ def user_mention(request):
     ).order_by('username')[:8]
     if username:
         if user_queryset.exists():
-            print(user_queryset)
             user_list = get_mentioned_users_context(user_queryset)
             return JsonResponse({'user_list':  user_list})
     return JsonResponse({'user_list': []})

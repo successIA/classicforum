@@ -155,7 +155,7 @@ class AttachmentQuerySetTest(TestCase):
         category = make_category()
         thread = make_only_thread(self.user, category)
 
-        message = '![](http://127.0.0.1:8000%s)' % attachment.image.url
+        message = f'![]({attachment.image.url})'
         comment = make_comment(self.user, thread, message=message)
         Attachment.objects.sync_with_comment(comment)
         self.assertIn(
@@ -168,7 +168,7 @@ class AttachmentQuerySetTest(TestCase):
         category = make_category()
         thread = make_only_thread(self.user, category)
 
-        message = '![](http://127.0.0.1:8000%s)' % attachment.image.url
+        message = f'![]({attachment.image.url})'
         comment = make_comment(self.user, thread, message=message)
         Attachment.objects.sync_with_comment(comment)
         self.assertIn(

@@ -32,7 +32,7 @@ def splittime(value):
     return value.split(", ")[0].replace(" ago", "") + " ago"
 
 
-@register.inclusion_tag('includes/categories_template.html')
+@register.inclusion_tag('includes/category_sidebar.html')
 def get_category_list(category=None):
     if category:
         return {

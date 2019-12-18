@@ -1,6 +1,6 @@
 import re
 
-from django.utils.html import mark_safe
+# from django.utils.html import mark_safe
 
 from markdown import markdown
 
@@ -13,7 +13,7 @@ def get_unreferenced_image_srcs_in_message(prev_message, message):
 
 def get_image_sources_from_message(message):
     img_regex = r'<img(?:.+?)src="(?P<src>.+?)"(?:.*?)>'
-    message = mark_safe(markdown(message, safe_mode='escape'))
+    message = markdown(message)
     return re.findall(img_regex, message)
 
 

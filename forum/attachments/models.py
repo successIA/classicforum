@@ -42,7 +42,6 @@ class AttachmentQuerySet(models.query.QuerySet):
         image_url_list = get_image_sources_from_message(comment.message)
 
         for url in image_url_list:
-            url = url.replace('http://127.0.0.1:8000', "")
             instance_list = None
             if url:
                 instance_list = list(self.filter(url=url))
@@ -61,8 +60,7 @@ class AttachmentQuerySet(models.query.QuerySet):
             previous_message, comment.message
         )
         for instance in comment.attachment_set.all():
-            url_with_domain = 'http://127.0.0.1:8000%s' % instance.url
-            if url_with_domain in unreferenced_image_sources:
+            if instance.url in unreferenced_image_sources:
                 instance.comments.remove(comment)
                 if not instance.is_avatar and instance.comments.count() == 0:
                     instance.is_orphaned = True

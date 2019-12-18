@@ -177,7 +177,7 @@
     z-index: 2;
   }
 </style>
-<div class="rounded-circle bg-secondary add-thread-btn add-thread-btn-small d-flex d-md-none align-items-center justify-content-center text-white">
+<div style="display: flex; opacity: 0;" class="rounded-circle bg-secondary add-thread-btn add-thread-btn-small d-md-none align-items-center justify-content-center text-white">
   <i class="fas fa-pen"></i>
 </div>
 
@@ -190,25 +190,25 @@
     <li><a href="#">Buy</a></li>
   </ul> -->
 </div> {% endcomment %}
-  {% comment %} <script src="{% static 'js4/jquery.min.js' %}"></script> {% endcomment %}
-  <script src="{% static 'js4/jquery-3.4.1.min.js' %}"></script>
-  <script src="{% static 'js4/popper.min.js' %}"></script>
-  <script src="{% static 'js4/bootstrap.min.js' %}"></script>
+  {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script> {% endcomment %}
+  <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+  <script src="{% static 'js/popper.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
       {% comment %} <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script> {% endcomment %}
 
     {% comment %} <!-- <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script> --> {% endcomment %}
-    {% comment %} <script src="{% static 'js4/bbcode_blockquote_to_html_converter.js' %}"></script>     {% endcomment %}
+    {% comment %} <script src="{% static 'js/bbcode_blockquote_to_html_converter.js' %}"></script>     {% endcomment %}
     
 
-    <script src="{% static 'js4/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
-    <script src="{% static 'js4/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
-    <script src="{% static 'js4/jquery-file-upload/jquery.fileupload.js' %}"></script>
+    <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+    <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
+    <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
 
-    <script src="{% static 'js4/easymde.min.js' %}"></script>
-    <script src="{% static 'js4/easymde-custom.js' %}"></script>
-    <script src="{% static 'js4/script.js' %}"></script>
-    <script src="{% static 'js4/script2.js' %}"></script>
+    <script src="{% static 'js/easymde.min.js' %}"></script>
+    <script src="{% static 'js/easymde-custom.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/jquery-file-upload-custom.js' %}"></script>
     {% block javascript %} {% endblock javascript %}
 
 </body>

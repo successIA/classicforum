@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div class="row mt-3">
+    <div class="row mt-3 mb-3">
       <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
         {% include "includes/pagination.html" with page_obj=threads  %}
       </div>
@@ -54,16 +54,13 @@
         }
       }
     </style>
-    <div class="form-small row">
-      <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
-        {% include "includes/comment_form.html" with form=form form_action=form_action %}
+    {% if request.user.is_authenticated %}
+      <div class="form-small row">
+        <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+          {% include "includes/comment_form.html" with form=form form_action=form_action %}
+        </div>
       </div>
-    </div>
+    {% endif %}
   </div>
 </main>
 {% endblock content %}
-
-
-{% block javascript %} 
-    <script src="{% static 'js4/thread-list.js' %}"></script>
-{% endblock javascript %}
