@@ -46,7 +46,8 @@ $(document).ready(function() {
 
     bindAddThreadBtnClick() {        
         var self = this;
-        $('.add-thread-btn').on('click', function(){
+        $('.add-thread-btn').on('click', function(e) {
+            e.preventDefault();
             $('.add-thread-btn-small').hide();
             self.$commentForm.show();
             $('html,body').animate(

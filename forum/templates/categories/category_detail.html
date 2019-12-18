@@ -21,9 +21,8 @@
             <li class="breadcrumb-item active text-muted" aria-current="page"><small
                     class="font-weight-bold">{{ threads.number }}</small></li>
         </ol> {% endcomment %}
-        <div class="ml-auto mr-4 d-none d-md-block">
-            <button href="#" class="btn btn-secondary btn-sm add-thread-btn"><i class="fas fa-pen mr-1"></i>Add new thread</button>
-        </div>
+        {% include 'includes/thread_add_partial.html' %}
+        
     </div>
 </div>
 <main>
@@ -58,11 +57,14 @@
                 }
             }
         </style>
-        <di class="form-small row">
-            <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+        
+        {% if request.user.is_authenticated %}
+            <div class="form-small row">
+                <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
                 {% include "includes/comment_form.html" with form=form form_action=form_action %}
+                </div>
             </div>
-    </div>
+        {% endif %}        
     </div>
 </main>
 {% endblock content %}

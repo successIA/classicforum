@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db import connection
+from django.conf import settings
 
 from forum.core.utils import get_paginated_queryset
 from forum.threads.models import (
@@ -35,8 +36,10 @@ def thread_list(request, filter_str=None, page=1, form=None):
         'threads:thread_create',
         kwargs={'filter_str': thread_data[0], 'page': page}
     )
+    home_url = Thread.get_precise_url(thread_data[0], page)
     context = {
         'threads': thread_paginator,
+        'scroll_or_login': f'{settings.LOGIN_URL}?next={home_url}/#comment-form',
         'threads_url': "/threads/%s" % (thread_data[0]),
         'form': ThreadForm if not form else form,
         'form_action': form_action + '#comment-form',
