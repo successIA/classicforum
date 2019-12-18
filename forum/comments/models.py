@@ -108,16 +108,12 @@ class Comment(TimeStampedModel):
         else:
             if not self.is_starting_comment:
                 self.position = self.thread.comment_count + 1
-
         self.message = bleach.clean(
             self.message, markdown_tags, markdown_attrs
         )
-
         mentioned_user_list =  self._get_mentioned_user_list()
         self.marked_message = self._get_marked_message(mentioned_user_list)
-        
         super(Comment, self).save(*args, **kwargs)
-
         if not created:
             self._perform_post_create_actions()
         self._perform_post_save_actions(mentioned_user_list)

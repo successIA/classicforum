@@ -1,73 +1,61 @@
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-var csrftoken = getCookie('csrftoken');
-
-
-var editor = new EasyMDE({
+var easyMDE = new EasyMDE({
     autoDownloadFontAwesome: false,
-    uploadImage: true,
-    imageUploadEndpoint: '/upload/',
-    imageCSRFToken: csrftoken,
+    // uploadImage: true,
+    // imageUploadEndpoint: '/upload/',
+    // imageCSRFToken: csrftoken,
     previewRender: function(plainText) {
         textWithRenderedMentions = MentionRenderer.render(plainText)
         return BBCodeQuoteRenderer.render(textWithRenderedMentions)
     },
     spellChecker:false,
-    showIcons: ["code", "upload-image"]
+    showIcons: ["code"/* , "upload-image" */]
 });
+
+var ConfirmEditor = {
+    init: function() {
+        this.bindConfirmPageEvent();
+    },
+
+    confirm: function() {
+        return 'Are you sure you want to leave?';
+    },
+
+    bindConfirmPageEvent: function() {   
+        window.onbeforeunload = function() {
+            if (easyMDE.value()) return 'Are you sure you want to leave?';
+        }
+    }
+}
+
+window.onload = ConfirmEditor.init();
 
 
 // Change image icon in the editor toolbar to upload icon 
-$('.upload-image').find('i').attr('class', 'fa fa-upload')
+// $('.upload-image').find('i').attr('class', 'fa fa-upload')
 
 
 var BBCodeQuoteRenderer = {
-    // Match [quote  only if charater A-Za-z and newline character does not follow
-    // Match as many characters except ] (closing square bracket) if present  
-    // Match ] and as many whitespace character if present and a compulsory new line character
-    // rOpenTag: /(\[quote)(?![A-Za-z\n])([^\]]*?)?(\])[\s]*?[\n]/g,
-
-    rOpenTag: /(\[quote)(?![A-Za-z\n])([^\]]*?)?(\])/g,
-
     // rOpenTagWithCapture: /\[quote(\s*)?=(\s*")?(?<username>[^\]\n]*?)(\s*,\s*)?(\w+?)?(\s*:\s*)?(?<id>\d+)?(\s*"\s*)?\][\s]*?[\n]/g,
     rOpenTagWithCapture: /\[quote(\s*)?=(\s*")?([^\]\n]*?)(\s*,\s*)?(\w+?)?(\s*:\s*)?(\d+)?(\s*"\s*)?\]/g,
     
-    // rCloseTag: /\[\/quote\][\s]*?[\n]*?/g,
-    rCloseTag: /\[\/quote\]/g,
-    
-
     // rOpenAndCloseTag: /((\[quote(?![A-Za-z\n])(?:[^\]]*?)?\][\s]*?[\n])(?![\s\S]*?\[quote(?![A-Za-z\n])(?:[^\]]*?)?\][\s]*?[\n][\s\S]*?\[\/quote\][\s]*?[\n])([\s\S]*?)(\[\/quote\][\s]*?[\n]))/g,
     rOpenAndCloseTag: /((\[quote(?![A-Za-z\n])(?:[^\]]*?)?\])(?![\s\S]*?\[quote(?![A-Za-z\n])(?:[^\]]*?)?\][\s\S]*?\[\/quote\])([\s\S]*?)(\[\/quote\]))/g,
 
     render: function(plainText) {
-        plainText = this.replaceMatchWithHtmlBlockquote2(plainText);
+        plainText = this.replaceMatchWithHtmlBlockquote(plainText);
         var strippedPlainTextWithBlockquote = this.stripOutUnwantedNewLineChars(plainText);
         console.log(strippedPlainTextWithBlockquote)
-        return editor.markdown(strippedPlainTextWithBlockquote);
+        return easyMDE.markdown(strippedPlainTextWithBlockquote);
     },
 
-    replaceMatchWithHtmlBlockquote2: function(plainText) {
+    replaceMatchWithHtmlBlockquote: function(plainText) {
         if (!plainText) return plainText;
         var self = this;
-        var counter = 0;
+        var matchFound = false;
         var replacedText = plainText.replace(this.rOpenAndCloseTag, 
             function(match, fullCapture, openTag, text, closeTag) 
         { 
-            counter++;
+            matchFound = true;
             var result = self.rOpenTagWithCapture.exec(openTag);
             
             // Used to reset regex.exec.
@@ -76,29 +64,25 @@ var BBCodeQuoteRenderer = {
             if (result && result.length) {
                 var username = result[3];
                 var id = result[7];
-                var blockquote = '<br><aside class="quote"><blockquote>'
+                var blockquote = '<span class="position-absolute">&nbsp;</span><aside class="quote mt-2 mb-2"><blockquote>'
                         + '<div class="title">' + username + ' said:</div>'
                         + text.trim()
                         + '</blockquote></aside>';
                 return blockquote;
             } else {
-                return '<br><aside class="quote"><blockquote>'
+                return '<span class="position-absolute">&nbsp;</span><aside class="quote mt-2 mb-2"><blockquote>'
                             + text.trim() 
                         + '</blockquote></aside>';
             }
         });
 
-        console.log(counter);
-
-        if (counter > 0) {
-            return self.replaceMatchWithHtmlBlockquote2(replacedText)
-        } else {
-            return replacedText;
-        }
+        console.log(matchFound);
+        if (matchFound) return self.replaceMatchWithHtmlBlockquote(replacedText)
+        return replacedText;        
     },
 
     stripOutUnwantedNewLineChars: function(plainText) {    
-        if(!plainText) return plainText
+        if (!plainText) return plainText
         var rThreeNewLineChars = /(\n){3,}/g;
         var rLeadingNewLineChars = /(\n){1,}<aside class="quote"><blockquote>/g;
         var rTrailingNewLineChars = /<\/blockquote><\/aside>(\n){1,}/g;
@@ -145,7 +129,7 @@ var MentionRenderer = {
 
     registeChangeEvent: function() {
         var self = this;
-        editor.codemirror.on('change', function(instance, changeObj) {
+        easyMDE.codemirror.on('change', function(instance, changeObj) {
             // console.log(instance)
             if (MentionRenderer.shouldFetchEnteredMentionObjList) {
                 console.log('about to call fetchEnteredMentionObjList')
@@ -164,7 +148,7 @@ var MentionRenderer = {
     },
 
     getUniqueAndNewMentionsInEditor: function () {
-        mentionList = editor.value().match(this.allMentionsRegex)
+        mentionList = easyMDE.value().match(this.allMentionsRegex)
         if (!mentionList) return [];
         // remove duplicates.
         uniqueMentionList = mentionList.filter(function(item, pos, arr) {
@@ -189,7 +173,7 @@ var MentionRenderer = {
 
     registerTextPasteEvent: function() {
         var self = this;
-        editor.codemirror.on('paste', function(instance, event) {
+        easyMDE.codemirror.on('paste', function(instance, event) {
             // We can't initiate the fetching of mentions here because editor.value() 
             // at this point will be empty. We can only set a variable that will be used
             // by the editor's codemirror onChange event which only gets called when editor.value()
@@ -200,7 +184,7 @@ var MentionRenderer = {
 
     registerAtKeyPressedEvent: function() {
         var self = this
-        editor.codemirror.on('keydown', function (instance, event) {
+        easyMDE.codemirror.on('keydown', function (instance, event) {
             var code = event.keyCode || event.which;
             if (!self.atKeyCombo && code === 16) {
                 self.atKeyCombo = code;
@@ -219,7 +203,7 @@ var MentionRenderer = {
     },
 
     addLinkToAllValidMentions: function() {
-        textWithLinkedMentons = editor.value().replace(this.allMentionsRegex, function (match){
+        textWithLinkedMentons = easyMDE.value().replace(this.allMentionsRegex, function (match){
             var profileURL = MentionObjLab.getProfileURLByUsername(match.replace('@', ''))
             if (profileURL) {
                 return '<a class="mention" href="' + profileURL +'">' + match + '</a>';
@@ -259,7 +243,7 @@ var MentionObjLab = {
     },
 
     fetchMentionObjListInEditor: function(usernameList, onSuccess) {
-        if(!usernameList.length) return;
+        if (!usernameList.length) return;
         $.ajax({
             url: "/accounts/users/mention-list/",
             data: { 'username_list': JSON.stringify(usernameList) },
@@ -296,7 +280,7 @@ var MentionObjLab = {
 var MentionDropdown = {
     pattern: /@([\w]+)$/gm,
     startWith: '',
-    codemirror: editor.codemirror,
+    codemirror: easyMDE.codemirror,
     atCharLeft: null,
     mentionList: [],
     $dropdown: $('.mention-dropdown'),
@@ -319,12 +303,12 @@ var MentionDropdown = {
             self.postionDropDown()
         });
             
-        $( window ).resize(function() {
+        $(window).resize(function() {
             self.updateDropDownParameters();
             self.postionDropDown();
         });
         
-        $( window ).scroll(function() {
+        $(window).scroll(function() {
             self.updateDropDownParameters();
             self.postionDropDown();
         });
@@ -355,7 +339,7 @@ var MentionDropdown = {
         });
     },
 
-    onEnterKeyPressed:  function() {
+    onEnterKeyPressed: function() {
         var $activeDropdownItem = $(this.activeDropdownItemSelector)
         if($activeDropdownItem) {
             var username = $activeDropdownItem.text();            
@@ -440,7 +424,7 @@ var MentionDropdown = {
     registerEditorBlurEvent: function() {
         var self = this;
         $(document).click(function(e) {
-              if(self.$dropdown.css('display') === 'block' 
+              if (self.$dropdown.css('display') === 'block' 
                 && self.$dropdown.has(e.target).length === 0) {
                 self.$dropdown.css('display', 'none');  
               }
@@ -492,7 +476,7 @@ var MentionDropdown = {
         })
     },
 
-    setDropdown: function (newMentionList) {
+    setDropdown: function(newMentionList) {
         var self = this;
         self.mentionList = newMentionList;
         self.$dropdown.html('')

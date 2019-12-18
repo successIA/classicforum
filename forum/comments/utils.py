@@ -21,52 +21,15 @@ def get_rendered_message(message, user_value_list):
     rendered_message = BBCodeQuoteWithMarkdownParser(message).parse()
     return rendered_message
 
-
-# def get_mentioned_users(message):
-#     username_set = find_mentioned_usernames(message)
-#     return User.objects.filter(username__in=username_set).all()
-
-
 def get_bbcode_message_quote(parent_comment):
-    open_quote_tag = f'[quote="{parent_comment.user.username}, comment:{parent_comment.id}"] \n'
-    close_quote_tag = '\n[/quote] \n'
+    open_quote_tag = f'[quote="{parent_comment.user.username}, comment:{parent_comment.id}"]\n'
+    close_quote_tag = '\n[/quote]\n'
     return f'{open_quote_tag}{parent_comment.message}{close_quote_tag}'
-
 
 def get_comment_reply_form(comment):
     message = get_bbcode_message_quote(comment)
     return CommentForm.get_for_reply(message, extra='edit-message')
 
-
 def find_parent_info_in_comment(message):
     text, comment_info_list = bbcode_quote(message)
     return comment_info_list
-
-
-# def add_comment_to_parents(comment_info_list, new_comment):
-#     comment_info_list = normalize_comment_info_list(comment_info_list)
-#     for comment_info in comment_info_list:
-#         username = comment_info['username'].strip()
-#         comment_id = comment_info['id'].strip()
-#         try:
-#             comment_qs = Comment.objects.filter(
-#                 pk=int(comment_id), user__username=username
-#             )
-#             if comment_qs.exists():
-#                 comment = comment_qs.first()
-#                 comment.children.add(new_comment)
-#         except:
-#             continue
-
-
-# def normalize_comment_info_list(comment_info_list):
-#     key_list = []
-#     normalized_list = []
-#     for comment_info in comment_info_list:
-#         username = comment_info['username']
-#         comment_id = comment_info['id']
-#         key = '%s%s' % (username.strip(), comment_id.strip())
-#         if key not in key_list:
-#             key_list.append(key)
-#             normalized_list.append(comment_info)
-#     return normalized_list

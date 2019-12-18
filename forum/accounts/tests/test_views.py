@@ -418,11 +418,6 @@ class UserMentionListTest(TestCase):
         self.assertEqual(response.status_code, 200)
         expected_list = [
             {
-                'username': 'drogba',
-                'profile_url': '/accounts/drogba/',
-                'avatar_url': '/static/img/avatar.svg'
-            },
-            {
                 'username': 'john',
                 'profile_url': '/accounts/john/',
                 'avatar_url': '/static/img/avatar.svg'
@@ -430,6 +425,11 @@ class UserMentionListTest(TestCase):
             {
                 'username': 'joshua',
                 'profile_url': '/accounts/joshua/',
+                'avatar_url': '/static/img/avatar.svg'
+            },
+            {
+                'username': 'drogba',
+                'profile_url': '/accounts/drogba/',
                 'avatar_url': '/static/img/avatar.svg'
             }
         ]

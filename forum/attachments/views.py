@@ -28,21 +28,21 @@ def upload(request):
                 attachment.md5sum = md5sum
                 attachment.save()
 
-            stripped_url = strip_leading_slash(attachment.image.url)
+            # stripped_url = strip_leading_slash(attachment.image.url)
+            # data = {
+            #     'data': {'filePath': stripped_url}
+            # }
+
             data = {
-                'data': {'filePath': stripped_url}
+                'is_valid': True,
+                'name': attachment.image.name,
+                'url': attachment.image.url
+            }
+        else:
+            data = {
+                'is_valid': False,
+                'message': form.errors['image'][0]
             }
 
-            # data = {
-            #     'is_valid': True,
-            #     'name': attachment.image.name,
-            #     'url': attachment.image.url
-            # }
-        else:
-            # data = {
-            #     'is_valid': False,
-            #     'message': form.errors['image'][0]
-            # }
-
-            data = {'error': 'fileTooLarge'}
+            # data = {'error': 'fileTooLarge'}
         return JsonResponse(data)
