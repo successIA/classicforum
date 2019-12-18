@@ -49,6 +49,7 @@
             </div>
         </div>
 
+        {% if request.user.is_authenticated %}
         <style scoped>
             @media (max-width: 480px) {
                 .form-small {
@@ -58,7 +59,6 @@
             }
         </style>
         
-        {% if request.user.is_authenticated %}
             <div class="form-small row">
                 <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
                 {% include "includes/comment_form.html" with form=form form_action=form_action %}

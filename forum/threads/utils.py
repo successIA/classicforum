@@ -2,7 +2,10 @@ from django.http import Http404
 
 from forum.comments.models import Comment
 from forum.core.constants import COMMENT_PER_PAGE
-from forum.core.utils import get_paginated_queryset
+from forum.core.utils import (
+    get_paginated_queryset,
+    get_post_login_redirect_url
+)
 
 
 def get_filtered_threads(request, filter_str=None, thread_qs=None):
@@ -47,9 +50,11 @@ def get_additional_thread_detail_ctx(request, thread, form_action):
             comment_paginator.number
         )
     first_page = True if comment_paginator.number == 1 else False
+    thread_url = f'{thread.get_absolute_url()}?page={comment_paginator.number}'
     ctx = {
         'category': category,
         'comments': comment_paginator,
+        'scroll_or_login': get_post_login_redirect_url(thread_url),
         'form_action': form_action,
         'first_page': first_page
     }

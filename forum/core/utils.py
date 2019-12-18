@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.utils.html import mark_safe
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.conf import settings
 
 from markdown import markdown
 
@@ -55,3 +56,6 @@ def get_paginated_queryset(queryset, PER_PAGE, page_num):
 def strip_leading_slash(text):
     leading_slash_patt = r'^/'
     return re.sub(leading_slash_patt, '', text)
+
+def get_post_login_redirect_url(url):
+    return f'{settings.LOGIN_URL}?next={url}/#comment-form'

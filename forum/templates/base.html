@@ -172,44 +172,35 @@
     width: 50px;
     height: 50px;
     position: fixed; 
-    right: 1rem;
-    bottom: 1rem;
+    right: 1.5rem;
+    bottom: 1.5rem;
     z-index: 2;
   }
 </style>
-<div style="display: flex; opacity: 0;" class="rounded-circle bg-secondary add-thread-btn add-thread-btn-small d-md-none align-items-center justify-content-center text-white">
+
+<a href="{{scroll_or_login}}" style="display: flex; text-decoration: none;" class="rounded-circle bg-secondary add-thread-btn add-thread-btn-small align-items-center justify-content-center text-white">
   <i class="fas fa-pen"></i>
-</div>
+</a>
 
 <ul class="mention-dropdown"></ul>
-{% comment %} 
-<div class="username-suggest">
- <!--  <ul>
-    <li><a href="#">Buy</a></li>
-    <li><a href="#">Buy</a></li>
-    <li><a href="#">Buy</a></li>
-  </ul> -->
-</div> {% endcomment %}
-  {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script> {% endcomment %}
-  <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
-  <script src="{% static 'js/popper.min.js' %}"></script>
-  <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
-      {% comment %} <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script> {% endcomment %}
+<script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+<script src="{% static 'js/popper.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
 
-    {% comment %} <!-- <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script> --> {% endcomment %}
-    {% comment %} <script src="{% static 'js/bbcode_blockquote_to_html_converter.js' %}"></script>     {% endcomment %}
-    
+{% if request.user.is_authenticated %}
+  <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
 
-    <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
-    <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
-    <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
+  <script src="{% static 'js/easymde.min.js' %}"></script>
+  <script src="{% static 'js/easymde-custom.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload-custom.js' %}"></script>
+{% endif %}
 
-    <script src="{% static 'js/easymde.min.js' %}"></script>
-    <script src="{% static 'js/easymde-custom.js' %}"></script>
-    <script src="{% static 'js/script.js' %}"></script>
-    <script src="{% static 'js/jquery-file-upload-custom.js' %}"></script>
-    {% block javascript %} {% endblock javascript %}
+<script src="{% static 'js/script.js' %}"></script>
+  
+{% block javascript %} {% endblock javascript %}
 
 </body>
 

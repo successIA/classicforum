@@ -24,6 +24,7 @@ from forum.comments.forms import CommentForm
 from forum.threads.forms import ThreadForm
 from forum.threads.mixins import thread_owner_required
 from forum.core.constants import THREAD_PER_PAGE
+from forum.core.utils import get_post_login_redirect_url
 
 
 def thread_list(request, filter_str=None, page=1, form=None):
@@ -39,7 +40,7 @@ def thread_list(request, filter_str=None, page=1, form=None):
     home_url = Thread.get_precise_url(thread_data[0], page)
     context = {
         'threads': thread_paginator,
-        'scroll_or_login': f'{settings.LOGIN_URL}?next={home_url}/#comment-form',
+        'scroll_or_login': get_post_login_redirect_url(home_url),
         'threads_url': "/threads/%s" % (thread_data[0]),
         'form': ThreadForm if not form else form,
         'form_action': form_action + '#comment-form',
