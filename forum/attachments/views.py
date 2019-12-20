@@ -13,7 +13,6 @@ from forum.core.utils import strip_leading_slash
 @ajax_required
 def upload(request):
     if request.method == "POST":
-        print('image:', request.FILES)
         data = {}
         form = AttachmentForm(request.POST, request.FILES)
 

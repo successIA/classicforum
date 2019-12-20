@@ -24,7 +24,7 @@ $(document).ready(function() {
         var $item = $(this);
         text = self.sidebarItems[$item.text().trim()];
         if ($item.data("target") === text) {
-          self.$navScroller.find("nav").scrollLeft($item.position().left);
+          self.$navScroller.find("nav").scrollLeft($item.position().left - $item.width());
         }
       });
     }

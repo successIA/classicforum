@@ -103,7 +103,10 @@ def empty_thread_description(filter_str):
     desc_dict = {
         'me': 'No threads yet',
         'new': 'No new threads yet',
-        'following': 'Yet to follow any thread'
+        'following': 'Yet to follow any thread',
+        'trending': 'No trending threads yet',
+        'popular': 'No popular threads yet',
+        'fresh': 'No fresh threads yet'
     }
     description = desc_dict.get(filter_str) 
     if not description:

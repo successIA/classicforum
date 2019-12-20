@@ -124,12 +124,25 @@ body {
 }
 
 .search-abs {
-  position: relative;
-  left: 1.8rem;
+  position: absolute;
+  left: .7rem;
   color: gray;
 }
 .search-pl {
   padding-left: 2.3rem;
+}
+#close-search-bar {
+  display: inline-block;
+  font-size: 1.4rem;
+  color: gray;
+  // margin-left: .3rem;
+  cursor: pointer;
+}
+.search-bar-hide{
+  display: none !important;
+}
+.search-bar-show {
+  display: block !important;
 }
 .nav-profile-img::after {
   content: none;

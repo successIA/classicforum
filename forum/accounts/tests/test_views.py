@@ -167,7 +167,7 @@ class UserProfileEditTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['userprofile'], self.user)
         self.assertEqual(
-            response.context['dropdown_active_text2'], 'profile')
+            response.context['dropdown_active_text2'], 'settings')
         self.assertIsInstance(response.context['form'], UserProfileForm)
 
     def test_large_image(self):
