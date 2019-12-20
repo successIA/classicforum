@@ -72,7 +72,9 @@
 
         <div class="d-flex justify-content-end align-items-center">
           {% if request.user.is_authenticated %}
-          <span class="d-inline-block d-md-none mr-4 text-dark"><i class="fas fa-search"></i></span>
+          <span class="d-inline-block d-md-none mr-4 text-dark">
+            <i class="fas fa-search" style="font-size: 1.1rem;"></i>
+          </span>
           {% endif %}
 
           {% if request.user.is_authenticated %}
@@ -110,14 +112,14 @@
             <a class="dropdown-toggle nav-profile-img text-dark" data-toggle="dropdown" aria-haspopup="true"
               aria-expanded="false" href="#">
               {% if request.user.avatar_url %}
-              <img src="{{ request.user.avatar_url }}" height="38" width="38" class="mr-1 mr-md-2 rounded-circle"
-                alt="..." style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+              <img src="{{ request.user.avatar_url }}" height="38" width="38" class="avatar mr-1 mr-md-2 rounded-circle"
+                alt="..." />
               {% else %}
-              <img src="{% static 'img/avatar.svg' %}" height="38" width="38" class="mr-1 mr-md-2 rounded-circle"
-                alt="..." style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+              <img src="{% static 'img/avatar.svg' %}" height="38" width="38" class="avatar mr-1 mr-md-2 rounded-circle"
+                alt="..." />
               {% endif %}
             </a>
-            <div class="dropdown-menu dropdown-menu-right w-50">
+            <div style="min-width: 12rem;" class="dropdown-menu dropdown-menu-right w-50 shadow-sm">
               <a class="dropdown-item" href="{{ user.get_absolute_url }}">My account</a>
               <a class="dropdown-item" href="{% url 'accounts:user_edit' request.user.username %}">
                 Update profile
@@ -168,7 +170,7 @@
 
 
 <style scoped>
-  .add-thread-btn-small {
+  .floating-action-btn {
     width: 50px;
     height: 50px;
     position: fixed; 
@@ -178,9 +180,11 @@
   }
 </style>
 
-<a href="{{scroll_or_login}}" style="display: flex; text-decoration: none;" class="rounded-circle bg-secondary add-thread-btn add-thread-btn-small align-items-center justify-content-center text-white">
+{% if not userprofile %}
+<a href="{{scroll_or_login}}" style="display: flex; text-decoration: none;" class="rounded-circle bg-secondary add-thread-btn floating-action-btn align-items-center justify-content-center text-white">
   <i class="fas fa-pen"></i>
 </a>
+{% endif %}
 
 <ul class="mention-dropdown"></ul>
 
@@ -188,7 +192,7 @@
 <script src="{% static 'js/popper.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
-{% if request.user.is_authenticated %}
+{% if request.user.is_authenticated and threads or thread %}
   <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
   <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
   <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>

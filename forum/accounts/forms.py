@@ -4,7 +4,9 @@ from django.contrib.auth.models import User
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordChangeForm
+from django.utils.datastructures import MultiValueDict
 
+from forum.attachments.forms import AttachmentForm
 
 User = get_user_model()
 
@@ -62,9 +64,9 @@ class UserProfileForm(forms.ModelForm):
 
     def clean_image(self):
         image = self.cleaned_data.get('image')
-        limit = 500 * 1024  # 2 MegaBytes 2048 KiloBytes 2097152 Bytes
-        if image and image.size > limit:
-            raise forms.ValidationError(
-                'File too large. Size should not exceed 500 KB.'
-            )
+        if image:
+            att_form = AttachmentForm()
+            cleaned_data = {'image': image}
+            att_form.cleaned_data = cleaned_data
+            return att_form.clean_image(size=(300, 300))
         return image

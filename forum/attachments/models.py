@@ -66,21 +66,42 @@ class AttachmentQuerySet(models.query.QuerySet):
                     instance.is_orphaned = True
                     instance.save()
 
-    def create_avatar(self, image, user):
-        if not image:
-            return
-        md5sum = md5(image)
-        queryset_list = list(self.filter(md5sum=md5sum, is_avatar=True))
-        if queryset_list:
-            queryset_list[0].users.add(user)
-            return queryset_list[0].image.url
-        else:
-            instance = self.create(
-                image=image, filename=image.name, is_avatar=True
-            )
-            instance.users.add(user)
-            return instance.image.url
+    def _update_users(self, user):
+        qs = self.filter(url=user.avatar_url, is_avatar=True)[:1]
+        instance = qs[0] if qs else None
+        if instance:
+            instance.users.remove(user)
+            if instance.users.count() == 0:
+                instance.is_orphaned = True
+                instance.save()
+                
 
+    def create_avatar(self, image, user):
+        if image:
+            print('HIIIIIIIIIIIIIIIIT')
+
+            if user.avatar_url:
+                self._update_users(user)
+            
+            md5sum = md5(image)
+            qs = self.filter(md5sum=md5sum, is_avatar=True)[:1]
+            instance = qs[0] if qs else None
+            if instance:
+                if instance.is_orphaned:
+                    instance.is_orphaned = False
+                    instance.save()
+                instance.users.add(user)
+                return instance.url
+            else:
+                instance = self.create(
+                    image=image, 
+                    filename=image.name, 
+                    is_avatar=True, 
+                    is_orphaned=False
+                )
+                instance.users.add(user)
+                return instance.url
+        return None
 
 class Attachment(models.Model):
     image = models.ImageField(

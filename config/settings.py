@@ -54,14 +54,15 @@ INSTALLED_APPS = [
     'compressor',
     'django_seed',
     'background_task',
+    'sorl.thumbnail',
 
+    # MY APPS
     'forum.categories',
     'forum.comments',
     'forum.threads',
     'forum.attachments',
     'forum.accounts',
     'forum.notifications',
-
 ]
 
 MIDDLEWARE = [
@@ -202,3 +203,6 @@ FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 INTERNAL_IPS = ['127.0.0.1']
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+MAX_IMAGE_UPLOAD_SIZE = 500 * 1024 # 500KB

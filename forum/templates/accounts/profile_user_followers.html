@@ -8,7 +8,7 @@
     <!-- Navigation Scroller Item Detail -->
     <div class="row offset-lg-1 mt-2 mb-4">
       <div class="col-12">
-        <h5 class="mb-4">Followers</h5>
+        <h5 class="mb-3">Followers</h5>
       </div>
 
       {% for person in user_followers %}
@@ -43,12 +43,16 @@
       </div>
       {% empty %}
       <div class="col-12 col-lg-8">
-        <!-- <h6 class="font-weight-light">Yet to have any follower</h6> -->
         <div class="card">
-          <div class="card-header text-center text-primary font-weight-bold bg-white">
-            No followers yet
+          <div class="text-center text-secondary mt-2">
+            <div style="font-size: 2rem"><i class="fas fa-user-friends"></i></div>
+            <div>
+                <p style="font-size: 1.3rem; margin-bottom: 0.5rem;">No followers yet</p>
+            </div>
           </div>
         </div>
+        
+        
       </div>
       {% endfor %}
     </div>

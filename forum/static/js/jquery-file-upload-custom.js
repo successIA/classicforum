@@ -15,6 +15,7 @@ $(document).ready(function () {
         bindUploadEvent: function() {
             var self = this;
             self.$realImageChooser.fileupload({
+                replaceFileInput: false,
                 dataType: 'json',
                 sequentialUploads: true,  
                 dropZone: $('#div_id_message'), 
@@ -25,13 +26,16 @@ $(document).ready(function () {
                     self.onStart(e);
                 },            
                 progressall: function (e, data) {
-                    self.onProgressall(e, data)
+                    self.onProgressall(e, data);
                 },
                 stop: function (e) {
-                    self.onStop(e)
+                    self.onStop(e);
                 },
                 done: function (e, data) { 
-                    self.onDone(e, data)
+                    self.onDone(e, data);
+                },
+                fail: function (e, data) {
+                    self.onFail(e, data);
                 }
             })
         },
@@ -49,38 +53,31 @@ $(document).ready(function () {
                 pos = easyMDE.codemirror.getCursor();
                 easyMDE.codemirror.setSelection(pos, pos);
                 easyMDE.codemirror.replaceSelection(src);
+                easyMDE.codemirror.focus();
                 $(this).next().show();
             })
         },
 
         bindRemoveBtnEvent: function() {
             $('.remove-url-btn').on('click', function() {
-                var src = $(this).attr('data-src');
-                var escapedSrc =  src.replace(/[-[\]{}()*+!<=:?.\/\\^$|#\s,]/g, '\\$&');
-                var regex = new RegExp(escapedSrc, 'g')
+                var src = $(this).attr('data-src'),
+                    escapedSrc =  src.replace(/[-[\]{}()*+!<=:?.\/\\^$|#\s,]/g, '\\$&'),
+                    regex = new RegExp(escapedSrc, 'g')
                 easyMDE.value(easyMDE.value().replace(regex, ''));
                 $(this).hide();
             })
         },
 
         onAdd: function(e, data) {
-            console.log(data);
-            var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
-            var maxImageSize = 500 * 1024 // 500KB
-            if (data.files[0] && !acceptFileTypes.test(data.files[0]['type'])) {
-                alert("File is not an image");
-            }
-            else if (data.files[0] && data.files[0]['size'] > maxImageSize) {
-                maxImageSizeHuman = maxImageSize / 1024 + " KB"
-                alert("Image cannot be greater than " + maxImageSizeHuman)
-            } else {
+            // window.validateImage can be found in js/script.js
+            if ( window.validateImage(data) ) {
                 data.submit();
             }
         },
 
         onStart: function(e) {
             var self = this;
-            self.$progressBarWrapper = $("#progress-bar-wrapper")
+            self.$progressBarWrapper = $("#progress-bar-wrapper");
             self.$progressBarWrapper.show();
             $('html,body').animate(
                 { scrollTop: self.$progressBarWrapper.offset().top },
@@ -90,10 +87,11 @@ $(document).ready(function () {
 
         onProgressall: function(e, data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);
-            var strProgress = progress + "%";
-            $('.progress-bar').css( {'width': strProgress} )
-                              .text(strProgress)
-                              .attr('aria-valuenow', String(progress))
+                strProgress = progress + "%";
+            $('.progress-bar')
+                .css( {'width': strProgress} )
+                .text(strProgress)
+                .attr('aria-valuenow', String(progress));
         },
 
         onStop: function(e) {
@@ -103,11 +101,11 @@ $(document).ready(function () {
         isImagePresent: function(url) {
             var isPresent = false;
             this.$attachmentMenu.find('img').each(function() {
-                if ($(this).attr('src') === url) {
+                if ( $(this).attr('src') === url ) {
                     isPresent = true;
                 }
             });
-            return isPresent
+            return isPresent;
         },
 
         populateAttachmentMenu: function(data) {
@@ -127,18 +125,26 @@ $(document).ready(function () {
         },
 
         onDone: function(e, data) {
+            console.log(data)
             this.$attachmentMenu = $('.attachment-menu');
             if (data.result.is_valid) {
                 if (this.isImagePresent(data.result.url)) {
+                    console.log('exists')
                     alert("Image already exists");
-                    return;
+                } else {
+                    this.populateAttachmentMenu(data);
                 }
-                this.populateAttachmentMenu(data)
             } else {
                 alert("Something went wrong");
             }   
         },
 
+        onFail: function (e, data) {
+            alert('Something went weong');
+        }
     }
     CustomFileUpload.init();
+    window.CustomFileUpload = CustomFileUpload
+        
+    // };
   });

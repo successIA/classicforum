@@ -83,7 +83,6 @@ body {
   overflow-y: auto;
   height: 100vh;
   margin-left: -15rem;
-
   transition: margin 0.25s ease-out;
 
   #close-sidebar {
@@ -297,9 +296,9 @@ body {
     color: #6c757d;
   }
 
-  .nav-link:hover {
-    color: $primary !important;
-  }
+  // .nav-link:hover {
+  //   color: $primary !important;
+  // }
 }
 
 .nav-scroller .nav {
@@ -331,18 +330,6 @@ body {
 }
 /*--- END OF PROFILE PAGE ---*/
 
-$light-blue-gray: #dae0e5;
-.profile-sidebar .bg-light-gray {
-  background-color: darken($color: #dae0e5, $amount: 5%);
-}
-.profile-sidebar .nav-link:hover {
-  background-color: $light-blue-gray;
-}
-
-.profile-sidebar .nav-link:focus,
-.nav-link:active {
-  background-color: darken($color: #dae0e5, $amount: 5%);
-}
 
 blockquote {
   font-size: 13.5px !important;
@@ -355,7 +342,7 @@ blockquote {
   padding: 10px 10px !important;
 }
 
-/*---Comment Body Markdown Styling ---*/
+/*--- COMMENT BODY MARKDOWN STYLING ---*/
 .comment-list-group {
   .list-group-item {
     blockquote {
@@ -388,7 +375,16 @@ blockquote {
     }
   }
 }
-/*--- Comment Body Markdown Styling ---*/
+/*--- END OF COMMENT BODY MARKDOWN STYLING ---*/
+
+/*--- POST CREATION FORM ---*/
+@media (max-width: 480px) {
+  .form-small {
+      margin-left: 0;
+      margin-right: 0;
+  }
+}
+/*--- END OF POST CREATION FORM ---*/
 
 
 /* USERNAME SUGGEST STYLING */
@@ -547,7 +543,6 @@ margin-bottom: 2px;
 }
 
 /* END MESSAGE THUMBNAIL STYLING */
-
 
 
 

@@ -96,7 +96,8 @@ def user_profile_edit(request, username):
 
     ctx = {
         'userprofile': request.user,
-        'dropdown_active_text2': 'profile',
+        # 'dropdown_active_text2': 'profile',
+        'dropdown_active_text2': 'settings',
         'form': form
     }
     return render(request, 'accounts/profile_edit.html', ctx)

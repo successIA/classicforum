@@ -36,17 +36,17 @@
                 {% endif %}
 
                 {% if request.user.is_authenticated %}
-                {% if request.user != userprofile %}
-                {% if request.user in userprofile.followers.all %}
-                <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-outline-primary mt-2 font-weight-bold">
-                    <i class="fas fa-check mr-1"></i>Following
-                </a>
-                {% else %}
-                <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-primary text-bold mt-2 font-weight-bold">
-                    Follow
-                </a>
-                {% endif %}
-                {% endif %}
+                    {% if request.user != userprofile %}
+                        {% if request.user in userprofile.followers.all %}
+                            <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-outline-primary mt-2 font-weight-bold">
+                                <i class="fas fa-check mr-1"></i>Following
+                            </a>
+                        {% else %}
+                            <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-primary text-bold mt-2 font-weight-bold">
+                                Follow
+                            </a>
+                        {% endif %}
+                    {% endif %}
                 {% endif %}
             </div>
         </div><!-- Profile Info -->

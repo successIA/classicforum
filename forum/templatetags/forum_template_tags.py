@@ -43,11 +43,13 @@ def get_category_list(category=None):
 
 
 @register.inclusion_tag('includes/profile_sidebar.html')
-def get_profile_sidebar_list(request, user, dropdown_active_text2=None):
+def get_profile_sidebar_list(
+    request, user, dropdown_active_text2=None, is_scroller=False):
     return {
         'request': request,
         'userprofile': user,
         'dropdown_active_text2': dropdown_active_text2,
+        'is_scroller': is_scroller
     }
 
 
@@ -82,3 +84,35 @@ def url_with_page_num(url, page_number):
     return '%s?page=%s#comment-form' % (
         url, page_number
     )
+
+
+@register.simple_tag
+def profile_threads_text(filter_str):
+    text_dict = {
+        'new': 'New Threads',
+        'following': 'Thread Following',
+        'me': 'All Threads'
+    }
+    text = text_dict.get(filter_str) 
+    if not text:
+        text = text_dict.get('me')
+    return text
+
+@register.simple_tag
+def empty_thread_description(filter_str):
+    desc_dict = {
+        'me': 'No threads yet',
+        'new': 'No new threads yet',
+        'following': 'Yet to follow any thread'
+    }
+    description = desc_dict.get(filter_str) 
+    if not description:
+        description = desc_dict.get('me')
+    return description
+
+@register.simple_tag
+def active_category_class(dropdown_active_text2, filter_str):
+    if dropdown_active_text2 == filter_str:
+        return 'category-active'
+    else:
+        return ''
