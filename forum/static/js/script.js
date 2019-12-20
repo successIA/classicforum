@@ -84,7 +84,60 @@ $(document).ready(function() {
   };
   SideBarToggler.init();
 
-  var NotificationIconBackgroudSwitcher = {
+  var SearchBarToggler = {
+    $icon: $('#search-icon'),
+    $aroundSearchBar: null,
+    $searchBar: null,
+    $searchInput: null,
+
+    init: function() {
+      this.bindOpenEvent();
+    },
+
+    hideSideSearchBar: function() {
+      this.$aroundSearchBar.removeClass('search-bar-hide')
+      if (this.$searchBar.is(':focus')) {
+        this.$searchInput.focus();
+      }
+      this.$searchBar.removeClass('search-bar-show')
+    },
+    
+    showSideSearchBar: function() {
+      this.$aroundSearchBar.addClass('search-bar-hide')
+      this.$searchBar.addClass('search-bar-show')
+      this.$searchInput.focus();
+    },
+
+    bindResizeEvent: function() {
+      var self = this;
+      $(window).resize(function() {
+        console.log('resize searchbar')
+        self.hideSideSearchBar();
+      });
+    },
+
+    bindOpenEvent: function() {
+      var self = this;
+      self.$icon.on('click', function() {
+        self.$aroundSearchBar = $('.around-search-bar');
+        self.$searchBar = $('.search-bar');
+        self.$searchInput = self.$searchBar.find('input');
+        self.showSideSearchBar();  
+        self.bindCloseEvent();
+        self.bindResizeEvent();
+      })
+    },
+
+    bindCloseEvent: function() {
+      var self = this;
+      $('#close-search-bar').on('click', function() {
+        self.hideSideSearchBar();
+      })
+    }
+  }
+  SearchBarToggler.init();
+
+  var NotificationIconBackgroundSwitcher = {
     init: function() {
       this.bindEvent();
     },
@@ -101,7 +154,7 @@ $(document).ready(function() {
       });
     }
   };
-  NotificationIconBackgroudSwitcher.init();
+  NotificationIconBackgroundSwitcher.init();
 
   var ShowPostFormScroll = {
     $commentForm: $("#comment-form"),

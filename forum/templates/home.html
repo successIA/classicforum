@@ -11,7 +11,6 @@
     {% include 'includes/thread_filter_ctrl.html' with dropdown_active_text=dropdown_active_text %}
     {% include 'includes/thread_add_partial.html' %}
   </div>
- 
 </div>
 
 <main>
@@ -29,9 +28,14 @@
                 No Available threads at this moment. Start a new thread or check back later.
             </li>
             {% else %}
-              <li class="list-group-item text-primary text-center font-weight-bold">
-                No Available threads for the current selection.
-              </li>              
+              <div class="card">
+                <div class="text-center text-secondary mt-3 mb-3">
+                    <div style="font-size: 2rem"><i class="fas fa-book"></i></div>
+                    <div>
+                        <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">{% empty_thread_description dropdown_active_text %}</p>
+                    </div>
+                </div>
+              </div>           
             {% endif %}
           {% endfor %}
         </ul>

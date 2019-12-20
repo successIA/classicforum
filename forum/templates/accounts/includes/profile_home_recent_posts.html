@@ -1,12 +1,22 @@
+<style scoped>
+    .nav-tabs .nav-link {
+        font-weight: 600;
+        color: #6c757d;
+    }
+    .nav-tabs .nav-link.active {
+        color: #212529;
+    }
+    
+</style>
 <ul class="nav nav-tabs border-bottom-0" id="myTab" role="tablist"
     style="margin-left: -0.95rem; margin-right: -0.95rem;">
     <li class="nav-item">
-        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+        <a class="font-weight-bold nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
             aria-controls="home" aria-selected="true">Comments</a>
     </li>
 
     <li class="nav-item">
-        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+        <a class="font-weight-bold nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
             aria-controls="profile" aria-selected="false">Threads</a>
     </li>
 </ul>
@@ -22,8 +32,11 @@
                 </li>
             {% empty %}
                 <div class="card">
-                    <div class="card-header text-dark text-center font-weight-bold bg-white">
-                        No comments yet
+                    <div class="text-center text-secondary mt-3 mb-3">
+                        <div style="font-size: 2rem"><i class="far fa-comments"></i></div>
+                        <div>
+                            <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No comments yet</p>
+                        </div>
                     </div>
                 </div>
             {% endfor %}                
@@ -39,8 +52,11 @@
                 </li>
             {% empty %}
                 <div class="card">
-                    <div class="card-header text-dark text-center font-weight-bold bg-white">
-                        No threads yet
+                    <div class="text-center text-secondary mt-3 mb-3">
+                        <div style="font-size: 2rem"><i class="fas fa-book"></i></div>
+                        <div>
+                            <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No threads yet</p>
+                        </div>
                     </div>
                 </div>
             {% endfor %}

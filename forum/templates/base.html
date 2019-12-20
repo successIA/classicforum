@@ -54,94 +54,101 @@
     <!-- Page Content -->
     <div id="page-content-wrapper">
       <!-- Navigation -->
-      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="menu-toggle">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="d-flex d-lg-none justify-content-start align-items-center ml-2 ml-lg-0 mr-auto">
-          <a class="navbar-brand" href="/">
-            <img src="{% static 'assets/bootstrap-solid.svg' %}" width="30" height="30" alt="" />
-            <span class="d-none d-md-inline-block">ClassicForum</span>
-          </a>
-        </div>
-        <form class="form-inline my-2 my-lg-0 justify-content-end d-none d-md-flex position-relative mr-lg-auto">
-          <i class="fas fa-search search-abs"></i>
-          <input class="form-control mr-sm-4 search-pl" type="search" placeholder="Search" aria-label="Search" />
+      <nav class="flex-nowrap navbar navbar-expand-lg navbar-light bg-light border-bottom">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="menu-toggle">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="around-search-bar d-flex d-lg-none justify-content-start align-items-center ml-2 ml-lg-0 mr-auto">
+            <a class="navbar-brand" href="/">
+              <img src="{% static 'assets/bootstrap-solid.svg' %}" width="30" height="30" alt="" />
+              <span class="d-none d-md-inline-block">ClassicForum</span>
+            </a>
+          </div>
+        {% comment %} <form class="form-inline my-2 my-lg-0 justify-content-end d-none d-md-flex mr-lg-auto"> {% endcomment %}
+        <form class="search-bar form-inline my-0 my-lg-0 justify-content-end d-none ml-3 ml-md-0 d-md-flex mr-lg-auto">
+          <div class="position-relative d-flex align-items-center">
+            <i class="fas fa-search search-abs"></i>
+            <input class="form-control mr-3 md-mr-0 search-pl" type="search" placeholder="Search" aria-label="Search" />
+            <span class="d-inline-block d-md-none"><i class="fas fa-times-circle" id="close-search-bar"></i></span>
+            
+          </div>
         </form>
 
-        <div class="d-flex justify-content-end align-items-center">
-          {% if request.user.is_authenticated %}
-          <span class="d-inline-block d-md-none mr-4 text-dark">
-            <i class="fas fa-search" style="font-size: 1.1rem;"></i>
-          </span>
-          {% endif %}
+        <div class="around-search-bar">
+          <div class="d-flex justify-content-end align-items-center">
+            {% if request.user.is_authenticated %}
+              <span class="d-inline-block d-md-none mr-4 text-dark">
+                <i class="fas fa-search" id="search-icon" style="font-size: 1.1rem;"></i>
+              </span>
+            {% endif %}
 
-          {% if request.user.is_authenticated %}
-          <span class="mr-4 position-relative d-flex justify-content-center align-items-center">
-            <a class="notif-icon text-decoration-none text-dark" href="{{ request.user.notif_url }}">
-              <i style="font-size: 1.5rem;"
-                class="notif-icon far fa-bell"></i>
-              {% if request.user.notif_count %}
-                {% comment %} <span style="font-size: 0.7rem; position: absolute; top: -.67rem; right: -.63rem; min-width: 1em; 
-                                  padding: .25em .4em; text-align: center;"
-                  class="bg-primary text-center rounded-circle text-white"> {% endcomment %}                  
-                <style scoped>
-                  .notif-badge {
-                    font-size: 0.8rem;
-                    font-weight: 600;
-                    position: absolute;
-                    bottom: 18px;
-                    left: 12px;
-                    padding: 0.5px 5px;
-                  }
-                  .notif-badge span {
-                    display: inline-block;
-                  }
-                  .notif-icon:active {
-                    background-color: blue;
-                  }
-                </style>
-                <div class="notif-badge bg-primary text-center rounded-circle text-white">
-                  <span>{{ request.user.notif_count }}</span>
-                </div>
-              {% endif %}
-            </a>
-          </span>
-          <div class="btn-group">
-            <a class="dropdown-toggle nav-profile-img text-dark" data-toggle="dropdown" aria-haspopup="true"
-              aria-expanded="false" href="#">
-              {% if request.user.avatar_url %}
-              <img src="{{ request.user.avatar_url }}" height="38" width="38" class="avatar mr-1 mr-md-2 rounded-circle"
-                alt="..." />
-              {% else %}
-              <img src="{% static 'img/avatar.svg' %}" height="38" width="38" class="avatar mr-1 mr-md-2 rounded-circle"
-                alt="..." />
-              {% endif %}
-            </a>
-            <div style="min-width: 12rem;" class="dropdown-menu dropdown-menu-right w-50 shadow-sm">
-              <a class="dropdown-item" href="{{ user.get_absolute_url }}">My account</a>
-              <a class="dropdown-item" href="{% url 'accounts:user_edit' request.user.username %}">
-                Update profile
+            {% if request.user.is_authenticated %}
+            <span class="mr-4 position-relative d-flex justify-content-center align-items-center">
+              <a class="notif-icon text-decoration-none text-dark" href="{{ request.user.notif_url }}">
+                <i style="font-size: 1.5rem;"
+                  class="notif-icon far fa-bell"></i>
+                {% if request.user.notif_count %}
+                  {% comment %} <span style="font-size: 0.7rem; position: absolute; top: -.67rem; right: -.63rem; min-width: 1em; 
+                                    padding: .25em .4em; text-align: center;"
+                    class="bg-primary text-center rounded-circle text-white"> {% endcomment %}                  
+                  <style scoped>
+                    .notif-badge {
+                      font-size: 0.8rem;
+                      font-weight: 600;
+                      position: absolute;
+                      bottom: 18px;
+                      left: 12px;
+                      padding: 0.5px 5px;
+                    }
+                    .notif-badge span {
+                      display: inline-block;
+                    }
+                    .notif-icon:active {
+                      background-color: blue;
+                    }
+                  </style>
+                  <div class="notif-badge bg-primary text-center rounded-circle text-white">
+                    <span>{{ request.user.notif_count }}</span>
+                  </div>
+                {% endif %}
               </a>
-              <a class="dropdown-item" href="{% url 'accounts:password_change' %}">Change password</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a>
+            </span>
+            <div class="btn-group">
+              <a class="dropdown-toggle nav-profile-img text-dark" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false" href="#">
+                {% if request.user.avatar_url %}
+                <img src="{{ request.user.avatar_url }}" height="38" width="38" class="avatar mr-1 mr-md-2 rounded-circle"
+                  alt="..." />
+                {% else %}
+                <img src="{% static 'img/avatar.svg' %}" height="38" width="38" class="avatar mr-1 mr-md-2 rounded-circle"
+                  alt="..." />
+                {% endif %}
+              </a>
+              <div style="min-width: 12rem;" class="dropdown-menu dropdown-menu-right w-50 shadow-sm">
+                <a class="dropdown-item" href="{{ user.get_absolute_url }}">My account</a>
+                <a class="dropdown-item" href="{% url 'accounts:user_edit' request.user.username %}">
+                  Update profile
+                </a>
+                <a class="dropdown-item" href="{% url 'accounts:password_change' %}">Change password</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a>
+              </div>
             </div>
+            {% else %}
+            <!-- Login/Register navigation for Desktop/Tablet -->
+            <div class="d-none d-md-flex justify-content-end align-items-center">
+              <span class="d-inline-block d-lg-none mr-3 text-dark"><i class="fas fa-search"></i></span>
+              <!-- Search Icon for Tablet -->
+              <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn mr-2">
+                Register
+              </a>
+              <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary">
+                Login
+              </a>
+            </div>
+            {% endif %}
           </div>
-          {% else %}
-          <!-- Login/Register navigation for Desktop/Tablet -->
-          <div class="d-none d-md-flex justify-content-end align-items-center">
-            <span class="d-inline-block d-lg-none mr-3 text-dark"><i class="fas fa-search"></i></span>
-            <!-- Search Icon for Tablet -->
-            <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn mr-2">
-              Register
-            </a>
-            <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary">
-              Login
-            </a>
-          </div>
-          {% endif %}
         </div>
       </nav>
       {% if not request.user.is_authenticated %}

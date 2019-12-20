@@ -65,8 +65,8 @@ class UserProfileForm(forms.ModelForm):
     def clean_image(self):
         image = self.cleaned_data.get('image')
         if image:
-            att_form = AttachmentForm()
+            a_f = AttachmentForm()
             cleaned_data = {'image': image}
-            att_form.cleaned_data = cleaned_data
-            return att_form.clean_image(size=(300, 300))
+            a_f.cleaned_data = cleaned_data
+            return a_f.clean_image(size=(300, 300))
         return image

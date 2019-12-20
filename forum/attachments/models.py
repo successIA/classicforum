@@ -74,12 +74,10 @@ class AttachmentQuerySet(models.query.QuerySet):
             if instance.users.count() == 0:
                 instance.is_orphaned = True
                 instance.save()
-                
+
 
     def create_avatar(self, image, user):
         if image:
-            print('HIIIIIIIIIIIIIIIIT')
-
             if user.avatar_url:
                 self._update_users(user)
             
