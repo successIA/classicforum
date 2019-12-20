@@ -1,92 +1,129 @@
-$(document).ready(function() {    
-    function scrollHorizontalNavigation() {
-        // console.log(
-        //   $(".nav-scroller")
-        //     .find("a")
-        //     .data("target")
-        // );
-        var profileSidebarActiveLinkKeys = [
-          "stats",
-          "user_notifs",
-          "profile",
-          "replies",
-          "new",
-          "following",
-          "me",
-          "user_following",
-          "user_followers"
-        ];
-    
-        $(".nav-scroller")
-          .find("a")
-          .each(function() {
-            console.log($(this).data("target"));
-          });
-        var left = $(document).outerWidth() - $(window).width();
-        $(".nav-scroller").scrollLeft(left);
-      }
-      // scrollHorizontalNavigation();
-    
-      var ProfileImageController = {
-        $realImageChooserWrapper: $('#div_id_image'),
-        $realImageChooser: $("#id_image"),
-    
-        init: function() {
-          this.$realImageChooserWrapper.css('display', 'none');
-          this.$realImageChooser.css("display", "none");
-          this.bindImageChooserClickEvent();
-          this.bindWindowResizeEvent();
-          this.bindImageChooserChangeEvent();
-        },
-        
-        getImageChooser: function() {
-          var $fakeImageChooser =
-            $("#fake-image-chooser1").css("display") === "none"
-              ? $("#fake-image-chooser2")
-              : $("#fake-image-chooser1");
-          return $fakeImageChooser;
-        },
-    
-        bindImageChooserClickEvent: function() {
-          var self = this;
-          var $fakeImageChooser = self.getImageChooser();
-          $fakeImageChooser.on("click", function() {
-            self.$realImageChooser.click();
-          });
-        },
-    
-        bindWindowResizeEvent: function() {
-          var self = this;
-          window.onresize = function(e) {
-            console.log("resize");
-            self.bindImageChooserClickEvent();
-          };
-        },
-    
-        bindImageChooserChangeEvent: function() {
-          var self = this;
-          self.$realImageChooser.change(function(e) {
-            var tagForMobile = document.getElementById(
-              "fake-image-chooser1"
-            );
-            var tagForDesktop = document.getElementById(
-              "fake-image-chooser2"
-            );
-            self.bindFileReaderEvent(e, tagForMobile, tagForDesktop)
-          });  
-        },
-    
-        bindFileReaderEvent: function(e, tag1, tag2) {     
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            tag1.src = e.target.result;
-            tag2.src = e.target.result;
-          };
-          if (e.target.files[0]) {
-            reader.readAsDataURL(e.target.files[0]);
-          }
+$(document).ready(function() {
+  var HorizontalScrollNavigation = {
+    $navScroller: $(".nav-scroller"),
+
+    sidebarItems: {
+      Information: "stats",
+      Notifications: "user_notifs",
+      Settings: "settings",
+      Replies: "replies",
+      New: "new",
+      Following: "following",
+      Threads: "me",
+      "User Following": "user_following",
+      Followers: "user_followers"
+    },
+
+    init: function() {
+      this.bindEvent();
+    },
+
+    bindEvent: function() {
+      var self = this;
+      self.$navScroller.find("a").each(function() {
+        var $item = $(this);
+        text = self.sidebarItems[$item.text().trim()];
+        if ($item.data("target") === text) {
+          self.$navScroller.find("nav").scrollLeft($item.position().left);
+        }
+      });
+    }
+  };
+  HorizontalScrollNavigation.init();
+
+  var ConfirmProfileSettings = {
+    init: function() {
+      this.bindConfirmPageEvent();
+    },
+
+    confirm: function() {
+      return "Are you sure you want to leave?";
+    },
+
+    bindConfirmPageEvent: function() {
+      window.onbeforeunload = function() {
+        var image = $("#id_image").val();
+        var gender = $("#id_gender").val();
+        var signature = $("#id_signature").val();
+        var location = $("#id_location").val();
+        var website = $("#id_website").val();
+        if (image || gender || signature || location || website) {
+          return "Are you sure you want to leave?";
+        }
+      };
+    }
+  };
+
+  window.onload = ConfirmProfileSettings.init();
+
+  var ProfileImageChooser = {
+    $realImageChooserWrapper: $("#div_id_image"),
+    $realImageChooser: $("#id_image"),
+
+    init: function() {
+      this.$realImageChooserWrapper.css("display", "none");
+      this.$realImageChooser.css("display", "none");
+      this.bindImageChooserClickEvent();
+      this.bindWindowResizeEvent();
+      this.bindImageChooserChangeEvent();
+      this.bindImageAlertError();
+    },
+
+    getImageChooser: function() {
+      var $customImageChooser =
+        $("#custom-image-chooser1").css("display") === "none"
+          ? $("#custom-image-chooser2")
+          : $("#custom-image-chooser1");
+      return $customImageChooser;
+    },
+
+    bindImageChooserClickEvent: function() {
+      var self = this,
+        $customImageChooser = self.getImageChooser();
+      $customImageChooser.on("click", function() {
+        self.$realImageChooser.click();
+      });
+    },
+
+    bindWindowResizeEvent: function() {
+      var self = this;
+      window.onresize = function(e) {
+        self.bindImageChooserClickEvent();
+      };
+    },
+
+    bindImageChooserChangeEvent: function() {
+      var self = this;
+      self.$realImageChooser.change(function(e) {
+        var tagForMobile = document.getElementById("custom-image-chooser1");
+        var tagForDesktop = document.getElementById("custom-image-chooser2");
+        self.bindFileReaderEvent(e, tagForMobile, tagForDesktop);
+      });
+    },
+
+    bindFileReaderEvent: function(e, tag1, tag2) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        tag1.src = e.target.result;
+        tag2.src = e.target.result;
+      };
+      if (e.target.files[0]) {
+        // window.validateImage can be found in js/script.js
+        if (window.validateImage(e.target)) {
+          reader.readAsDataURL(e.target.files[0]);
         }
       }
-    
-    ProfileImageController.init();
-})
+    },
+
+    bindImageAlertError: function() {
+      var $error = $("#error_1_id_image");
+      if ($error && $error.length) {
+        setTimeout(function() {
+          alert($error.text());
+          $error = null;
+        }, 100);
+      }
+    }
+  };
+  ProfileImageChooser.init();
+});

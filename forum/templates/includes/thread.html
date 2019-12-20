@@ -4,11 +4,11 @@
 
 <div class="media">
     {% if thread.user.avatar_url %}
-    <img src="{{ thread.user.avatar_url }}" height="60" width="60" class="mr-3 rounded-circle d-none d-md-block"
-        alt="..." style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+    <img src="{{ thread.user.avatar_url }}" height="60" width="60" class="avatar mr-3 rounded-circle d-none d-md-block"
+        alt="..." />
     {% else %}
-    <img src="{% static 'img/avatar.svg' %}" height="60" width="60" class="mr-3 rounded-circle d-none d-md-block"
-        alt="..." style="object-fit: cover; box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1)" />
+    <img src="{% static 'img/avatar.svg' %}" height="60" width="60" class="avatar mr-3 rounded-circle d-none d-md-block"
+        alt="..." />
     {% endif %}
     <div class="media-body">
         <h5 class="mt-0">

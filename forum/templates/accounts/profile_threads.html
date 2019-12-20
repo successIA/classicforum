@@ -10,29 +10,26 @@
 
     <div class="row offset-lg-1">
       <div class="col-12">
-        <h5 class="mb-3" style="margin-left: -.9rem;">
-          {% if dropdown_active_text2 == 'new' %}
-          New Threads
-          {% elif dropdown_active_text2 == 'following' %}
-          Thread Following
-          {% else %}
-          All Threads
-          {% endif %}
+        <h5 class="mb-3">
+          {% profile_threads_text dropdown_active_text2 %}
         </h5>
       </div>
       <div class="col-12 col-lg-8">
         <!-- Thread Section -->
-        <ul class="list-group mb-4 thread-list-group">
+        <ul class="list-group mb-4">
           {% for thread in threads %}
           <li class="list-group-item">
             {% include "includes/thread.html" with thread=thread %}
           </li>
           {% empty %}
-          <div class="card">
-            <div class="card-header text-primary text-center font-weight-bold bg-white">
-              No threads yet
+            <div class="card">
+              <div class="text-center text-secondary mt-2">
+                  <div style="font-size: 2rem"><i class="fas fa-book"></i></div>
+                  <div>
+                      <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">{% empty_thread_description dropdown_active_text2 %}</p>
+                  </div>
+              </div>
             </div>
-          </div>
           {% endfor %}
         </ul><!-- Thread Section -->
       </div>

@@ -8,8 +8,7 @@ $(document).ready(function() {
             $('.thread-follow-btn').on('click', function(e){
                 e.preventDefault();
                 $followBtn = $(this);
-                $followBtn.attr('disabled', true)
-                $followBtn.css('cursor', 'not-allowed')
+                $followBtn.attr('disabled', true).css('cursor', 'not-allowed')
                 $toggle = $followBtn.find('.toggle');
                 var switchTextTo = $toggle.text().trim() === 'Follow' ? 
                     'Unfollow' : 
@@ -23,8 +22,7 @@ $(document).ready(function() {
                     success: function(data) {
                         $toggle.text(switchTextTo)
                         $followBtn.find('.count').text(data['followers_count'])
-                        $followBtn.attr('disabled', false)
-                        $followBtn.css('cursor', 'pointer')
+                        $followBtn.attr('disabled', false).css('cursor', 'pointer')
                     }
                 });
             });  

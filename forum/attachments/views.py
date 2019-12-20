@@ -13,26 +13,21 @@ from forum.core.utils import strip_leading_slash
 @ajax_required
 def upload(request):
     if request.method == "POST":
-        # print('post received')
+        print('image:', request.FILES)
         data = {}
-        # print('files:', request.FILES)
         form = AttachmentForm(request.POST, request.FILES)
-        if form.is_valid():
-            # print('form is valid')
-            attachment = form.save(commit=False)
+
+        if form.is_valid():            
+            attachment = form.save(commit=False)            
             md5sum = md5(attachment.image)
-            attachment_list = list(Attachment.objects.filter(md5sum=md5sum))
+            attachment_list = list(
+                Attachment.objects.filter(md5sum=md5sum, is_avatar=False)
+            )
             if attachment_list:
                 attachment = attachment_list[0]
             else:
                 attachment.md5sum = md5sum
                 attachment.save()
-
-            # stripped_url = strip_leading_slash(attachment.image.url)
-            # data = {
-            #     'data': {'filePath': stripped_url}
-            # }
-
             data = {
                 'is_valid': True,
                 'name': attachment.image.name,
@@ -43,6 +38,4 @@ def upload(request):
                 'is_valid': False,
                 'message': form.errors['image'][0]
             }
-
-            # data = {'error': 'fileTooLarge'}
         return JsonResponse(data)

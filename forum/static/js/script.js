@@ -1,109 +1,48 @@
 $(document).ready(function() {
   function getCookie(name) {
     var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
+    if (document.cookie && document.cookie !== "") {
+      var cookies = document.cookie.split(";");
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].trim();
+        // Does this cookie string begin with the name we want?
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
         }
+      }
     }
     return cookieValue;
   }
 
-  csrftoken = getCookie('csrftoken');
+  csrftoken = getCookie("csrftoken");
 
-  
-  var NotificationIconBackgroudSwitcher  = {
-    init: function() {
-      this.bindEvent();
-    },
-
-    bindEvent: function() {      
-      $('.notif-icon').on('click', function(e) {
-        e.preventDefault();
-        var self = $(this);
-        window.setTimeout(function() {
-          self.css('background-color', current_bg_color);
-        }, 400)
-        var current_bg_color = $(this).css('background-color')
-        self.css('background-color', 'hsla(219, 59%, 80%, 0.78)');    
-      });   
+  function validateImage(data) {
+    var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i,
+      maxImageSize = 500 * 1024; // 500KB
+    if (data.files[0] && !acceptFileTypes.test(data.files[0]["type"])) {
+      alert("File is not an image");
+      return false;
+    } else if (data.files[0] && data.files[0]["size"] > maxImageSize) {
+      maxImageSizeHuman = maxImageSize / 1024 + " KB";
+      alert("Image cannot be greater than " + maxImageSizeHuman);
+      return false;
+    } else {
+      return true;
     }
   }
-  NotificationIconBackgroudSwitcher.init();
-
-  var ShowPostFormScroll = {
-    $commentForm: $('#comment-form'),
-
-    init: function() {      
-      // If there is no comment-form, it means that the user is a
-      // guest
-      if(!this.$commentForm[0]) return;
-      this.bindAddThreadBtnClick();  
-    },
-
-    bindAddThreadBtnClick() {        
-        var self = this;
-        $('.add-thread-btn').on('click', function(e) {
-            e.preventDefault();
-            // $('.add-thread-btn-small').hide();
-            self.$commentForm.show();
-            $('html,body').animate(
-                { scrollTop: self.$commentForm.offset().top },
-                'slow'
-            );
-        });   
-    }
-  }
-  ShowPostFormScroll.init();
-
-  
-  var AddThreadMobileBtnToggler = {
-
-    init: function() {      
-      // If there is no comment-form, it means that the user is a
-      // guest
-      if(!$('#comment-form')[0]) return;
-      console.log($('#comment-form'));
-      // To prevent flashing button when the browser is refreshed
-      // at a point the button is meant to be invisible
-      setTimeout(this.toggleAddThreadMobileBtn, 200)
-
-      this.toggleAddThreadMobileBtn();
-      this.bindWindowScrollEvent();
-    },
-
-    bindWindowScrollEvent: function() {     
-      var self = this;
-      $(window).on('scroll', function() {
-        self.toggleAddThreadMobileBtn();
-      }) 
-    },
-
-    toggleAddThreadMobileBtn: function() {
-      var $fixedBtn = $('.add-thread-btn-small');
-      var fixedBtnBottom = $fixedBtn.offset().top + $fixedBtn.height();
-      var $textWrapper = $('#div_id_message');
-      var textWrapperBottom = $textWrapper.offset().top + $textWrapper.height();
-      fixedBtnBottom >= textWrapperBottom ? $fixedBtn.css('opacity', 0)
-                                          : $fixedBtn.css('opacity', 1); 
-    }
-  }
-  AddThreadMobileBtnToggler.init();
+  window.validateImage = function(data) {
+    return validateImage(data);
+  };
 
   var SideBarToggler = {
-    $menuToggle: $('#menu-toggle'),
+    $menuToggle: $("#menu-toggle"),
     $sidebarOverlay: $(".sidebar-overlay"),
     $wrapper: $("#wrapper"),
     $closeSidebarIcon: $("#close-sidebar"),
     $sidebarWrapper: $("#sidebar-wrapper"),
 
-    init: function () {
+    init: function() {
       this.bindMenuToggleEvent();
       this.bindSidebarCloseBtnEvent();
       this.bindSidebarOverlayEvent();
@@ -125,13 +64,15 @@ $(document).ready(function() {
         self.$sidebarOverlay.toggleClass("overlay-show");
         self.$wrapper.toggleClass("toggled");
       });
-    }, 
+    },
 
     bindSidebarOverlayEvent: function() {
-      var self = this;      
+      var self = this;
       self.$sidebarOverlay.on("touchstart click", function(e) {
         var touch =
-          e.originalEvent && e.originalEvent.touches && e.originalEvent.touches[0];
+          e.originalEvent &&
+          e.originalEvent.touches &&
+          e.originalEvent.touches[0];
         var validTouch = touch || e;
         if (validTouch.clientX > self.$sidebarWrapper.width()) {
           self.$sidebarOverlay.toggleClass("overlay-show");
@@ -140,7 +81,82 @@ $(document).ready(function() {
         }
       });
     }
-  }
+  };
   SideBarToggler.init();
 
+  var NotificationIconBackgroudSwitcher = {
+    init: function() {
+      this.bindEvent();
+    },
+
+    bindEvent: function() {
+      $(".notif-icon").on("click", function(e) {
+        // e.preventDefault();
+        var self = $(this);
+        window.setTimeout(function() {
+          self.css("background-color", current_bg_color);
+        }, 200);
+        var current_bg_color = $(this).css("background-color");
+        self.css("background-color", "hsla(219, 59%, 80%, 0.78)");
+      });
+    }
+  };
+  NotificationIconBackgroudSwitcher.init();
+
+  var ShowPostFormScroll = {
+    $commentForm: $("#comment-form"),
+
+    init: function() {
+      // If there is no comment-form, it means that the user is a
+      // guest
+      if (!this.$commentForm[0]) return;
+      this.bindAddThreadBtnClick();
+    },
+
+    bindAddThreadBtnClick() {
+      var self = this;
+      $(".add-thread-btn").on("click", function(e) {
+        e.preventDefault();
+        self.$commentForm.show();
+        $("html,body").animate(
+          { scrollTop: self.$commentForm.offset().top },
+          "slow"
+        );
+      });
+    }
+  };
+  ShowPostFormScroll.init();
+
+  var FloatingActionBtnToggler = {
+    init: function() {
+      // If there is no comment-form, it means that the user is a
+      // guest
+      if (!$("#comment-form")[0]) return;
+
+      // To prevent flashing button when the browser is refreshed
+      // at a point the button is meant to be invisible
+      setTimeout(this.toggle, 200);
+
+      this.toggle();
+      this.bindWindowScrollEvent();
+    },
+
+    bindWindowScrollEvent: function() {
+      var self = this;
+      $(window).on("scroll", function() {
+        self.toggle();
+      });
+    },
+
+    toggle: function() {
+      var $actionBtn = $(".floating-action-btn");
+      var actionBtnBottom = $actionBtn.offset().top + $actionBtn.height();
+      var $textWrapper = $("#div_id_message");
+      var textWrapperBottom = $textWrapper.offset().top + $textWrapper.height();
+      actionBtnBottom >= textWrapperBottom
+        ? $actionBtn.css("opacity", 0)
+        : $actionBtn.css("opacity", 1);
+    }
+  };
+  FloatingActionBtnToggler.init();
 });
