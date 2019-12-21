@@ -10,7 +10,8 @@ from forum.core.utils import (
 
 def get_filtered_threads(request, filter_str=None, thread_qs=None):
     RECENT = 'recent'
-    auth_filter_list = ['following', 'new', 'me']
+    # auth_filter_list = ['following', 'new', 'me']
+    auth_filter_list = ['following', 'new']
     if filter_str in auth_filter_list and not request.user.is_authenticated:
         raise Http404
     threads_dict = {
@@ -55,6 +56,7 @@ def get_additional_thread_detail_ctx(request, thread, form_action):
         'category': category,
         'comments': comment_paginator,
         'scroll_or_login': get_post_login_redirect_url(thread_url),
+        'show_floating_btn': True,
         'form_action': form_action,
         'first_page': first_page
     }

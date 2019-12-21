@@ -22,22 +22,22 @@
           <h5 class="mt-2"><a class="text-dark" href="{{ person.get_absolute_url }}">{{ person.username }}</a></h5>
 
           {% if request.user.is_authenticated %}
-          {% if request.user != person %}
-          {% if request.user in person.followers %}
-          <a href="{{ person.get_user_follow_url }}" class="btn btn-outline-primary btn-sm mt-2 font-weight-bold">
-            <i class="fas fa-check mr-1"></i>Following
-          </a>
-          {% else %}
-          <a href="{{ person.get_user_follow_url }}" class="btn btn-primary btn-sm text-bold mt-2 font-weight-bold">
-            Follow
-          </a>
-          {% endif %}
-          {% else %}
-          <a href="{% url 'accounts:user_stats' request.user.username %}"
-            class="btn btn-primary btn-sm text-bold mt-2 font-weight-bold">
-            You
-          </a>
-          {% endif %}
+            {% if request.user != person %}
+              {% if request.user in person.followers %}
+                <a href="{{ person.get_user_follow_url }}" class="btn btn-outline-primary btn-sm mt-2 font-weight-bold">
+                  <i class="fas fa-check mr-1"></i>Following
+                </a>
+              {% else %}
+                <a href="{{ person.get_user_follow_url }}" class="btn btn-primary btn-sm text-bold mt-2 font-weight-bold">
+                  Follow
+                </a>
+              {% endif %}
+            {% else %}
+              <a href="{% url 'accounts:user_stats' request.user.username %}"
+                class="btn btn-primary btn-sm text-bold mt-2 font-weight-bold">
+                You
+              </a>
+            {% endif %}
           {% endif %}
         </div>
       </div>

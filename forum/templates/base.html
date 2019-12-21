@@ -66,12 +66,11 @@
             </a>
           </div>
         {% comment %} <form class="form-inline my-2 my-lg-0 justify-content-end d-none d-md-flex mr-lg-auto"> {% endcomment %}
-        <form class="search-bar form-inline my-0 my-lg-0 justify-content-end d-none ml-3 ml-md-0 d-md-flex mr-lg-auto">
+        <form action="{% url 'search:search' %}" class="search-bar form-inline my-0 my-lg-0 justify-content-end d-none ml-3 ml-md-0 d-md-flex mr-lg-auto">
           <div class="position-relative d-flex align-items-center">
             <i class="fas fa-search search-abs"></i>
-            <input class="form-control mr-3 md-mr-0 search-pl" type="search" placeholder="Search" aria-label="Search" />
+            <input class="form-control mr-3 md-mr-0 search-pl" type="search" name="q" value="{{ query }}" placeholder="Search" aria-label="Search" />
             <span class="d-inline-block d-md-none"><i class="fas fa-times-circle" id="close-search-bar"></i></span>
-            
           </div>
         </form>
 
@@ -187,7 +186,7 @@
   }
 </style>
 
-{% if not userprofile %}
+{% if show_floating_btn %}
 <a href="{{scroll_or_login}}" style="display: flex; text-decoration: none;" class="rounded-circle bg-secondary add-thread-btn floating-action-btn align-items-center justify-content-center text-white">
   <i class="fas fa-pen"></i>
 </a>

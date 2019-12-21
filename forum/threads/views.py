@@ -40,6 +40,7 @@ def thread_list(request, filter_str=None, page=1, form=None):
     home_url = Thread.get_precise_url(thread_data[0], page)
     context = {
         'threads': thread_paginator,
+        'show_floating_btn': True,
         'scroll_or_login': get_post_login_redirect_url(home_url),
         'threads_url': "/threads/%s" % (thread_data[0]),
         'form': ThreadForm if not form else form,

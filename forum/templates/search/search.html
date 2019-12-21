@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load humanize %}
+
+{% load forum_template_tags %}
+
+{% block title %}
+{{ category.title }}
+{% endblock title %}
+
+{% block content %}
+<main>
+  <div class="container mt-3 mt-lg-4">
+
+    <div class="row offset-lg-1 mr-lg-auto">
+        {% if query %}
+            {% if results %}
+                <div class="col-12">
+                    <h4 class="mb-3">
+                        Search results for <strong class="text-secondary">{{ query }}</strong>
+                    </h4>   
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <h4 class="d-none d-sm-block mb-3">
+                        No search results for <strong class="text-secondary">{{ query|truncatechars:50 }}</strong>
+                    </h4>
+                    <h4 class="d-md-none mb-3">
+                        No search results for <strong class="text-secondary">{{ query|truncatechars:25 }}</strong>
+                    </h4>
+                </div>
+            {% endif %}
+            <style scoped>
+            .thread-result-item img {
+                display: block;
+                
+            }
+            </style>
+            <div class="col-12 col-lg-8">
+                <ul class="list-group mb-4">
+                {% for thread in results %}
+                    <li class="thread-result-item list-group-item" style="max-height: 13rem; overflow: hidden;">
+                        <h5><a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a></h5>
+                        {{ thread.starting_comment.marked_message|safe }}
+                    </li>                    
+                {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <div class="col-12 col-lg-8 mt-4">
+                <div class="card">
+                    <div class="text-center text-secondary mt-2">
+                        <div style="font-size: 2rem"><i class="fas fa-info-circle"></i></div>
+                        <div>
+                            <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">Please enter a query in the search box.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}  
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+        {% include "includes/pagination.html" with page_obj=results append_query_str=True %}
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endblock content %}
