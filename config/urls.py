@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^topics/(?P<thread_slug>[\w-]+)/comments/', include('forum.comments.urls', namespace='comments')),
     url(r'^upload/', include('forum.attachments.urls', namespace='attachments')),
 
+    url(r'^search/', include('forum.search.urls', namespace='search')),
     url(r'^admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

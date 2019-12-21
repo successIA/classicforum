@@ -32,6 +32,7 @@ def category_detail(request, slug, filter_str=None, page=1, form=None):
         'form': form,
         'dropdown_active_text': thread_data[0],
         'threads': thread_paginator,
+        'show_floating_btn': True,
         'scroll_or_login': get_post_login_redirect_url(category_url),
         'threads_url': "/categories/%s/%s" % (category.slug, thread_data[0]),
         'form_action': category.get_thread_form_action(thread_data[0], page),

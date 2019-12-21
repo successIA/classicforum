@@ -2,7 +2,7 @@
 <style scoped>
 
     .sidebar-item.category-active {
-        background-color: #cbd3da;
+        {% comment %} {% if is_scroller %}background-color: #cbd3da;{% endif %} {% endcomment %}
         color: #9c27b0 !important;
         font-weight: 600;
     }

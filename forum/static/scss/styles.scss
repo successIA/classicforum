@@ -17,6 +17,7 @@ GLOBAL STYLE
 .avatar {
   object-fit: cover;
   box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.1);
+  border-radius: 50%;
 }
 
 /*-------------------------------------------
@@ -358,6 +359,7 @@ blockquote {
 /*--- COMMENT BODY MARKDOWN STYLING ---*/
 .comment-list-group {
   .list-group-item {
+    word-wrap: break-word;
     blockquote {
       font-size: 13.5px !important;
       background-color: #f8f8f8 !important;
