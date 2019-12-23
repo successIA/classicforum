@@ -35,7 +35,8 @@ class CategoryDetailView(CategoryViewTest):
         Thread.objects.all().delete()
         response = self.client.get(self.detail_url)
         self.assertEquals(response.status_code, 200)
-        no_threads_str = 'No Available threads for the current selection.'
+        # no_threads_str = 'No Available threads for the current selection.'
+        no_threads_str = 'No threads yet'
         self.assertIn(no_threads_str, response.content.decode())
         self.assertEquals(response.context['category'], self.category)
         self.assertIsInstance(response.context['form'], ThreadForm)
@@ -94,7 +95,8 @@ class CategoryDetailView(CategoryViewTest):
             )
 
     def test_auth_filter_str_for_anonymous_user(self):
-        auth_filter_str_list = ['new', 'following', 'me']
+        auth_filter_str_list = ['new', 'following']
+        # auth_filter_str_list = ['new', 'following', 'me']
         for filter_str in auth_filter_str_list:
             filter_str_url = reverse(
                 "categories:category_detail_filter",
