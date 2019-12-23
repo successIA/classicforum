@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'forum.attachments',
     'forum.accounts',
     'forum.notifications',
+    'forum.moderation',
 ]
 
 MIDDLEWARE = [
