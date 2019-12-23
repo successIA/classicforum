@@ -3,8 +3,6 @@ from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 from forum.core.models import TimeStampedModel
 
-
-
 class CategoryQuerySet(models.query.QuerySet):
     def get_by_slug(self, slug):
         return self.filter(slug=slug).first()

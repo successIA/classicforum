@@ -64,14 +64,14 @@ class UserModelTest(TestCase):
 
     def test_is_required_filter_with_owner(self):
         user = User.objects.get(username='john')
-        for filter_str in ['me', 'following', 'new']:
+        for filter_str in ['following', 'new']:
             self.assertTrue(
                 self.user.is_required_filter_owner(user, filter_str)
             )
 
     def test_is_required_filter_with_not_owner(self):
         second_user = self.make_user('second_user')
-        for filter_str in ['me', 'following', 'new']:
+        for filter_str in ['following', 'new']:
             self.assertFalse(
                 self.user.is_required_filter_owner(second_user, filter_str)
             )
