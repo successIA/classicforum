@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django_seed',
     'background_task',
     'sorl.thumbnail',
+    'django_extensions',
 
     # MY APPS
     'forum.categories',
