@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+    New Moderator
+{% endblock title %}
+
+{% block content %}
+  <main>
+    <div class="container mt-3 mt-lg-4">
+      <div class="row offset-lg-1 mr-lg-auto">
+          <div class="col-12 col-lg-9 col-xl-8">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0">{% if moderator %}Update Category{% else %}Add Moderator{% endif %}</h5>
+              </div>
+              <style scoped>
+                .invalid-feedback {
+                  display: block;
+                }
+                .table.categories-edit-table thead th {
+                  border-bottom: 0px solid #dee2e6;
+                }
+              </style>
+              <div class="card-body">
+                {% if form.non_field_errors %}
+                  {% for error in form.non_field_errors %}
+                    <p class="text-danger">{{ error }}</p>
+                  {% endfor %}
+                {% endif %}
+                <form method="post" autocomplete="off" novalidate>
+                  {% csrf_token %}
+                  {% if moderator %}
+                    {% include 'moderation/includes/user_detail.html' with moderator=moderator %}                  
+                  {% else %}
+                    {% include 'moderation/includes/user_auto_suggest.html' %}
+                  {% endif %}
+                  <div class="table-responsive">
+                    <table class="categories-edit-table table table-hover">
+                      <thead class="thead-light">
+                        <tr>
+                          <th style="padding-left: 2.3rem;">Category</th>
+                          <th>Moderators</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <div class="d-flex justify-content-between my-3 alert alert-warning" role="alert">
+                          <div class="mr-3"><i style="font-size: 2rem" class="fas fa-info-circle"></i></div>
+                          <div style="font-size: 0.85rem;">{{ form.categories.label }}</div>
+                        </div>
+                        {% for value, label, category in form.categories.field.choices %}
+                          <tr>
+                            <td>
+                              <div class="custom-control custom-checkbox">
+                                <input type="checkbox" name="categories" value={{ value }} class="custom-control-input" 
+                                  id="customCheck{{forloop.counter}}"
+                                  {% if prev_cats and category in prev_cats %}
+                                    checked="checked"
+                                  {% endif %}>
+                                <label class="custom-control-label" for="customCheck{{forloop.counter}}">{{ label }} 
+                                </label>
+                              </div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column">
+                                  {% for mod in category.get_moderators %}                              
+                                    <div class="d-flex align-items-center rounded bg-light mb-1 p-2">
+                                      <img src="{{ mod.user.get_avatar_url }}" class="avatar mr-1" width="25" height="25" />
+                                      <a class="text-dark" href="{{ mod.user.get_absolute_url }}">{{mod.user.username}}</a>
+                                    </div>
+                                  {% endfor %}
+                                </div>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                        {% if form.categories.errors %}
+                            <div class="mt-3 invalid-feedback">
+                            {% for error in form.categories.errors %}
+                                <p class="mb-1"><strong>{{ error|escape }}</strong></p>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+              </div>
+            </div>
+          </div>           
+      </div>
+    </div>
+  </main>
+{% endblock content %}
+
+
+{% block javascript %} 
+  <script src="{% static 'js/moderation.js' %}"></script>
+{% endblock javascript %}

@@ -3,7 +3,20 @@ from django.core.urlresolvers import reverse
 from django.utils.text import slugify
 from forum.core.models import TimeStampedModel
 
+
 class CategoryQuerySet(models.query.QuerySet):
+    def get_difference(self, prev_pk_set, curr_pk_set):
+        removed_qs = self.none()
+        removed_pk_set = prev_pk_set.difference(curr_pk_set)        
+        if removed_pk_set:
+        	removed_qs = self.filter(pk__in=removed_pk_set)
+        
+        fresh_qs = self.none()
+        fresh_pk_set = curr_pk_set.difference(prev_pk_set)
+        if fresh_pk_set:
+            fresh_qs = self.filter(pk__in=fresh_pk_set)
+        return removed_qs, fresh_qs
+
     def get_by_slug(self, slug):
         return self.filter(slug=slug).first()
 
@@ -21,6 +34,14 @@ class Category(TimeStampedModel):
 
     def __str__(self):
         return self.title
+
+    def get_moderators(self):
+        from forum.moderation.models import Moderator
+
+        return Moderator.objects.get_for_category(
+            self
+        ).select_related('user')
+
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)

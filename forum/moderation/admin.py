@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Moderator, ModeratorEvent
+
+
+admin.site.register(Moderator)
+admin.site.register(ModeratorEvent)
+

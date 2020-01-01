@@ -20,6 +20,22 @@ GLOBAL STYLE
   border-radius: 50%;
 }
 
+
+.bg-light-purple {
+  /*border: 0px solid rgba(41, 98, 255, 1);*/
+  color: $primary;
+  background-color: lightskyblue;
+
+  // background-color: hsla(240, 80%, 84%, 0.76);
+}
+
+#user-search-dropdown > li:hover {
+  /*border: 0px solid rgba(41, 98, 255, 1);*/
+  // color: $primary;
+  background-color: lightskyblue;
+
+  // background-color: hsla(240, 80%, 84%, 0.76);
+}
 /*-------------------------------------------
 GLOBAL STYLE
 -------------------------------------------*/

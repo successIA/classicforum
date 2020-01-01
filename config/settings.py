@@ -69,7 +69,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
 
     # THIRD PARTY MIDDLEWARE
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

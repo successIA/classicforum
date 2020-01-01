@@ -51,7 +51,10 @@ class User(AbstractUser):
         return self.is_owner(user)
 
     def get_avatar_url(self):
-        return self.avatar_url
+        url = '/static/img/avatar.svg'
+        if self.avatar_url:
+            url = self.avatar_url
+        return url
 
     def update_notification_info(self, request, url, count):
         request.user.notif_url = url
