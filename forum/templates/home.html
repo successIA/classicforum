@@ -17,16 +17,23 @@
   <div class="container">
     <div class="row mt-4">
       <div class="col-sm-12 col-md-10 offset-md-1 col-lg-9 col-xl-8 offset-lg-1">
-        <ul class="list-group mb-4 thread-list-group shadow-sm">
+        <ul class="list-group mb-4 thread-list-group">
           {% for thread in threads %}
           <li class="list-group-item">
             {% include "includes/thread.html" with thread=thread %}
           </li>
           {% empty %}
             {% if dropdown_active_text == 'recent' %}            
-            <li class="list-group-item text-primary text-center font-weight-bold">
-                No Available threads at this moment. Start a new thread or check back later.
-            </li>
+              <div class="card">
+                <div class="text-center text-secondary mt-3 mb-3">
+                    <div style="font-size: 2rem"><i class="fas fa-book"></i></div>
+                    <div>
+                        <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">
+                          No Available threads at this moment. Start a new thread or check back later.
+                        </p>
+                    </div>
+                </div>
+              </div>
             {% else %}
               <div class="card">
                 <div class="text-center text-secondary mt-3 mb-3">

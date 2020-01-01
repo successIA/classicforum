@@ -2,7 +2,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import (
+    get_object_or_404, 
+    HttpResponseRedirect,
+    redirect, 
+    render,
+)
 
 from .events import (
     create_moderator_added_event,
@@ -26,7 +31,9 @@ def create_moderator(request):
         if form.is_valid():
             user = form.cleaned_data.get("user")
             cats = form.cleaned_data.get("categories")
-            mod, created = Moderator.objects.get_or_create(user=user)
+            mod = Moderator.objects.create(user=user)
+            user.is_moderator = True
+            user.save()
             mod.categories.add(*cats)
             create_moderator_added_event(user, cats)
             messages.success(
@@ -74,6 +81,8 @@ def delete_moderator(request, username):
         # queryset must be evaluated here
         cats = list(mod.categories.all())
         mod.delete()
+        user.is_moderator = False
+        user.save()
         create_moderator_removed_event(user, cats)
         messages.success(
             request, 
@@ -98,3 +107,4 @@ def moderator_detail(request, username):
     mod = get_object_or_404(Moderator, user=user)
     context = {"user": user, "moderator": mod}
     return render(request, "moderation/moderator_detail.html", context)
+
