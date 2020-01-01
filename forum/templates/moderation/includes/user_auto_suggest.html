@@ -1,0 +1,27 @@
+<div style="display: none;" id="user-detail" class="align-items-center">
+  <a class="user-profile-link" href="#">
+    <img  width="60" height="60" class="avatar mr-2"/>
+  </a>
+  <div>
+    <h5 class="mb-0">
+      <a class="user-profile-link username-wrapper" href="#" target="_blank" rel="noopener noreferrer"
+      style="color: inherit; text-decoration: none;"></a>
+      <small style="font-size: 0.8rem;" id="change-user-detail" style="font-size: 0.87rem;"><a href="#">Change</a></small>
+    </h5>
+  </div>
+</div>
+
+<div class="position-relative mt-3 user-search-wrapper">
+  <input type="text" name="user" value="{% if moderator %}{{ moderator.user.username }}{% endif %}{{ form.user.value|default:"" }}" 
+    class="form-control" id="user-search-input" placeholder="Enter username">
+  <ul style="display: none; z-index: 10;" class="list-group position-absolute shadow-sm" id="user-search-dropdown">
+  </ul>
+  <small class="text-secondary">Enter the username of the moderator</small>
+  {% if form.user.errors %}
+    <div class="mt-0 invalid-feedback">
+    {% for error in form.user.errors %}
+        <p class="mb-1"><strong>{{ error|escape }}</strong></p>
+    {% endfor %}
+    </div>
+  {% endif %}  
+</div>

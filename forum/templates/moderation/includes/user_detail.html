@@ -1,0 +1,16 @@
+<div class="d-flex align-items-center">
+  <a href="">
+    <img src="{{ moderator.user.get_avatar_url }}" width="60" height="60" class="avatar mr-2"/>
+  </a>
+  <div>
+    <h5 class="mb-0">
+      <a href="{{ moderator.user.get_avatar_url }}" target="_blank" rel="noopener noreferrer"
+       style="color: inherit; text-decoration: none;">
+        {{ moderator.user.username }}
+      </a>
+    </h5>
+  </div>
+</div>
+
+{% comment %} <input type="hidden" name="user" value="{{ moderator.user.username }}" class="form-control"> {% endcomment %}
+
