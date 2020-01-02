@@ -76,7 +76,19 @@
         </form>
 
         <div class="around-search-bar">
+          
           <div class="d-flex justify-content-end align-items-center">
+            {% if request.user.is_authenticated and request.user.is_superuser %}
+              <div class="mr-3">
+                <a href="{% url 'moderation:moderator_list' %}">Manage moderators</a>
+              </div>
+            {% endif %}
+            {% if request.user.is_authenticated and request.user.is_moderator %}
+              <div class="mr-3">
+                <a href="{% url 'moderation:moderator_detail' request.user.username %}">Moderation Profile</a>
+              </div>
+            {% endif %}
+
             {% if request.user.is_authenticated %}
               <span class="d-inline-block d-md-none mr-4 text-dark">
                 <i class="fas fa-search" id="search-icon" style="font-size: 1.1rem;"></i>

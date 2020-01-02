@@ -5,7 +5,10 @@ from .views import (
     moderator_detail,
     update_moderator,
     delete_moderator,
-    moderator_list
+    moderator_list,
+
+    hide_thread,
+    unhide_thread,
 )
 
 urlpatterns = [
@@ -20,5 +23,9 @@ urlpatterns = [
         r'^(?P<username>[\w-]+)/delete/$', delete_moderator, name='moderator_delete'
     ),
     url(r'^list/$', moderator_list, name='moderator_list'),
+
+    url(r'^threads/(?P<slug>[\w-]+)/hide/$', hide_thread, name='thread_hide'),
+    url(r'^threads/(?P<slug>[\w-]+)/unhide/$', unhide_thread, name='thread_unhide'),
+
 ]
 

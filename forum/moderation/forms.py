@@ -53,11 +53,9 @@ class ModeratorForm(forms.Form):
         user = None
         if not self.instance:            
             if Moderator.objects.filter(user__username=username).exists():
-                raise forms.ValidationError("User is already a moderator.")
+                raise forms.ValidationError("User is already a moderator.")            
             try:
                 user = User.objects.get(username=username)
-                if user.is_superuser:
-                    raise forms.ValidationError("User is a superuser")
             except User.DoesNotExist:
                 raise forms.ValidationError("User does not exist.")
         return user

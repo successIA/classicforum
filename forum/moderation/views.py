@@ -1,9 +1,12 @@
+from django.db import transaction
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import (
     get_object_or_404, 
+    Http404,
     HttpResponseRedirect,
     redirect, 
     render,
@@ -15,7 +18,12 @@ from .events import (
     create_category_changed_event
 )
 from ..comments.models import Comment
-from .mixins import staff_member_required
+from .mixins import (
+    staff_member_required,
+    supermoderator_or_moderator_owner_required,
+    hide_thread_permission_required,
+    unhide_thread_permission_required
+)
 from .models import Moderator, ModeratorEvent
 from .forms import ModeratorForm
 
@@ -101,10 +109,50 @@ def moderator_list(request):
 
 
 @login_required
-@staff_member_required
-def moderator_detail(request, username):
-    user = get_object_or_404(User, username=username)
-    mod = get_object_or_404(Moderator, user=user)
-    context = {"user": user, "moderator": mod}
+@supermoderator_or_moderator_owner_required
+def moderator_detail(request, username, mod_profile=None):
+    mod_profile.user = mod_profile.user
+    context = {"mod_profile": mod_profile}
     return render(request, "moderation/moderator_detail.html", context)
 
+
+@login_required
+@hide_thread_permission_required
+def hide_thread(request, slug, thread=None, mod=None):
+    if request.method == "POST":
+        with transaction.atomic():
+            thread.visible = False
+            thread.save()
+            mod.hidden_threads.add(thread)
+            ModeratorEvent.objects.create(
+                event_type=ModeratorEvent.THREAD_HIDDEN,
+                user=request.user,
+                thread=thread,
+            )
+        messages.success(
+            request, f"<strong>{thread.title}</strong> has been"
+            " hidden successfully"
+        )
+        return redirect(mod)
+    raise Http404
+
+
+@login_required
+@unhide_thread_permission_required
+def unhide_thread(request, slug, thread=None, mod=None):
+    if request.method == "POST":
+        with transaction.atomic():
+            thread.visible = True
+            thread.save()
+            for mod in Moderator.objects.all():
+                mod.hidden_threads.remove(thread)
+            ModeratorEvent.objects.create(
+                event_type=ModeratorEvent.THREAD_UNHIDDEN,
+                user=request.user,
+                thread=thread,
+            )
+        messages.success(
+            request, f"<strong>{thread.title}</strong> is now visible to all users"
+        )
+        return HttpResponseRedirect(thread.get_absolute_url())
+    raise Http404

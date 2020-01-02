@@ -105,6 +105,8 @@ TEMPLATES = [
             ],
             'libraries': {
                 'forum_template_tags': 'forum.templatetags.forum_template_tags',
+                'moderation_template_tags': 'forum.templatetags.moderation_template_tags',
+
             }
         },
     },

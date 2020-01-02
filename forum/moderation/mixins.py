@@ -17,27 +17,76 @@ User = get_user_model()
 
 def staff_member_required(f):
     return _staff_member_required(f, login_url="accounts:login")
-# def comment_owner_required(function):
-#     def wrap(request, *args, **kwargs):
-#         comment = get_object_or_404(Comment, pk=kwargs.get('pk'))
-#         if comment.is_starting_comment:
-#             raise Http404
-#         if not comment.is_owner(request.user):
-#             raise PermissionDenied
-#         kwargs['comment'] = comment
-#         return function(request, *args, **kwargs)
-#     wrap.__doc__ = function.__doc__
-#     wrap.__name__ = function.__name__
-#     return wrap
 
 
-# def vote_perm_required(function):
-#     def wrap(request, *args, **kwargs):
-#         comment = get_object_or_404(Comment, pk=kwargs.get('pk'))
-#         if request.user == comment.user:
-#             raise PermissionDenied
-#         kwargs['comment'] = comment
-#         return function(request, *args, **kwargs)
-#     wrap.__doc__ = function.__doc__
-#     wrap.__name__ = function.__name__
-#     return wrap
+def moderator_required(f):
+    def wrap(request, *args, **kwargs):
+        if request.user.is_moderator:
+            return f(request, *args, **kwargs)
+        else:
+            raise PermissionDenied        
+    wrap.__doc__ = f.__doc__
+    wrap.__name__ = f.__name__
+    return wrap
+
+
+def supermoderator_or_moderator_owner_required(f):
+    @moderator_required
+    def wrap(request, *args, **kwargs):
+        mod_profile = get_object_or_404(
+            Moderator, user__username=kwargs["username"]
+        )
+        if (
+            request.user.moderator.is_supermoderator_to(mod_profile) or
+            mod_profile.is_owner(request.user.moderator)
+        ):
+            kwargs["mod_profile"] = mod_profile
+            return f(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+    wrap.__doc__ = f.__doc__
+    wrap.__name__ = f.__name__
+    return wrap
+
+
+def _set_thread_moderation_kwargs(request, kwargs):
+    kwargs["thread"] = get_object_or_404(Thread, slug=kwargs.get("slug"))
+    kwargs["mod"] = request.user.moderator
+
+def thread_moderator_required(f):
+    @moderator_required
+    def wrap(request, *args, **kwargs):
+        _set_thread_moderation_kwargs(request, kwargs)
+        if not kwargs["mod"].is_moderating_thread(kwargs["thread"]):
+            raise PermissionDenied
+        return f(request, *args, **kwargs)
+    wrap.__doc__ = f.__doc__
+    wrap.__name__ = f.__name__
+    return wrap
+
+
+def hide_thread_permission_required(f):
+    @moderator_required
+    def wrap(request, *args, **kwargs):
+        _set_thread_moderation_kwargs(request, kwargs)
+        if kwargs["mod"].can_hide_thread(kwargs["thread"]):
+            return f(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+    wrap.__doc__ = f.__doc__
+    wrap.__name__ = f.__name__
+    return wrap
+
+
+def unhide_thread_permission_required(f):
+    @moderator_required
+    def wrap(request, *args, **kwargs):
+        _set_thread_moderation_kwargs(request, kwargs)
+        if kwargs["mod"].can_unhide_thread(kwargs["thread"]):
+            return f(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+    wrap.__doc__ = f.__doc__
+    wrap.__name__ = f.__name__
+    return wrap
+

@@ -1,10 +1,14 @@
 {% load static %}
 {% load humanize %}
 {% load forum_template_tags %}
+{% load moderation_template_tags %}
 
 <!--COMMENT HISTORY MODAL -->
 {% include "includes/comment_history.html" with comment=comment %}
 <!--COMMENT HISTORY MODAL -->
+
+{% include "includes/modal.html" with comment=comment %}
+
 
 <div class="media flex-column flex-md-row" id="comment{{ comment.id }}">
     <div class="d-flex mb-2">
@@ -72,7 +76,20 @@
                     </a>
                     {% endif %}
                 {% endif %}
-
+                
+                {% if request.user.is_authenticated and request.user.is_moderator %}
+                    {% can_hide_thread comment.thread request.user as can_hide_thread %}
+                    {% if can_hide_thread %}
+                        <form method="post" action="{% url 'moderation:thread_hide' comment.thread.slug %}">
+                            {% if comment.is_starting_comment %}
+                                <a href="#" data-toggle="modal" data-target="#deleteModal_{{ comment.pk }}" class="dropdown-item py-2">
+                                    <i class="fas fa-eye-slash" style="margin-right: .7rem;"></i>Hide thread
+                                </a>
+                            {% endif %}
+                        </form>
+                    {% endif %}                    
+                {% endif %}
+                
 
                 <a class="dropdown-item py-2" href="#" data-toggle="modal"
                     data-target="#commentHistoryModal{{ comment.pk }}">

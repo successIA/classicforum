@@ -49,6 +49,10 @@ class User(AbstractUser):
         if filter_str not in owner_only:
             return True
         return self.is_owner(user)
+    
+    @property
+    def is_supermoderator(self):
+        return self.is_superuser and self.is_moderator
 
     def get_avatar_url(self):
         url = '/static/img/avatar.svg'
