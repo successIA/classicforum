@@ -29,6 +29,7 @@
     <div class="container">
         <div class="row mt-4">
             <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+                {% include "includes/messages.html" with messages=messages%}
                 <!-- Thread Heading -->
                 <div class="thread-heading">
                     <h4 class="mt-0 mb-0">
@@ -64,10 +65,10 @@
 
                 {% if comments.number == 1 %}
                 <!-- Thread Starting Comment -->
-                <ul class="list-group mb-4 comment-list-group shadow-sm">
+                <ul class="list-group mb-4 comment-list-group">
 
                     {% if starting_comment %}
-                    <li class="list-group-item" style="border: 1px solid #9b27b062;">
+                    <li class="list-group-item" {% comment %} style="border: 2px solid #9b27b062;" {% endcomment %}>
                         {% include "includes/comment.html" with comment=starting_comment %}
                     </li>
                     {% else %}

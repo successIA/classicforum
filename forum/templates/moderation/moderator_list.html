@@ -11,16 +11,7 @@
       <div class="row mt-4">
         <div class="col-sm-12 col-md-10 offset-md-1 col-lg-9 col-xl-8 offset-lg-1">
           <h4>Moderators</h4>
-          {% if messages %}
-            {% for message in messages %}
-              <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ message|safe }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-            {% endfor %}
-          {% endif %}
+          {% include "includes/messages.html" with messages=messages%}
           <div class="mb-2 d-flex flex-row-reverse">
             <a href="{% url "moderation:moderator_create" %}" class="btn btn-light btn-sm text-primary">
               <i class="fas fa-plus mr-2"></i>Add Moderator
@@ -43,7 +34,7 @@
                     {% with moderator.user.username as username %}
                       <tr>
                       <td>
-                        <a href="{% url "moderation:moderator_detail" username %}" target="_blank" rel="noopener noreferrer">
+                        <a href="{% url "moderation:moderator_detail" username %}">
                           <strong>{{ username }}</strong>
                         </a>
                       </td>
