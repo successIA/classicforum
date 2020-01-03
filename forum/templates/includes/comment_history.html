@@ -23,7 +23,7 @@
                     {% for rev_thread in comment.thread.revisions.all %}
                     <li class="list-group-item">
                         <h6 class="text-secondary">{{ rev_thread.created|date:"D, d M Y" }} @
-                            {{ rev_thread.created|date:"g:iA" }}</h6 class="text-secondary">
+                            {{ rev_thread.created|date:"g:iA" }}</h6>
                         <h3>{{ rev_thread.title }}</h3>
                         {{ rev_thread.marked_message|safe }}
                     </li>

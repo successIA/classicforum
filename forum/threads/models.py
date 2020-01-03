@@ -64,6 +64,13 @@ class Thread(TimeStampedModel):
             Notification.objects.notify_thread_followers_for_modification(self)
 
     def sync_with_comment(self, comment, is_create=True):
+        comment = None
+        comment_qs = self.comments.filter(visible=True)
+        if comment_qs:
+            comment = comment_qs.last()
+        else:
+            comment = self.starting_comment
+
         if is_create:
             self.__class__.objects.filter(pk=self.pk).update(
                 final_comment_user=comment.user,

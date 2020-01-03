@@ -37,6 +37,9 @@ from forum.threads.tasks import (
 class Comment(TimeStampedModel):
     message = models.TextField(max_length=4000)
     marked_message = models.TextField(max_length=4000, blank=True)
+    category = models.ForeignKey(
+        'categories.Category', on_delete=models.CASCADE, related_name='comments'
+    )
     thread = models.ForeignKey(
         'threads.Thread', on_delete=models.CASCADE, related_name='comments'
     )
@@ -106,6 +109,7 @@ class Comment(TimeStampedModel):
                 CommentRevision.objects.create_from_comment(prev_instance)
                 self.mentioned_users.clear()
         else:
+            self.category = self.thread.category
             if not self.is_starting_comment:
                 self.position = self.thread.comment_count + 1
         self.message = bleach.clean(
@@ -125,7 +129,25 @@ class Comment(TimeStampedModel):
         super(Comment, self).delete(*args, **kwargs)
         instance = self.thread.comments.last()
         self.thread.sync_with_comment(instance, is_create=False)
-
+    
+    def hide(self, *args, **kwargs):
+        self.thread.comments.filter(
+            is_starting_comment=False, pk__gt=self.pk
+        ).update(
+            offset=F('offset') - 1
+        )
+        self.__class__.objects.filter(pk=self.pk).update(visible=False)
+        self.thread.sync_with_comment(self, is_create=False)
+    
+    def unhide(self, *args, **kwargs):
+        self.thread.comments.filter(
+            is_starting_comment=False, pk__gt=self.pk
+        ).update(
+            offset=F('offset') + 1
+        )
+        self.__class__.objects.filter(pk=self.pk).update(visible=True)
+        self.thread.sync_with_comment(self)
+    
     def downvote(self, user):
         if user in self.downvoters.all():
             self.downvoters.remove(user)
@@ -153,9 +175,17 @@ class Comment(TimeStampedModel):
     def is_owner(self, user):
         return self.user == user
 
+    @property
+    def index(self):
+        return self.position + self.offset
+
     def get_precise_url(self, page_num=None):
         if not page_num:
-            count = self.position - self.offset
+            count = self.position + self.offset
+            # count = self.position - self.offset
+            print("POSITION:", self.position)
+            print("OFFSET:", self.offset)
+            print("COUNT:", count)
             page_num = ceil(count / COMMENT_PER_PAGE)
         return '%s?page=%s&read=True#comment%s' % (
             self.thread.get_absolute_url(), page_num, self.pk
@@ -204,6 +234,21 @@ class Comment(TimeStampedModel):
             ),
             page_num
         )
+
+    def get_url_for_next_or_prev(self):
+        if self.position > 1:
+            next_obj_qs = self.__class__.objects.active().filter(
+                pk__gt=self.pk
+            ).order_by('pk')
+            if next_obj_qs:
+                return next_obj_qs.first().get_precise_url()
+            else:
+                prev_obj_qs = self.__class__.objects.active().filter(
+                    pk__lt=self.pk
+                ).order_by('pk')
+                if prev_obj_qs:
+                    return prev_obj_qs.last().get_precise_url()    
+        return self.thread.get_absolute_url()
 
 
 class CommentRevisionQuerySet(models.query.QuerySet):
