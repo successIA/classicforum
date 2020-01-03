@@ -49,15 +49,31 @@ def supermoderator_or_moderator_owner_required(f):
     return wrap
 
 
+def _set_post_moderation_kwargs(request, kwargs):
+    post_key = None
+    if kwargs.get("slug"):
+        _set_thread_moderation_kwargs(request, kwargs)
+        post_key = "thread"
+    elif kwargs.get("comment_pk"):
+        _set_comment_moderation_kwargs(request, kwargs)
+        post_key = "comment"
+    kwargs["mod"] = request.user.moderator
+    return post_key
+
+
 def _set_thread_moderation_kwargs(request, kwargs):
     kwargs["thread"] = get_object_or_404(Thread, slug=kwargs.get("slug"))
-    kwargs["mod"] = request.user.moderator
 
-def thread_moderator_required(f):
+
+def _set_comment_moderation_kwargs(request, kwargs):
+    kwargs["comment"] = get_object_or_404(Comment, pk=kwargs.get("comment_pk"))
+
+
+def post_moderator_required(f):
     @moderator_required
     def wrap(request, *args, **kwargs):
-        _set_thread_moderation_kwargs(request, kwargs)
-        if not kwargs["mod"].is_moderating_thread(kwargs["thread"]):
+        post_key = _set_post_moderation_kwargs(request, kwargs)
+        if not kwargs["mod"].is_moderating_post(kwargs[post_key]):
             raise PermissionDenied
         return f(request, *args, **kwargs)
     wrap.__doc__ = f.__doc__
@@ -65,11 +81,11 @@ def thread_moderator_required(f):
     return wrap
 
 
-def hide_thread_permission_required(f):
+def hide_post_permission_required(f):
     @moderator_required
     def wrap(request, *args, **kwargs):
-        _set_thread_moderation_kwargs(request, kwargs)
-        if kwargs["mod"].can_hide_thread(kwargs["thread"]):
+        post_key = _set_post_moderation_kwargs(request, kwargs)
+        if kwargs["mod"].can_hide_post(kwargs[post_key]):
             return f(request, *args, **kwargs)
         else:
             raise PermissionDenied
@@ -78,11 +94,11 @@ def hide_thread_permission_required(f):
     return wrap
 
 
-def unhide_thread_permission_required(f):
+def unhide_post_permission_required(f):
     @moderator_required
     def wrap(request, *args, **kwargs):
-        _set_thread_moderation_kwargs(request, kwargs)
-        if kwargs["mod"].can_unhide_thread(kwargs["thread"]):
+        post_key = _set_post_moderation_kwargs(request, kwargs)
+        if kwargs["mod"].can_unhide_post(kwargs[post_key]):
             return f(request, *args, **kwargs)
         else:
             raise PermissionDenied

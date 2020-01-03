@@ -21,8 +21,8 @@ from ..comments.models import Comment
 from .mixins import (
     staff_member_required,
     supermoderator_or_moderator_owner_required,
-    hide_thread_permission_required,
-    unhide_thread_permission_required
+    hide_post_permission_required,
+    unhide_post_permission_required
 )
 from .models import Moderator, ModeratorEvent
 from .forms import ModeratorForm
@@ -117,7 +117,7 @@ def moderator_detail(request, username, mod_profile=None):
 
 
 @login_required
-@hide_thread_permission_required
+@hide_post_permission_required
 def hide_thread(request, slug, thread=None, mod=None):
     if request.method == "POST":
         with transaction.atomic():
@@ -138,7 +138,7 @@ def hide_thread(request, slug, thread=None, mod=None):
 
 
 @login_required
-@unhide_thread_permission_required
+@unhide_post_permission_required
 def unhide_thread(request, slug, thread=None, mod=None):
     if request.method == "POST":
         with transaction.atomic():
@@ -155,4 +155,47 @@ def unhide_thread(request, slug, thread=None, mod=None):
             request, f"<strong>{thread.title}</strong> is now visible to all users"
         )
         return HttpResponseRedirect(thread.get_absolute_url())
+    raise Http404
+
+
+@login_required
+@hide_post_permission_required
+def hide_comment(request, thread_slug, comment_pk, comment=None, mod=None):
+    if request.method == "POST":
+        redirect_to = comment.get_url_for_next_or_prev()
+        with transaction.atomic():
+            comment.hide()
+            mod.hidden_comments.add(comment)
+            ModeratorEvent.objects.create(
+                event_type=ModeratorEvent.COMMENT_HIDDEN,
+                user=request.user,
+                comment=comment,
+            )
+        messages.success(
+            request, f"<strong>{comment.user.username}</strong>'s comment hidden"
+                      " successfully!"
+        )
+        return redirect(redirect_to)
+    raise Http404
+
+
+
+@login_required
+@unhide_post_permission_required
+def unhide_comment(request, thread_slug, comment_pk, comment=None, mod=None):
+    if request.method == "POST":
+        with transaction.atomic():
+            comment.unhide()
+            for mod in Moderator.objects.all():
+                mod.hidden_comments.remove(comment)
+            ModeratorEvent.objects.create(
+                event_type=ModeratorEvent.COMMENT_UNHIDDEN,
+                user=request.user,
+                comment=comment,
+            )
+        messages.success(
+            request, f"<strong>{comment.user.username}</strong>'s comment"
+                     " is now visible to all users"
+        )
+        return redirect(comment.get_precise_url())
     raise Http404

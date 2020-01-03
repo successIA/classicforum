@@ -2,6 +2,12 @@
 
 {% load static %}
 
+{% load humanize %}
+
+{% load forum_template_tags %}
+{% load moderation_template_tags %}
+
+
 {% load crispy_forms_tags %}
 
 {% load moderation_template_tags %}
@@ -15,7 +21,7 @@
     <div class="container mt-3 mt-lg-4">
       <div class="row offset-lg-1 mr-lg-auto">
         <div class="col-12 col-lg-9 col-xl-8">
-          <div class="card">
+          <div class="card mb-5">
             <div class="card-header">
               <h5 class="mb-0">Moderator Details</h5>
             </div>
@@ -34,24 +40,52 @@
               {% common_categories mod_profile request.user as visible_categories %}
               {% for category in visible_categories %}
                 <h5 class="mb-0"><a href="{{ category.get_absolute_url }}" class="text-dark">{{ category.title }}</a></h5>
-                {% with hidden_threads=mod_profile.hidden_threads.all %}
-                  {% if hidden_threads %}
-                    <ul class="list-group mt-3 mb-2">
+                {% with hidden_threads=mod_profile.hidden_threads.all hidden_comments=mod_profile.hidden_comments.all %}
+                  {% if hidden_threads %}      
+                    <ul class="list-group my-2">
                       {% for thread in hidden_threads %}
                         {% if thread.category == category %}
+                          <form method="post" action="{% url 'moderation:thread_unhide' thread.slug %}">
+                            {% csrf_token %}
+                            <li class="list-group-item">
+                              {% include "includes/thread.html" with thread=thread %}
+                              <button type="submit" class="btn btn-primary btn-sm mt-3"><i class="fas fa-eye mr-1"></i>Make visible</button>
+                            </li>
+                          </form>
+                        {% endif %}
+                      {% endfor %} 
+                    </ul>
+                  {% endif %}
+
+                  {% if hidden_comments %}
+                    <ul class="list-group mt-3 my-1">
+                      {% for comment in hidden_comments %}
+                        {% if comment.category == category %}
                           <li class="list-group-item">
-                              <form method="post" action="{% url 'moderation:thread_unhide' thread.slug %}">
-                                {% csrf_token %}
-                                <div class="d-flex justify-content-between align-items-center">
-                                  <span><a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a></span>
-                                  <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-eye mr-1"></i>Make visible</button>
+                            <form method="post" action="{% url 'moderation:comment_unhide' comment.thread.slug comment.pk %}">
+                              {% csrf_token %}
+                              <div>
+                                <div class="d-flex align-items-center mb-2">
+                                  <img src="{{ comment.user.get_avatar_url }}" width="60" height="60" class="avatar mr-3" />
+                                  <div class="d-flex">
+                                    <a href="{{ comment.user.get_absolute_url }}" style="color: inherit; text-decoration: none;">
+                                      {{ comment.user.username }}
+                                    </a>
+                                    <span class="comment-time text-muted ml-2"><span class="time-dot"></span>
+                                      <small class="d-inline-block font-weight-bold">{{ comment.created|naturaltime|splittime }}</small>
+                                    </span>
+                                  </div>
                                 </div>
-                              </form>
+                                {{ comment.marked_message|safe|truncatechars_html:"300" }}                
+                              </div>
+                              <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-eye mr-1"></i>Make visible</button>
+                            </form>
                           </li>
                         {% endif %}                          
                       {% endfor %}
                     </ul>
-                  {% endif %}                
+                  {% endif %}            
+
                 {% endwith %}
               {% endfor %}
             </div>

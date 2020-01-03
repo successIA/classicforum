@@ -4,7 +4,9 @@ from django.shortcuts import reverse
 from django.utils import timezone
 
 from forum.categories.models import Category
+from forum.comments.models import Comment
 from forum.core.models import TimeStampedModel
+from forum.threads.models import Thread
 
 
 class ModeratorQuerySet(models.query.QuerySet):	
@@ -24,6 +26,13 @@ class Moderator(TimeStampedModel):
 	def __str__(self):
 		return self.user.username
 	
+	def _get_hidden_posts(self, post):
+		if isinstance(post, Thread):
+			return self.hidden_threads.all()
+		if isinstance(post, Comment):
+			return self.hidden_comments.all()
+		raise TypeError("post has to be an instance either Thread or Comment")
+
 	def is_owner(self, request_mod):
 		return self == request_mod
 	
@@ -34,28 +43,34 @@ class Moderator(TimeStampedModel):
 			self.categories.filter(pk__in=obj_pk_list).exists()
 		)
 
-	def is_moderating_thread(self, thread):
-		return thread.category in self.categories.all()
+	def is_moderating_post(self, post):
+		return post.category in self.categories.all()
 
-	def is_supermoderator_and_moderating_thread(self, thread):
-		return self.user.is_supermoderator and self.is_moderating_thread(thread)
+	def is_supermoderator_and_moderating_post(self, post):
+		return self.user.is_supermoderator and self.is_moderating_post(post)
 
-	def can_hide_thread(self, thread):
-		if thread.visible and self.is_moderating_thread(thread):
-			if not thread.user.is_moderator:
+	def can_hide_post(self, post):
+		is_starting_comment = (
+			isinstance(post, Comment) and post.is_starting_comment
+		)
+		if (
+			post.visible and self.is_moderating_post(post) 
+			and not is_starting_comment
+		):
+			if not post.user.is_moderator:
 				return True
-			if thread.user.moderator.is_owner(self):
+			if post.user.moderator.is_owner(self):
 				return True
-			if not thread.user.moderator.is_moderating_thread(thread):
+			if not post.user.moderator.is_moderating_post(post):
 				return True
-			if self.is_supermoderator_and_moderating_thread(thread):
+			if self.is_supermoderator_and_moderating_post(post):
 				return True
 		return False
 	
-	def can_unhide_thread(self, thread):
-		if not thread.visible and self.is_moderating_thread(thread):
-			if thread in self.hidden_threads.all() or (
-				self.is_supermoderator_and_moderating_thread(thread)
+	def can_unhide_post(self, post):
+		if not post.visible and self.is_moderating_post(post):
+			if post in self._get_hidden_posts(post) or (
+				self.is_supermoderator_and_moderating_post(post)
 			):
 				return True
 		return False
@@ -72,6 +87,25 @@ class Moderator(TimeStampedModel):
 			"moderation:moderator_detail", kwargs={"username": self.user.username}
 		)
 	
+	@staticmethod
+	def get_post_hide_action_url(comment):
+		if comment.is_starting_comment:
+			return Moderator._get_thread_hide_action_url(comment.thread)
+		else:
+			return Moderator._get_comment_hide_action_url(comment)	
+
+	@staticmethod
+	def _get_thread_hide_action_url(thread):
+		return reverse(
+			"moderation:thread_hide", kwargs={"slug": thread.slug}
+		)
+	@staticmethod
+	def _get_comment_hide_action_url(comment):
+		return reverse(
+			"moderation:comment_hide", 
+			kwargs={"thread_slug": comment.thread.slug, "comment_pk": comment.pk}
+		)
+
 
 class ModeratorEvent(models.Model):
 	MODERATOR_ADDED = 0

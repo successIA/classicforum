@@ -22,11 +22,11 @@ var easyMDE = new EasyMDE({
     },
   
     bindConfirmPageEvent: function() {
-      window.onbeforeunload = function() {
-        if (easyMDE.value()) {
-          return "Are you sure you want to leave?";
-        }
-      };
+      // window.onbeforeunload = function() {
+      //   if (easyMDE.value()) {
+      //     return "Are you sure you want to leave?";
+      //   }
+      // };
     }
   };
   

@@ -1,3 +1,8 @@
+{% load humanize %}
+
+{% load forum_template_tags %}
+{% load moderation_template_tags %}
+
 <div class="modal fade" id="deleteModal_{{ comment.pk }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
   aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -9,11 +14,36 @@
           </button>
         </div>
         <div class="modal-body">
+        {% if comment.is_starting_comment %}
           <strong class="text-primary">{{ comment.thread.title }}</strong> will be hidden. Are you sure?
+        {% else %}
+          <div class="mb-1">
+            <strong>The comment below will be hidden. Are you sure?</strong>
+          </div>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <div>
+                <div class="d-flex align-items-center mb-2">
+                  <img src="{{ comment.user.get_avatar_url }}" width="60" height="60" class="avatar mr-3" />
+                  <div class="d-flex">
+                    <a href="{{ comment.user.get_absolute_url }}" style="color: inherit; text-decoration: none;">
+                      {{ comment.user.username }}
+                    </a>
+                    <span class="comment-time text-muted ml-2"><span class="time-dot"></span>
+                      <small class="d-inline-block font-weight-bold">{{ comment.created|naturaltime|splittime }}</small>
+                    </span>
+                  </div>
+                </div>
+                {{ comment.marked_message|safe|truncatechars_html:"300" }}                
+              </div>
+            </li>
+          </ul>
+        {% endif %}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-          <form method="post" action="{% url 'moderation:thread_hide' comment.thread.slug %}">
+          {% comment %} {% url 'moderation:thread_hide' comment.thread.slug %} {% endcomment %}
+          <form method="post" action="{{ comment|post_hide_action_link }}">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Hide</button>
           </form>
