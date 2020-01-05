@@ -1,51 +1,50 @@
 {% extends 'profile_base.html' %}
 
-{% load static %}
-{% load humanize %}
-
 {% load forum_template_tags %}
+{% load humanize %}
+{% load static %}
 
 {% block  profile_content %}
-<main>
+  <main>
     <div class="container mt-lg-4">
-        <!-- Navigation Scroller Item Detail -->
-        <div class="row offset-lg-1">
-            <div class="notification col-12 col-lg-9">
-                <h5 class="mb-3">Notifications</h5>
-                <ul class="list-group mb-4 notification-list-group">
-                    <style scoped>
-                        .notif-list img {
-                            display: none;
-                            border-radius: 4px;
-                            max-width: 100%;
-                            margin-top: 1rem;
-                            margin-bottom: 1rem;
-                        }
+      <!-- Navigation Scroller Item Detail -->
+      <div class="row offset-lg-1">
+        <div class="notification col-12 col-lg-9">
+          <h5 class="mb-3">Notifications</h5>
+          <ul class="list-group mb-4 notification-list-group">
+            <style scoped>
+              .notif-list .media-body img {
+                  display: none;
+                  border-radius: 4px;
+                  max-width: 100%;
+                  margin-top: 1rem;
+                  margin-bottom: 1rem;
+              }
 
-                        .notif-list a img {
-                            display: block;
-                        }
-                    </style>
-                    {% for notif in notifications %}
-                    <li class="notif-list list-group-item {% if notif.unread %}bg-light{% endif %}">
-                        {{ notif.get_description }}
-                    </li>
-                    {% empty %}
-                    <div class="card">
-                        <div class="card-header text-dark text-center font-weight-bold bg-white">
-                            No Notifications yet
-                        </div>
-                    </div>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div><!-- Navigation Scroller Item Detail -->
-
-        <div class="row mb-4">
-            <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1 mt-4">
-                {% include "includes/pagination.html" with page_obj=notifications use_page_txt=True %}
-            </div>
+              .notif-list .media-body a img {
+                  display: block;
+              }
+            </style>
+            {% for notif in notifications %}
+              <li class="notif-list list-group-item {% if notif.unread %}bg-light{% endif %}">
+                {{ notif.get_description }}
+              </li>
+            {% empty %}
+              <div class="card">
+                <div class="card-header text-dark text-center font-weight-bold bg-white">
+                  No Notifications yet
+                </div>
+              </div>
+            {% endfor %}
+          </ul>
         </div>
+      </div><!-- Navigation Scroller Item Detail -->
+
+      <div class="row mb-4">
+        <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1 mt-4">
+          {% include "includes/pagination.html" with page_obj=notifications use_page_txt=True %}
+        </div>
+      </div>
     </div>
-</main>
+  </main>
 {% endblock profile_content %}

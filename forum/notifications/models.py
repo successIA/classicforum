@@ -13,84 +13,18 @@ from forum.core.constants import NOTIF_PER_PAGE
 
 class NotificationQuerySet(models.query.QuerySet):    
     def notify_users(self, notif, receivers):
-        obj_list = []
+        notif_list = []
         for receiver in receivers:
-            ntf = Notification(
+            n = Notification(
                 sender=notif.sender, 
                 receiver=receiver,
                 thread=notif.thread, 
                 comment=notif.comment,
                 notif_type=notif.notif_type
             )
-            obj_list.append(ntf)
-        if obj_list:
-            self.bulk_create(obj_list)
-
-    # def notify_receiver_for_reply(self, reply):
-    #     self.create(
-    #         sender=reply.user,
-    #         receiver=reply.parent.user,
-    #         comment=reply,
-    #         notif_type=Notification.COMMENT_REPLIED
-    #     )
-
-    # def notify_mentioned_users(self, comment, mentioned_user_list):
-    #     users = [usr for usr in mentioned_user_list if usr.pk != comment.user.pk]
-    #     instance_list = []
-    #     for user in users:
-    #         instance_list.append(
-    #             self.model(
-    #                 sender=comment.user,
-    #                 receiver=user,
-    #                 comment=comment,
-    #                 notif_type=Notification.USER_MENTIONED
-    #             )
-    #         )
-    #     if instance_list:
-    #         self.bulk_create(instance_list)
-
-    # def notify_user_followers_for_thread_creation(self, thread):
-    #     instance_list = []
-    #     for user in thread.user.followers.all():
-    #         instance_list.append(
-    #             self.model(
-    #                 sender=thread.user,
-    #                 receiver=user,
-    #                 thread=thread,
-    #                 notif_type=Notification.THREAD_CREATED
-    #             )
-    #         )
-    #     if instance_list:
-    #         self.bulk_create(instance_list)
-
-    # def notify_thread_followers_for_modification(self, thread):
-    #     other_followers = [usr for usr in thread.followers.all()
-    #                        if usr.pk != thread.user.pk]
-    #     for user in other_followers:
-    #         self.create(
-    #             sender=thread.user,
-    #             receiver=user,
-    #             thread=thread,
-    #             notif_type=Notification.THREAD_UPDATED
-    #         )
-
-    # def notify_receiver_for_comment_upvote(self, sender, receiver, comment):
-    #     self.create(
-    #         sender=sender,
-    #         receiver=receiver,
-    #         comment=comment,
-    #         notif_type=Notification.COMMENT_UPVOTED
-    #     )
-
-    # def delete_comment_upvote_notification(self, sender, receiver, comment):
-    #     instance = self.filter(
-    #         sender=sender,
-    #         receiver=receiver,
-    #         comment=comment,
-    #         notif_type=Notification.COMMENT_UPVOTED
-    #     ).first()
-    #     if instance:
-    #         instance.delete()
+            notif_list.append(n)
+        if notif_list:
+            self.bulk_create(notif_list)
 
     def mark_as_read(self, receiver, notif_id_list):
         if notif_id_list:
@@ -123,7 +57,7 @@ class NotificationQuerySet(models.query.QuerySet):
         return url, count
 
     def get_for_user(self, user):
-        return Notification.objects.select_related(
+        return self.select_related(
             'sender', 'receiver', 'thread', 'comment'
         ).prefetch_related(
             'thread__starting_comment', 'comment__thread'

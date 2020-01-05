@@ -4,13 +4,7 @@
 
 <div class="media">
 	<a href="{% url 'accounts:user_stats' userprofile.username %}" class="text-dark">
-		{% if notif.sender.avatar_url %}
-		<img src="{{ notif.sender.avatar_url }}" style="object-fit: cover;" class="mr-3 rounded-circle" alt="..."
-			width="50" height="50" />
-		{% else %}
-		<img src="{% static 'img/avatar.svg' %}" style="object-fit: cover;" class="mr-3 rounded-circle" alt="..."
-			width="50" height="50" />
-		{% endif %}
+		<img src="{{ notif.sender.get_avatar_url }}" class="mr-3 avatar" alt="..." width="50" height="50" />
 	</a>
 
 	<div class="media-body">
@@ -35,7 +29,7 @@
 
 		{{ notif.thread.starting_comment.marked_message|safe|truncatechars:180 }}
 		{% if notif.thread.starting_comment.marked_message|length > 180 %}
-		<a class="text-primary" href="{{ notif.thread.get_absolute_url }}">read more</a>
+		  <a class="text-primary" href="{{ notif.thread.get_absolute_url }}">read more</a>
 		{% endif %}
 	</div>
 </div>

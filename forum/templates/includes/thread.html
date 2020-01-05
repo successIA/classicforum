@@ -1,71 +1,64 @@
 {% load static %}
-{% load humanize %}
+
 {% load forum_template_tags %}
+{% load humanize %}
 
-<div class="media">
-    {% if thread.user.avatar_url %}
-    <img src="{{ thread.user.avatar_url }}" height="60" width="60" class="avatar mr-3 rounded-circle d-none d-md-block"
-        alt="..." />
-    {% else %}
-    <img src="{% static 'img/avatar.svg' %}" height="60" width="60" class="avatar mr-3 rounded-circle d-none d-md-block"
-        alt="..." />
-    {% endif %}
-    <div class="media-body">
-        <h5 class="mt-0">
-            <a href="{% thread_url thread.get_absolute_url thread.comment_count thread.new_c_id thread.new_c_num %}"
-                class="text-dark">{{ thread.title }}</a>
+<div class="media">  
+  <img src="{{ thread.user.get_avatar_url }}" height="60" width="60" class="avatar mr-3 d-none d-md-block" alt="..." />
+  <div class="media-body">
+    <h5 class="mt-0">
+      <a href="{% thread_url thread.get_absolute_url thread.comment_count thread.new_c_id thread.new_c_num %}" class="text-dark">
+        {{ thread.title }}
+      </a>
 
-            {% if not category %}
-            <span class="badge badge-secondary py-1">
-                <small class="font-weight-bold ">{{ thread.category.title }}</small>
-            </span>
-            {% endif %}
+      {% if not category %}
+        <span class="badge badge-secondary py-1">
+          <small class="font-weight-bold ">{{ thread.category.title }}</small>
+        </span>
+      {% endif %}
 
-            {% if thread.new_c_num > 0 %}
-            <span class="badge badge-info py-1 ml-2">
-                <small class="font-weight-bold ">{{ thread.new_c_num }} new</small>
-            </span>
-            {% endif %}
-        </h5>
+      {% if thread.new_c_num > 0 %}
+        <span class="badge badge-info py-1 ml-2">
+          <small class="font-weight-bold ">{{ thread.new_c_num }} new</small>
+        </span>
+      {% endif %}
+    </h5>
 
-        <div class="media-footer text-muted">
-            <small class="mr-4"><i class="far fa-comments"></i>
-                {% if thread.comment_count %}
-                {{ thread.comment_count }}
-                {% else %}
-                0
-                {% endif %}
-            </small>
+    <div class="media-footer text-muted">
+      <small class="mr-4"><i class="far fa-comments"></i>
+        {% if thread.comment_count %}
+          {{ thread.comment_count }}
+        {% else %}
+          0
+        {% endif %}
+      </small>
 
-            {% if thread.final_comment_user %}
-            <a href="{{ thread.final_comment_user.get_absolute_url }}" class="text-muted">
-                <small class="mr-4"><i class="far fa-user"></i>
-                    {{ thread.final_comment_user.username|capfirst }}</small>
-            </a>
-            {% else %}
-            <a href="{{ thread.user.get_absolute_url }}">
-                <small class="mr-4 text-muted"><i
-                        class="far fa-user text-muted mr-1"></i>{{ thread.user.username|capfirst }}</small>
-            </a>
-            {% endif %}
+      {% if thread.final_comment_user %}
+        <a href="{{ thread.final_comment_user.get_absolute_url }}" class="text-muted">
+          <small class="mr-4">
+            <i class="far fa-user"></i>{{ thread.final_comment_user.username|capfirst }}
+          </small>
+        </a>
+      {% else %}
+        <a href="{{ thread.user.get_absolute_url }}">
+          <small class="mr-4 text-muted">
+            <i class="far fa-user text-muted mr-1"></i>{{ thread.user.username|capfirst }}
+          </small>
+        </a>
+      {% endif %}
 
-            <small class="mr-4"><i class="far fa-clock"></i>
-                {% if thread.final_comment_time %}
+      <small class="mr-4">
+        <i class="far fa-clock"></i>
+        {% if thread.final_comment_time %}
+          {{ thread.final_comment_time|naturaltime|splittime }}
+        {% else %}
+          {{ thread.created|naturaltime|splittime }}
+        {% endif %}
+      </small>
 
-                {% comment %}
-                {{ thread.final_comment_time|date:"M d, Y, g:i:s a" }}
-                {{ thread.created|date:"M d, Y, g:i:s a" }}
-                {% endcomment %}
-
-                {{ thread.final_comment_time|naturaltime|splittime }}
-                {% else %}
-                {{ thread.created|naturaltime|splittime }}
-                {% endif %}
-            </small>
-
-            <small class="mr-4"><i class="far fa-eye"></i>
-                {{ thread.views }}
-            </small>
-        </div>
+      <small class="mr-4">
+        <i class="far fa-eye"></i>{{ thread.views }}
+      </small>
     </div>
+  </div>
 </div>

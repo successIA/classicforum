@@ -125,3 +125,37 @@ class Moderation
 
 
 coverage html --omit="*/test*" -d
+
+test_redirect_for_guest
+test_with_authenticated_user_without_perm_
+test_permission_denied_for_moderators
+test_render_for_superuser
+test_empty_data_rejection
+test_invalid_data_rejection
+test_submit_success
+
+
+hide_thread
+test_permission_denied_for_guest
+test_permission_denied_for_unprevileged_users
+test_permission_denied_for_unprevileged_moderators
+test_hide_thread_success_for_previleged_moderators
+test_hide_thread_failure_for_thread_moderator
+test_hide_thread_suceess_for_thread_supermoderator
+
+
+an hidden thread cannot be seen, updated, or commented on by
+unprevileged users 
+
+a moderator can see any hidden thread or comment
+
+a moderator can unhide comment whose thread was hidden by co-moderator
+but cannot hide comment in the thread.
+
+a supermoderator can unhide comment whose thread was hidden by co-moderator
+and can also hide comment in the thread.
+
+a user can only hide their threads or comments if they have not been approved
+rather than delete.
+
+a user can only be banned on the bases of comment or thread they have created

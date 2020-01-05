@@ -31,7 +31,9 @@ class Moderator(TimeStampedModel):
 			return self.hidden_threads.all()
 		if isinstance(post, Comment):
 			return self.hidden_comments.all()
-		raise TypeError("post has to be an instance either Thread or Comment")
+		raise TypeError(
+			"post has to be an instance either Thread or Comment"
+		)
 
 	def is_owner(self, request_mod):
 		return self == request_mod
@@ -84,27 +86,39 @@ class Moderator(TimeStampedModel):
 
 	def get_absolute_url(self):
 		return reverse(
-			"moderation:moderator_detail", kwargs={"username": self.user.username}
+			"moderation:moderator_detail", 
+			kwargs={"username": self.user.username}
 		)
 	
 	@staticmethod
 	def get_post_hide_action_url(comment):
 		if comment.is_starting_comment:
-			return Moderator._get_thread_hide_action_url(comment.thread)
+			return reverse(
+				"moderation:thread_hide", 
+				kwargs={"slug": comment.thread.slug}
+			)
 		else:
-			return Moderator._get_comment_hide_action_url(comment)	
+			return reverse(
+				"moderation:comment_hide", 
+				kwargs={
+					"thread_slug": comment.thread.slug, 
+					"comment_pk": comment.pk
+				}
+			)
 
-	@staticmethod
-	def _get_thread_hide_action_url(thread):
-		return reverse(
-			"moderation:thread_hide", kwargs={"slug": thread.slug}
-		)
-	@staticmethod
-	def _get_comment_hide_action_url(comment):
-		return reverse(
-			"moderation:comment_hide", 
-			kwargs={"thread_slug": comment.thread.slug, "comment_pk": comment.pk}
-		)
+
+	# @staticmethod
+	# def _get_thread_hide_action_url(thread):
+	# 	return reverse(
+	# 		"moderation:thread_hide", kwargs={"slug": thread.slug}
+	# 	)
+		
+	# @staticmethod
+	# def _get_comment_hide_action_url(comment):
+	# 	return reverse(
+	# 		"moderation:comment_hide", 
+	# 		kwargs={"thread_slug": comment.thread.slug, "comment_pk": comment.pk}
+	# 	)
 
 
 class ModeratorEvent(models.Model):

@@ -1,65 +1,66 @@
 <style scoped>
-    .nav-tabs .nav-link {
-        font-weight: 600;
-        color: #6c757d;
-    }
-    .nav-tabs .nav-link.active {
-        color: #212529;
-    }
-    
+  .nav-tabs .nav-link {
+    font-weight: 600;
+    color: #6c757d;
+  }
+  .nav-tabs .nav-link.active {
+    color: #212529;
+  }    
 </style>
-<ul class="nav nav-tabs border-bottom-0" id="myTab" role="tablist"
-    style="margin-left: -0.95rem; margin-right: -0.95rem;">
-    <li class="nav-item">
-        <a class="font-weight-bold nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-            aria-controls="home" aria-selected="true">Comments</a>
-    </li>
 
-    <li class="nav-item">
-        <a class="font-weight-bold nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
-            aria-controls="profile" aria-selected="false">Threads</a>
-    </li>
+<ul class="nav nav-tabs border-bottom-0" id="myTab" role="tablist" style="margin-left: -0.95rem; margin-right: -0.95rem;">
+  <li class="nav-item">
+    <a class="font-weight-bold nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+      Comments
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="font-weight-bold nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">
+      Threads
+    </a>
+  </li>
 </ul>
 
 <!-- Tab Panel Content -->
 <div class="tab-content" id="myTabContent">
-    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-        <!-- Comment Section -->
-        <ul class="list-group mb-4 comment-list-group">
-            {% for comment in recent_comments %}
-                <li class="list-group-item rounded-0">
-                    {% include "includes/comment.html" with comment=comment %}
-                </li>
-            {% empty %}
-                <div class="card">
-                    <div class="text-center text-secondary mt-3 mb-3">
-                        <div style="font-size: 2rem"><i class="far fa-comments"></i></div>
-                        <div>
-                            <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No comments yet</p>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}                
-        </ul><!-- Comment Section -->
-    </div>
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+    <!-- Comment Section -->
+    <ul class="list-group mb-4 comment-list-group">
+      {% for comment in recent_comments %}
+        <li class="list-group-item rounded-0">
+          {% include "includes/comment.html" with comment=comment %}
+        </li>
+      {% empty %}
+        <div class="card">
+          <div class="text-center text-secondary mt-3 mb-3">
+            <div style="font-size: 2rem"><i class="far fa-comments"></i></div>
+            <div>
+              <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No comments yet</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}                
+    </ul><!-- Comment Section -->
+  </div>
 
-    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-        <!-- Thread Section -->
-        <ul class="list-group mb-4 thread-list-group">
-            {% for thread in recent_threads %}
-                <li class="list-group-item">
-                    {% include "includes/thread.html" with thread=thread %}
-                </li>
-            {% empty %}
-                <div class="card">
-                    <div class="text-center text-secondary mt-3 mb-3">
-                        <div style="font-size: 2rem"><i class="fas fa-book"></i></div>
-                        <div>
-                            <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No threads yet</p>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </ul><!-- Thread Section -->
-    </div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+    <!-- Thread Section -->
+    <ul class="list-group mb-4 thread-list-group">
+      {% for thread in recent_threads %}
+        <li class="list-group-item">
+          {% include "includes/thread.html" with thread=thread %}
+        </li>
+      {% empty %}
+        <div class="card">
+          <div class="text-center text-secondary mt-3 mb-3">
+            <div style="font-size: 2rem"><i class="fas fa-book"></i></div>
+            <div>
+              <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No threads yet</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </ul><!-- Thread Section -->
+  </div>
 </div><!-- Tab Panel Content -->
