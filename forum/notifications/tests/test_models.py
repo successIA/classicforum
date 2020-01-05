@@ -170,13 +170,21 @@ class NotificationQuerySetManagerTest(TestCase):
         reply = make_comment(self.sender, self.thread)
         reply.parent = self.comment
         reply.save()
-        Notification.objects.notify_receiver_for_reply(reply)
+        Notification.objects.create(
+            sender=reply.user,
+            receiver=reply.parent.user,
+            comment=reply,
+            notif_type=Notification.COMMENT_REPLIED
+        )
         self.assertEqual(Notification.objects.count(), 1)
 
     def test_notify_mentioned_users(self):
-        Notification.objects.notify_mentioned_users(
-            self.comment, self.receiver_list
+        notif = Notification(
+            sender=self.comment.user,
+            comment=self.comment,
+            notif_type=Notification.USER_MENTIONED
         )
+        Notification.objects.notify_users(notif, self.receiver_list)
         notifs = Notification.objects.all()
         self.assertEqual(notifs[0].receiver, self.receiver)
         self.assertEqual(notifs[1].receiver, self.receiver2)
@@ -185,20 +193,21 @@ class NotificationQuerySetManagerTest(TestCase):
         )
         self.assertTrue(notif_qs.count(), 2)
 
-    def test_notify_mentioned_users_with_sender_included(self):
-        Notification.objects.notify_mentioned_users(
-            self.comment, self.receiver_list + [self.sender]
-        )
-        self.assertEqual(self.sender.receiver_notif.count(), 0)
-
     def test_notify_user_followers_for_thread_creation(self):
         user = self.make_user('user')
         ThreadFollowership.objects.create(user=user, thread=self.thread)
         for receiver in self.receiver_list:
             self.sender.followers.add(receiver)
-        Notification.objects.notify_user_followers_for_thread_creation(
-            self.thread
+
+        notif = Notification(
+            sender=self.thread.user, 
+            thread=self.thread, 
+            notif_type=Notification.THREAD_CREATED
         )
+        Notification.objects.notify_users(
+           notif, self.thread.user.followers.all()
+        )
+
         notifs = Notification.objects.all()
         self.assertEqual(notifs[0].receiver, self.receiver)
         self.assertEqual(notifs[1].receiver, self.receiver2)
@@ -216,9 +225,15 @@ class NotificationQuerySetManagerTest(TestCase):
             ThreadFollowership.objects.create(
                 user=receiver, thread=self.thread
             )
-        Notification.objects.notify_thread_followers_for_modification(
-            self.thread
+        notif = Notification(
+            sender=self.thread.user, 
+            thread=self.thread, 
+            notif_type=Notification.THREAD_UPDATED
         )
+        Notification.objects.notify_users(
+           notif, self.thread.followers.all()
+        )
+
         notifs = Notification.objects.all()
         self.assertEqual(notifs[0].receiver, self.receiver)
         self.assertEqual(notifs[1].receiver, self.receiver2)
@@ -228,32 +243,6 @@ class NotificationQuerySetManagerTest(TestCase):
             notif_type=Notification.THREAD_UPDATED
         )
         self.assertTrue(notif_qs.count(), 2)
-
-    def test_notify_receiver_for_comment_upvote(self):
-        Notification.objects.notify_receiver_for_comment_upvote(
-            self.sender, self.receiver, self.comment
-        )
-        notif_qs = Notification.objects.filter(
-            sender=self.sender,
-            receiver=self.receiver,
-            comment=self.comment,
-            notif_type=Notification.COMMENT_UPVOTED
-        )
-        self.assertTrue(notif_qs.exists())
-
-    def test_delete_comment_upvote_notification(self):
-        notif = Notification.objects.create(
-            sender=self.sender,
-            receiver=self.receiver,
-            comment=self.comment,
-            notif_type=Notification.COMMENT_UPVOTED
-        )
-        Notification.objects.delete_comment_upvote_notification(
-            self.sender,
-            self.receiver,
-            self.comment,
-        )
-        self.assertEqual(Notification.objects.count(), 0)
 
     def test_mark_as_read(self):
         notif1 = Notification.objects.create(

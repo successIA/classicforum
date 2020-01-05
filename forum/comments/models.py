@@ -4,7 +4,7 @@ from math import ceil
 
 from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch
 from django.shortcuts import get_object_or_404
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.conf import settings
@@ -27,11 +27,7 @@ from forum.attachments.models import Attachment
 from forum.threads.models import ThreadFollowership
 from forum.notifications.models import Notification
 from forum.accounts.models import User
-from forum.core.utils import find_mentioned_usernames
-from forum.threads.tasks import (
-    sync_attachment_with_comment,
-    sync_comment_with_thread_followership
-)
+from forum.accounts.utils import get_user_list_without_creator
 
 
 class Comment(TimeStampedModel):
@@ -72,82 +68,71 @@ class Comment(TimeStampedModel):
     def __str__(self):
         return self.message[:32]
 
-    def _get_mentioned_user_list(self):
-        mentions = find_mentioned_usernames(self.message)
-        mentioned_user_list = list(
-            User.objects.filter(username__in=mentions).all()
+    def _set_position(self):
+        self.position = self.thread.comment_count + 1
+
+    def _set_message(self):
+        from forum.comments.utils import (
+            get_rendered_message,
+            get_mentioned_users_in_message,
+            get_user_value_list,
         )
-        return mentioned_user_list
-
-    def _get_marked_message(self, mentioned_user_list):
-        from forum.comments.utils import get_rendered_message
-
-        user_value_list = [{'username': usr.username, 'url': usr.get_absolute_url()}
-                           for usr in mentioned_user_list]
-        return get_rendered_message(self.message, user_value_list)
-    
-    def _perform_post_create_actions(self):
-        sync_attachment_with_comment(self.pk)
-        if not self.is_starting_comment:
-            self.thread.sync_with_comment(self)
-            # sync_comment_with_thread_followership(self.thread.pk, self.pk)
-            ThreadFollowership.objects.sync_with_comment(
-                self.thread, self
-            )
-        if self.parent and self.parent.user != self.user:
-            Notification.objects.notify_receiver_for_reply(self)
-
-    def _perform_post_save_actions(self, mentioned_user_list):
-        self.mentioned_users.add(*mentioned_user_list)
-        Notification.objects.notify_mentioned_users(self, mentioned_user_list)
+        self.message = bleach.clean(self.message)
+        mentioned_users = get_mentioned_users_in_message(self.message)
+        user_value_list = get_user_value_list(mentioned_users)
+        self.marked_message = get_rendered_message(
+            self.message, user_value_list
+        )
+        return mentioned_users
 
     def save(self, *args, **kwargs):
-        created = True if self.pk else False
-        if created:
-            prev_instance = self.__class__.objects.filter(pk=self.pk).first()
-            if prev_instance:
-                CommentRevision.objects.create_from_comment(prev_instance)
-                self.mentioned_users.clear()
-        else:
+        if not self.pk:
             self.category = self.thread.category
-            if not self.is_starting_comment:
-                self.position = self.thread.comment_count + 1
-        self.message = bleach.clean(
-            self.message, markdown_tags, markdown_attrs
-        )
-        mentioned_user_list =  self._get_mentioned_user_list()
-        self.marked_message = self._get_marked_message(mentioned_user_list)
         super(Comment, self).save(*args, **kwargs)
-        if not created:
-            self._perform_post_create_actions()
-        self._perform_post_save_actions(mentioned_user_list)
 
     def delete(self, *args, **kwargs):
-        self.thread.comments.filter(pk__gt=self.pk).update(
-            offset=F('offset') - 1
-        )
+        self.hide()
+        # self.thread.comments.filter(pk__gt=self.pk).update(
+        #     offset=F('offset') - 1
+        # )
         super(Comment, self).delete(*args, **kwargs)
-        instance = self.thread.comments.last()
-        self.thread.sync_with_comment(instance, is_create=False)
+        # instance = self.thread.comments.last()
+        # self.thread.sync_with_comment(instance, is_create=False)
     
     def hide(self, *args, **kwargs):
-        self.thread.comments.filter(
-            is_starting_comment=False, pk__gt=self.pk
+        self.thread.comments.pure().filter(
+            pk__gt=self.pk
         ).update(
             offset=F('offset') - 1
         )
-        self.__class__.objects.filter(pk=self.pk).update(visible=False)
-        self.thread.sync_with_comment(self, is_create=False)
+
+        self.thread.comments.pure().filter(
+            pk=self.pk
+        ).update(visible=False)
+
+        self.thread.synchronise(self._get_last(), added=False)
     
     def unhide(self, *args, **kwargs):
-        self.thread.comments.filter(
-            is_starting_comment=False, pk__gt=self.pk
+        self.thread.comments.pure().filter(
+            pk__gt=self.pk
         ).update(
             offset=F('offset') + 1
         )
-        self.__class__.objects.filter(pk=self.pk).update(visible=True)
-        self.thread.sync_with_comment(self)
+
+        self.thread.comments.pure().filter(
+            pk=self.pk
+        ).update(visible=True)
+        
+        self.thread.synchronise(self._get_last())
     
+    def _get_last(self):
+        last_obj = None
+        last_obj_qs = self.thread.comments.pure_and_active()
+        if last_obj_qs:
+            last_obj = last_obj_qs.last()
+        return last_obj
+
+    @transaction.atomic
     def downvote(self, user):
         if user in self.downvoters.all():
             self.downvoters.remove(user)
@@ -155,21 +140,25 @@ class Comment(TimeStampedModel):
             self.upvoters.remove(user)
             self.downvoters.add(user)
             # Incase the user upvoted the comment initially by mistake
-            Notification.objects.delete_comment_upvote_notification(
-                user, self.user, self
-            )
+            Notification.objects.filter(
+                sender=user, receiver=self.user,
+                comment=self, notif_type=Notification.COMMENT_UPVOTED
+            ).delete()
 
+    @transaction.atomic
     def upvote(self, user):
         if user in self.upvoters.all():
             self.upvoters.remove(user)
-            Notification.objects.delete_comment_upvote_notification(
-                user, self.user, self
-            )
+            Notification.objects.filter(
+                sender=user, receiver=self.user,
+                comment=self, notif_type=Notification.COMMENT_UPVOTED
+            ).delete()
         else:
             self.downvoters.remove(user)
             self.upvoters.add(user)
-            Notification.objects.notify_receiver_for_comment_upvote(
-                user, self.user, self
+            Notification.objects.create(
+                sender=user, receiver=self.user,
+                comment=self, notif_type=Notification.COMMENT_UPVOTED
             )
     
     def is_owner(self, user):
@@ -183,9 +172,9 @@ class Comment(TimeStampedModel):
         if not page_num:
             count = self.position + self.offset
             # count = self.position - self.offset
-            print("POSITION:", self.position)
-            print("OFFSET:", self.offset)
-            print("COUNT:", count)
+            # print("POSITION:", self.position)
+            # print("OFFSET:", self.offset)
+            # print("COUNT:", count)
             page_num = ceil(count / COMMENT_PER_PAGE)
         return '%s?page=%s&read=True#comment%s' % (
             self.thread.get_absolute_url(), page_num, self.pk
@@ -252,16 +241,17 @@ class Comment(TimeStampedModel):
 
 
 class CommentRevisionQuerySet(models.query.QuerySet):
-    def create_from_comment(self, comment):
-        instance = self.create(
-            comment=comment,
-            message=comment.message,
-            marked_message=comment.marked_message
-        )
-        mentioned_users = comment.mentioned_users.all()
-        instance.mentioned_users.add(*mentioned_users)
-        # Attachment.objects.sync_with_comment(comment, instance.message)
-        sync_attachment_with_comment(comment.pk, message=instance.message)
+    pass
+    # def create_from_comment(self, comment):
+    #     instance = self.create(
+    #         comment=comment,
+    #         message=comment.message,
+    #         marked_message=comment.marked_message
+    #     )
+    #     mentioned_users = comment.mentioned_users.all()
+    #     instance.mentioned_users.add(*mentioned_users)
+    #     # Attachment.objects.sync_with_comment(comment, instance.message)
+    #     sync_attachment_with_comment(comment.pk, message=instance.message)
 
 
 class CommentRevision(models.Model):

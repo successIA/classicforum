@@ -8,9 +8,9 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
 from forum.core.models import TimeStampedModel
-from forum.attachments.utils import get_image_sources_from_message
 from forum.attachments.utils import (
-    get_unreferenced_image_srcs_in_message
+    get_image_srcs_from_msg,
+    get_unref_image_srcs_in_msg,
 )
 from forum.attachments.utils import md5
 
@@ -36,44 +36,44 @@ def upload_to(instance, filename):
 
 class AttachmentQuerySet(models.query.QuerySet):
 
-    def sync_with_comment(self, comment, previous_message=None):
-        if previous_message:
-            self._remove_comment_from_instance(comment, previous_message)
-        image_url_list = get_image_sources_from_message(comment.message)
+    def synchronise(self, comment, prev_msg=None):
+        if prev_msg:
+            self._remove_comment_from_attachment(comment, prev_msg)
+        src_list = get_image_srcs_from_msg(comment.message)
 
-        for url in image_url_list:
-            instance_list = None
+        for url in src_list:
+            att_list = None
             if url:
-                instance_list = list(self.filter(url=url))
-            if instance_list:
-                instance = instance_list[0]
-                instance.comments.add(comment)
-                instance.is_orphaned = False
-                instance.save()
+                att_list = list(self.filter(url=url))
+            if att_list:
+                att = att_list[0]
+                att.comments.add(comment)
+                att.is_orphaned = False
+                att.save()
 
-    def _remove_comment_from_instance(self, comment, previous_message):
+    def _remove_comment_from_attachment(self, comment, prev_msg):
         '''
         Detach comment from all its attachments if there is any
         change in the image urls in the message
         '''
-        unreferenced_image_sources = get_unreferenced_image_srcs_in_message(
-            previous_message, comment.message
+        unreferenced_image_sources = get_unref_image_srcs_in_msg(
+            prev_msg, comment.message
         )
-        for instance in comment.attachment_set.all():
-            if instance.url in unreferenced_image_sources:
-                instance.comments.remove(comment)
-                if not instance.is_avatar and instance.comments.count() == 0:
-                    instance.is_orphaned = True
-                    instance.save()
+        for att in comment.attachment_set.all():
+            if att.url in unreferenced_image_sources:
+                att.comments.remove(comment)
+                if not att.is_avatar and att.comments.count() == 0:
+                    att.is_orphaned = True
+                    att.save()
 
     def _update_users(self, user):
         qs = self.filter(url=user.avatar_url, is_avatar=True)[:1]
-        instance = qs[0] if qs else None
-        if instance:
-            instance.users.remove(user)
-            if instance.users.count() == 0:
-                instance.is_orphaned = True
-                instance.save()
+        attachment = qs[0] if qs else None
+        if attachment:
+            attachment.users.remove(user)
+            if attachment.users.count() == 0:
+                attachment.is_orphaned = True
+                attachment.save()
 
 
     def create_avatar(self, image, user):
@@ -83,23 +83,24 @@ class AttachmentQuerySet(models.query.QuerySet):
             
             md5sum = md5(image)
             qs = self.filter(md5sum=md5sum, is_avatar=True)[:1]
-            instance = qs[0] if qs else None
-            if instance:
-                if instance.is_orphaned:
-                    instance.is_orphaned = False
-                    instance.save()
-                instance.users.add(user)
-                return instance.url
+            attachment = qs[0] if qs else None
+            if attachment:
+                if attachment.is_orphaned:
+                    attachment.is_orphaned = False
+                    attachment.save()
+                attachment.users.add(user)
+                return attachment.url
             else:
-                instance = self.create(
+                attachment = self.create(
                     image=image, 
                     filename=image.name, 
                     is_avatar=True, 
                     is_orphaned=False
                 )
-                instance.users.add(user)
-                return instance.url
+                attachment.users.add(user)
+                return attachment.url
         return None
+
 
 class Attachment(models.Model):
     image = models.ImageField(
@@ -119,7 +120,6 @@ class Attachment(models.Model):
         return str(self.filename)
 
     def save(self, *args, **kwargs):
-
         if not self.pk and not self.md5sum:  # file is new
             self.md5sum = md5(self.image)
         self.filename = self.image.name

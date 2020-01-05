@@ -26,7 +26,6 @@ class AttachmentForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(AttachmentForm, self).__init__(*args, **kwargs)
-        print(kwargs)
         self.fields['image'].required = True
         # self.fields['image'] = forms.ImageField(validators=[file_size])
 

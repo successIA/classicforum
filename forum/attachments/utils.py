@@ -5,13 +5,13 @@ import re
 from markdown import markdown
 
 
-def get_unreferenced_image_srcs_in_message(prev_message, message):
-    prev_msg_img_url_list = get_image_sources_from_message(prev_message)
-    msg_img_url_list = get_image_sources_from_message(message)
-    return [url for url in prev_msg_img_url_list if url not in msg_img_url_list]
+def get_unref_image_srcs_in_msg(prev_msg, curr_msg):
+    prev_src_set = set(get_image_srcs_from_msg(prev_msg))
+    curr_src_set = set(get_image_srcs_from_msg(curr_msg))
+    return prev_src_set.difference(curr_src_set)
 
 
-def get_image_sources_from_message(message):
+def get_image_srcs_from_msg(message):
     img_regex = r'<img(?:.+?)src="(?P<src>.+?)"(?:.*?)>'
     message = markdown(message)
     return re.findall(img_regex, message)

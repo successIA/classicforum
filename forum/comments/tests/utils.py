@@ -16,6 +16,7 @@ def make_comment(
             Comment(
                 message=message if count == 1 else fake.text(),
                 user=user,
+                category=thread.category,
                 thread=thread,
                 is_starting_comment=is_starting_comment,
                 created=timezone.now(),

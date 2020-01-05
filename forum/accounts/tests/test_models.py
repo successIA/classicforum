@@ -83,7 +83,7 @@ class UserModelTest(TestCase):
         self.assertEquals(self.user.get_avatar_url(), url)
 
     def test_get_avatar_url_without_avatar(self):
-        self.assertIsNone(self.user.get_avatar_url())
+        self.assertEquals(self.user.get_avatar_url(), '/static/img/avatar.svg')
 
     def test_update_notification_info(self):
         request = RequestFactory()

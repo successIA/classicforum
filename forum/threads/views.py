@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.db import connection
+from django.db import connection, transaction
 from django.conf import settings
 
 from forum.core.utils import get_paginated_queryset
@@ -15,10 +15,17 @@ from forum.threads.models import (
 )
 from forum.threads.utils import (
     get_filtered_threads,
-    get_additional_thread_detail_ctx
+    get_additional_thread_detail_ctx,
+    perform_thread_post_update_actions,
+    perform_thread_post_create_actions,
 )
-from forum.comments.models import Comment
+from forum.comments.utils import (
+    perform_comment_save,
+    create_comment_revision,
+)
+from forum.comments.models import Comment, CommentRevision
 from forum.categories.models import Category
+from forum.threads.models import Thread, ThreadRevision
 from forum.categories.views import category_detail
 from forum.comments.forms import CommentForm
 from forum.threads.forms import ThreadForm
@@ -59,17 +66,18 @@ def create_thread(request, slug=None, filter_str=None, page=None):
             thread = form.save(commit=False)
             thread.user = request.user
             thread.category = form.cleaned_data.get('category')
-            thread.save()
-            comment = Comment.objects.create(
-                message=form.cleaned_data.get('message'),
-                thread=thread,
-                user=thread.user,
-                is_starting_comment=True
-            )
-            Thread.objects.filter(pk=thread.pk).update(
-                starting_comment=comment,
-                final_comment_time=comment.created
-            )
+            with transaction.atomic():
+                thread.save()          
+                comment = Comment(
+                    message=form.cleaned_data.get('message'),
+                    category=form.cleaned_data.get('category'),
+                    thread=thread,
+                    user=thread.user,
+                    is_starting_comment=True
+                )
+                perform_comment_save(comment)
+                thread.set_starting_comment(comment)
+                perform_thread_post_create_actions(thread)
             return redirect(thread.get_absolute_url())
 
     category_list = list(Category.objects.filter(slug=slug))
@@ -122,12 +130,23 @@ def update_thread(request, thread_slug, thread=None):
     if request.method == 'POST':
         form = ThreadForm(request.POST)
         if form.is_valid():
-            comment = thread.starting_comment
-            comment.message = form.cleaned_data.get('message')
-            comment.save()
-            thread.title = form.cleaned_data.get('title')
-            thread.message = form.cleaned_data.get('message')
-            thread.save()
+            with transaction.atomic():
+                comment = thread.starting_comment
+                prev_msg = comment.message
+                
+                ThreadRevision.objects.create(
+                    thread=thread, starting_comment=comment,
+                    title=thread.title, message=comment.message,
+                    marked_message=comment.marked_message
+                )
+                create_comment_revision(comment)
+
+                thread.title = form.cleaned_data.get('title')
+                thread.message = form.cleaned_data.get('message')
+                thread.save()                
+                comment.message = form.cleaned_data.get('message')
+                perform_comment_save(comment, prev_msg) 
+                perform_thread_post_update_actions(thread)           
             return HttpResponseRedirect(thread.get_absolute_url())
     form_action = thread.get_thread_update_form_action()
     return thread_detail(

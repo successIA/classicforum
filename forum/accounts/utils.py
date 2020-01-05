@@ -34,3 +34,8 @@ def get_mentioned_users_context(user_qs):
             'avatar_url': url
         })
     return user_list
+
+
+def get_user_list_without_creator(users, creator):
+    return [usr for usr in users if usr.pk != creator.pk]
+    

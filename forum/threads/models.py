@@ -11,7 +11,7 @@ from forum.core.models import TimeStampedModel
 from forum.core.constants import COMMENT_PER_PAGE
 from forum.threads.managers import ThreadQuerySet
 from forum.notifications.models import Notification
-from forum.core.utils import find_mentioned_usernames
+from forum.accounts.utils import get_user_list_without_creator
 
 
 class Thread(TimeStampedModel):
@@ -48,41 +48,31 @@ class Thread(TimeStampedModel):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.slug = self.__class__.objects.generate_slug(self)
-            super(Thread, self).save(*args, **kwargs)
-            # self.followers.add(self.user)
-            ThreadFollowership.objects.get_or_create(
-                user=self.user, thread=self
-            )
-            Notification.objects.notify_user_followers_for_thread_creation(
-                self
-            )
-        else:
-            prev_instance = self.__class__.objects.filter(pk=self.pk).first()
-            if prev_instance:
-                ThreadRevision.objects.create_from_thread(prev_instance)
-            super(Thread, self).save(*args, **kwargs)
-            Notification.objects.notify_thread_followers_for_modification(self)
+        super(Thread, self).save(*args, **kwargs)
 
-    def sync_with_comment(self, comment, is_create=True):
-        comment = None
-        comment_qs = self.comments.filter(visible=True)
-        if comment_qs:
-            comment = comment_qs.last()
+    def synchronise(self, comment, added=True):
+        if comment:
+            self.final_comment_user=comment.user
+            self.final_comment_time=comment.created            
+            if added:
+                self.comment_count=F('comment_count') + 1
+            else:
+                self.comment_count=F('comment_count') - 1
         else:
-            comment = self.starting_comment
+            self.final_comment_user=None
+            self.final_comment_time=self.starting_comment.created
+            self.comment_count=0
+        self.save(update_fields=[
+            'final_comment_user', 'final_comment_time', 'comment_count'
+        ])
 
-        if is_create:
-            self.__class__.objects.filter(pk=self.pk).update(
-                final_comment_user=comment.user,
-                final_comment_time=comment.created,
-                comment_count=F('comment_count') + 1
-            )
-        elif self.comment_count > 0:
-                self.__class__.objects.filter(pk=self.pk).update(
-                    final_comment_user=comment.user,
-                    final_comment_time=comment.created,
-                    comment_count=F('comment_count') - 1
-            )
+
+    def set_starting_comment(self, comment):
+        self.starting_comment=comment
+        self.final_comment_time=comment.created
+        self.save(update_fields=[
+            'starting_comment', 'final_comment_time'
+        ])
 
     # def toggle_follower(self, follower):
     #     if follower not in self.followers.all():
@@ -120,7 +110,6 @@ class Thread(TimeStampedModel):
 
     def get_thread_follow_url(self):
         return reverse('thread_follow', kwargs={'thread_slug': self.slug})
-
     
     def get_follow_url(self):
         return reverse('thread_follow', kwargs={'thread_slug': self.slug})
@@ -147,8 +136,8 @@ class ThreadFollowershipQuerySet(models.query.QuerySet):
             queryset[0].delete()
         else:
             self.create(user=user, thread=thread)
-
-    def sync_with_comment(self, thread, comment):
+    
+    def synchronise(self, thread, comment):
         qs = self.filter(thread=thread).select_related('user').all()
         user_list = [instance.user for instance in qs]
         if comment.user not in user_list:
@@ -224,27 +213,6 @@ class ThreadFollowership(TimeStampedModel):
         else:
             return 0
 
-
-class ThreadRevisionQuerySet(models.query.QuerySet):
-    def create_from_thread(self, thread):
-        from forum.comments.models import CommentRevision
-        
-        # Attributes of thread.starting_comment will not be in sync with old the thread
-        # so we have to fetch it from CommentRevision. This is due to the 
-        # starting_comment getting updated before the thread.
-        comment_revision = CommentRevision.objects.filter(
-            comment=thread.starting_comment,
-        ).last()
-        if comment_revision:
-            return self.create(
-                thread=thread,
-                starting_comment=comment_revision.comment,
-                title=thread.title,
-                message=comment_revision.message,
-                marked_message=comment_revision.marked_message
-            )
-
-
 class ThreadRevision(models.Model):
     thread = models.ForeignKey(
         Thread, on_delete=models.CASCADE, related_name="revisions"
@@ -257,7 +225,6 @@ class ThreadRevision(models.Model):
     message = models.TextField()
     marked_message = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    objects = ThreadRevisionQuerySet.as_manager()
 
     def __str__(self):
         return 'Thread History-%s' % (self.created)

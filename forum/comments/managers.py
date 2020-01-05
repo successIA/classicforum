@@ -66,5 +66,11 @@ class CommentQuerySet(models.query.QuerySet):
         if comment_qs.exists():
             return comment_qs.first()
 
+    def pure(self):
+        return self.filter(is_starting_comment=False)
+
+    def pure_and_active(self):
+        return self.active().filter(is_starting_comment=False)
+
     def active(self, *args, **kwargs):
         return self.filter(visible=True)

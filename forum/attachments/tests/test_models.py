@@ -150,27 +150,28 @@ class AttachmentQuerySetTest(TestCase):
             second_user, Attachment.objects.all().first().users.all()
         )
 
-    def test_sync_with_comment(self):
+    
+    def test_synchronise(self):
         attachment = Attachment.objects.create(image=self.test_image)
         category = make_category()
         thread = make_only_thread(self.user, category)
 
         message = f'![]({attachment.image.url})'
         comment = make_comment(self.user, thread, message=message)
-        Attachment.objects.sync_with_comment(comment)
+        Attachment.objects.synchronise(comment)
         self.assertIn(
             comment, Attachment.objects.all().first().comments.all()
         )
         self.assertFalse(Attachment.objects.last().is_orphaned)
-
-    def test_sync_with_comment_and_revision(self):
+    
+    def test_synchronise_with_revision(self):
         attachment = Attachment.objects.create(image=self.test_image)
         category = make_category()
         thread = make_only_thread(self.user, category)
 
         message = f'![]({attachment.image.url})'
         comment = make_comment(self.user, thread, message=message)
-        Attachment.objects.sync_with_comment(comment)
+        Attachment.objects.synchronise(comment)
         self.assertIn(
             comment, Attachment.objects.all().first().comments.all()
         )
@@ -183,7 +184,7 @@ class AttachmentQuerySetTest(TestCase):
             comment=comment, message=comment.message
         )
         comment.refresh_from_db()
-        Attachment.objects.sync_with_comment(comment, revision.message)
+        Attachment.objects.synchronise(comment, revision.message)
         self.assertNotIn(
             comment, Attachment.objects.all().first().comments.all()
         )
