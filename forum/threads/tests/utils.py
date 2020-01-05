@@ -35,6 +35,7 @@ def make_threads(
         comment = Comment.objects.create(
             message=message,
             user=user,
+            category=thread.category,
             thread=thread,
             is_starting_comment=True,
             created=timezone.now(),

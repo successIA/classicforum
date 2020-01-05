@@ -311,6 +311,7 @@ class CommentUpvoteTest(CommentViewsTest):
         super().setUp()
         self.comment = Comment.objects.create(
             message='hello world',
+            category=self.thread.category,
             thread=self.thread,
             user=self.user
         )

@@ -124,3 +124,4 @@ class Moderation
 
 
 
+coverage html --omit="*/test*" -d

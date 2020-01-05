@@ -31,22 +31,21 @@ class ThreadModelTest(TestCase):
 
     def test_save(self):
         self.assertEquals(self.thread.slug, "python-discussion")
-        self.assertIn(self.user, self.thread.followers.all())
 
-    def test_sync_with_comment_for_create(self):
+    def test_synchronise_for_create(self):
         self.assertEquals(self.thread.comment_count, 0)
         comment = make_comment(self.user, self.thread)
-        self.thread.sync_with_comment(comment)
+        self.thread.synchronise(comment)
         self.thread.refresh_from_db()
         self.assertEquals(self.thread.comment_count, 1)
 
         comment2 = make_comment(self.user, self.thread)
-        self.thread.sync_with_comment(comment2)
+        self.thread.synchronise(comment2)
         self.thread.refresh_from_db()
         self.assertEquals(self.thread.comment_count, 2)
 
         comment3 = make_comment(self.user, self.thread)
-        self.thread.sync_with_comment(comment3, is_create=False)
+        self.thread.synchronise(comment3, added=False)
         self.thread.refresh_from_db()
         self.assertEquals(self.thread.comment_count, 1)
         self.assertEquals(self.thread.final_comment_user, comment3.user)
@@ -80,9 +79,9 @@ class ThreadRevisionQuerySetTest(ThreadModelTest):
         self.thread.title = 'Updated title'
         self.thread.save()
 
-        revision = ThreadRevision.objects.create_from_thread(self.thread)
-        self.assertIsNotNone(revision)
-        self.assertEquals(self.thread, revision.thread)
+        # revision = ThreadRevision.objects.create_from_thread(self.thread)
+        # self.assertIsNotNone(revision)
+        # self.assertEquals(self.thread, revision.thread)
 
 
 # class ThreadActivityQuerySetTest(ThreadModelTest):

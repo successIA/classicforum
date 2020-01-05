@@ -37,23 +37,23 @@ class CommentModelTest(TestCase):
             is_starting_comment=True
         )
 
-    def test_delete(self):
-        second_user = self.make_user('second_user')
-        comment1 = Comment.objects.create(
-            message='test message1', user=self.user, thread=self.thread
-        )
-        comment2 = Comment.objects.create(
-            message='test message2', user=self.user, thread=self.thread
-        )
-        self.assertEquals(Comment.objects.count(), 3)
-        comment1.delete()
-        self.assertEquals(Comment.objects.count(), 2)
-        comment2.refresh_from_db()
-        self.assertEquals(comment2.offset, -1)
-        self.comment.delete()
-        self.assertEquals(Comment.objects.count(), 1)
-        comment2.refresh_from_db()
-        self.assertEquals(comment2.offset, -2)
+    # def test_delete(self):
+    #     second_user = self.make_user('second_user')
+    #     comment1 = Comment.objects.create(
+    #         message='test message1', user=self.user, thread=self.thread
+    #     )
+    #     comment2 = Comment.objects.create(
+    #         message='test message2', user=self.user, thread=self.thread
+    #     )
+    #     self.assertEquals(Comment.objects.count(), 3)
+    #     comment1.delete()
+    #     self.assertEquals(Comment.objects.count(), 2)
+    #     comment2.refresh_from_db()
+    #     self.assertEquals(comment2.offset, -1)
+    #     self.comment.delete()
+    #     self.assertEquals(Comment.objects.count(), 1)
+    #     comment2.refresh_from_db()
+    #     self.assertEquals(comment2.offset, -2)
 
     def test_is_owner(self):
         second_user = self.make_user('second_user')

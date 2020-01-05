@@ -1,12 +1,14 @@
 from django.http import Http404
 
 from forum.comments.models import Comment
+from forum.threads.models import ThreadFollowership
 from forum.core.constants import COMMENT_PER_PAGE
 from forum.core.utils import (
     get_paginated_queryset,
     get_post_login_redirect_url
 )
-
+from forum.notifications.models import Notification
+from forum.accounts.utils import get_user_list_without_creator
 
 def get_filtered_threads(request, filter_str=None, thread_qs=None):
     RECENT = 'recent'
@@ -67,3 +69,31 @@ def get_comment_paginator(request, thread):
     comment_qs = Comment.objects.get_for_thread(thread)
     page_num = request.GET.get('page')
     return get_paginated_queryset(comment_qs, COMMENT_PER_PAGE, page_num)
+
+
+def perform_thread_post_create_actions(thread):
+    ThreadFollowership.objects.get_or_create(
+        user=thread.user, thread=thread
+    )
+    notif = Notification(
+        sender=thread.user, 
+        thread=thread, 
+        notif_type=Notification.THREAD_CREATED
+    )
+    Notification.objects.notify_users(
+        notif, thread.user.followers.all()
+    )
+
+
+def perform_thread_post_update_actions(thread):
+    followers = get_user_list_without_creator(
+        thread.followers.all(), thread.user
+    )
+    notif = Notification(
+        sender=thread.user, 
+        thread=thread, 
+        notif_type=Notification.THREAD_UPDATED
+    )
+    Notification.objects.notify_users(
+        notif, followers
+    )

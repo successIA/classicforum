@@ -1,5 +1,6 @@
 import re
 
+from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -7,8 +8,13 @@ from django.utils.decorators import method_decorator
 
 from forum.comments.forms import CommentForm
 from forum.comments.mixins import comment_owner_required, vote_perm_required
-from forum.comments.models import Comment
-from forum.comments.utils import get_comment_reply_form
+from forum.comments.models import Comment, CommentRevision
+from forum.comments.utils import (
+    get_comment_reply_form,
+    perform_comment_save,
+    create_comment_revision,
+)
+from forum.notifications.models import Notification
 from forum.threads.models import Thread
 from forum.threads.views import thread_detail
 
@@ -20,9 +26,12 @@ def create_comment(request, thread_slug):
     if request.method == 'POST':
         form = CommentForm(request.POST, extra='edit-message')
         if form.is_valid():
-            form.instance.user = request.user
-            form.instance.thread = thread
-            comment = form.save()
+            with transaction.atomic():
+                form.instance.user = request.user
+                form.instance.thread = thread
+                form.instance.category = thread.category
+                comment = form.save(commit=False)
+                perform_comment_save(comment) 
             return HttpResponseRedirect(comment.get_precise_url())
     return thread_detail(request, thread_slug, form=form)
 
@@ -32,14 +41,22 @@ def create_comment(request, thread_slug):
 def update_comment(request, thread_slug, pk, comment=None):
     form = CommentForm(instance=comment, extra='edit-message')
     if request.method == 'POST':
+        # message must be backed up here
+        prev_msg = comment.message
         form = CommentForm(
             request.POST, instance=comment, extra='edit-message'
         )
-        if form.is_valid():
-            form.instance.pk = comment.pk
-            form.instance.user = request.user
-            form.instance.thread = comment.thread
-            comment = form.save()
+        if form.is_valid():            
+            with transaction.atomic():
+                form.instance.pk = comment.pk
+                form.instance.user = request.user
+                form.instance.thread = comment.thread
+                # Despite the fact that the comment obj used below has 
+                # been updated, the current comment in the db will
+                # used for creating a valid revision.
+                create_comment_revision(comment)
+                comment = form.save(commit=False)
+                perform_comment_save(comment, prev_msg)
             return HttpResponseRedirect(comment.get_precise_url())
 
     form_action = comment.get_update_form_action()
@@ -54,10 +71,21 @@ def reply_comment(request, thread_slug, pk):
     if request.method == 'POST':
         form = CommentForm(request.POST, extra='edit-message')
         if form.is_valid():
-            form.instance.parent = parent_comment
-            form.instance.user = request.user
-            form.instance.thread = parent_comment.thread
-            comment = form.save()
+            with transaction.atomic():
+                thread = parent_comment.thread
+                form.instance.parent = parent_comment
+                form.instance.user = request.user
+                form.instance.thread = thread
+                form.instance.category = thread.category
+                comment = form.save(commit=False)
+                perform_comment_save(comment)
+                if request.user != comment.parent.user:
+                    Notification.objects.create(
+                        sender=comment.user,
+                        receiver=comment.parent.user,
+                        comment=comment,
+                        notif_type=Notification.COMMENT_REPLIED
+                    )
             return HttpResponseRedirect(comment.get_precise_url())
 
     form_action = parent_comment.get_reply_form_action()
