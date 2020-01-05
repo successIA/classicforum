@@ -1,133 +1,126 @@
 {% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+{% load forum_template_tags %}
+{% load humanize %}
 {% load static %}
 
-{% load forum_template_tags %}
-{% load crispy_forms_tags %}
-
-{% load humanize %}
-
-
 {% block title %}
-{{ thread.title }}
+  {{ thread.title }}
 {% endblock title %}
 
-
 {% block content %}
-<!-- Breadcrumb -->
-<nav aria-label="breadcrumb" class="d-none d-md-block">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="d-none d-md-block">
     <ol class="breadcrumb bg-white border-bottom justify-content-end rounded-0 py-2">
-        <li class="breadcrumb-item"><a href="{{ category.get_absolute_url }}"><small
-                    class="font-weight-bold text-muted">{{ category }}</small></a></li>
-        <li class="breadcrumb-item"><a href="{{ thread.get_absolute_url }}"><small
-                    class="font-weight-bold text-secondary">{{ thread.title }}</a></small></li>
-        <li class="breadcrumb-item active text-muted" aria-current="page"><small
-                class="font-weight-bold">{{ comments.number }}</small></li>
+      <li class="breadcrumb-item">
+        <a href="{{ category.get_absolute_url }}">
+          <small class="font-weight-bold text-muted">{{ category }}</small>
+        </a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ thread.get_absolute_url }}">
+          <small class="font-weight-bold text-secondary">{{ thread.title }}</small>
+        </a>
+      </li>
+      <li class="breadcrumb-item active text-muted" aria-current="page">
+        <small class="font-weight-bold">{{ comments.number }}</small>
+      </li>
     </ol>
-</nav><!-- Breadcrumb -->
+  </nav><!-- Breadcrumb -->
 
-<main>
+  <main>
     <div class="container">
-        <div class="row mt-4">
-            <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
-                {% include "includes/messages.html" with messages=messages%}
-                <!-- Thread Heading -->
-                <div class="thread-heading">
-                    <h4 class="mt-0 mb-0">
-                        <a href="{{ thread.get_absolute_url }}" class="text-dark">{{ thread.title }}</a>
-                    </h4>
-                    <div class="dull-color mb-2 d-flex mt-2 align-items-end">
-                        <small class="d-inline-block mr-4 dull-color"><i class="far fa-comments"></i>
-                            {% if thread.comment_count %}
-                            {{ thread.comment_count }} repl{{ thread.comment_count|pluralize:"y,ies" }}
-                            {% else %}
-                            No reply
-                            {% endif %}
-                        </small>
-
-                        <small class="d-inline-block mr-auto dull-color"><i class="far fa-eye"></i>
-                            {{ thread.views }} view{{ thread.views|pluralize }}
-                        </small>
-
-                        <a href="{{ thread.get_thread_follow_url}}" class="btn btn-light text-muted btn-sm thread-follow-btn">
-                            <span class="toggle">
-                                {% if is_thread_follower %}
-                                Unfollow
-                                {% else %}
-                                Follow
-                                {% endif %}
-                            </span>
-                            <span class="count">
-                                {{ thread_followers_count }}
-                            </span>
-                        </a>
-                    </div>
-                </div><!-- Thread Heading -->
-
-                {% if comments.number == 1 %}
-                <!-- Thread Starting Comment -->
-                <ul class="list-group mb-4 comment-list-group">
-
-                    {% if starting_comment %}
-                    <li class="list-group-item" {% comment %} style="border: 2px solid #9b27b062;" {% endcomment %}>
-                        {% include "includes/comment.html" with comment=starting_comment %}
-                    </li>
-                    {% else %}
-                    <div class="card">
-                        <div class="card-header text-dark text-center font-weight-bold bg-white">
-                            Something went wrong. Please try updating the thread if you were the author.
-                        </div>
-                    </div>
-                    {% endif %}
-                </ul><!-- Comment Starting Comment -->
+      <div class="row mt-4">
+        <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+          {% include "includes/messages.html" with messages=messages%}
+            <!-- Thread Heading -->
+          <div class="thread-heading">
+            <h4 class="mt-0 mb-0">
+              <a href="{{ thread.get_absolute_url }}" class="text-dark">{{ thread.title }}</a>
+            </h4>
+            
+            <div class="dull-color mb-2 d-flex mt-2 align-items-end">
+              <small class="d-inline-block mr-4 dull-color"><i class="far fa-comments"></i>
+                {% if thread.comment_count %}
+                  {{ thread.comment_count }} repl{{ thread.comment_count|pluralize:"y,ies" }}
+                {% else %}
+                  No reply
                 {% endif %}
+              </small>
 
-                {% if comments.number == 1 and comments %}
-                <div class="comment-heading my-2">
-                    <h5>
-                        Comments
-                    </h5>
+              <small class="d-inline-block mr-auto dull-color"><i class="far fa-eye"></i>
+                {{ thread.views }} view{{ thread.views|pluralize }}
+              </small>
+
+              <a href="{{ thread.get_thread_follow_url}}" class="btn btn-light text-muted btn-sm thread-follow-btn">
+                <span class="toggle">
+                  {% if is_thread_follower %} Unfollow{% else %}Follow{% endif %}
+                </span>
+                <span class="count">{{ thread_followers_count }}</span>
+              </a>
+            </div>
+          </div><!-- Thread Heading -->
+
+          {% if comments.number == 1 %}
+            <!-- Thread Starting Comment -->
+            <ul class="list-group mb-4 comment-list-group">
+              {% if starting_comment %}
+                <li class="list-group-item" {% comment %} style="border: 2px solid #9b27b062;" {% endcomment %}>
+                  {% include "includes/comment.html" with comment=starting_comment %}
+                </li>
+              {% else %}
+                <div class="card">
+                  <div class="card-header text-dark text-center font-weight-bold bg-white">
+                    Something went wrong. Please try updating the thread if you were the author.
+                  </div>
                 </div>
-                {% endif %}
+              {% endif %}
+            </ul><!-- Comment Starting Comment -->
+          {% endif %}
 
-                <!-- Comment Section -->
-                <ul class="list-group mb-2 comment-list-group">
-                    {% for comment in comments %}
-                    <li class="list-group-item">
-                        {% include "includes/comment.html" with comment=comment %}
-                    </li>
-                    {% empty %}
-                        <div class="text-center text-secondary mt-2">
-                            <div style="font-size: 2rem"><i class="far fa-comments"></i></div>
-                            <div>
-                                <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No replies yet</p>
-                                <p style="font-size: 0.9rem">Be the first to comment</p>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </ul><!-- Comment Section -->
-
-               
+          {% if comments.number == 1 and comments %}
+            <div class="comment-heading my-2">
+              <h5>Comments</h5>
             </div>
-        </div>
+          {% endif %}
 
-        <div class="row">
-            <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1 mt-4">
-                {% include "includes/pagination.html" with page_obj=comments use_page_txt=True %}
-            </div>
-        </div>
-
-        {% if request.user.is_authenticated %}
-            <div class="form-small row">
-                <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
-                    {% include "includes/comment_form.html" with form=form form_action=form_action %}
+          <!-- Comment Section -->
+          <ul class="list-group mb-2 comment-list-group">
+            {% for comment in comments %}
+              <li class="list-group-item">
+                {% include "includes/comment.html" with comment=comment %}
+              </li>
+            {% empty %}
+              <div class="text-center text-secondary mt-2">
+                <div style="font-size: 2rem"><i class="far fa-comments"></i></div>
+                <div>
+                  <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No replies yet</p>
+                  <p style="font-size: 0.9rem">Be the first to comment</p>
                 </div>
-            </div>
-        {% endif %}
-        
+              </div>
+            {% endfor %}
+          </ul><!-- Comment Section -->          
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1 mt-4">
+          {% include "includes/pagination.html" with page_obj=comments use_page_txt=True %}
+        </div>
+      </div>
+
+      {% if request.user.is_authenticated %}
+        <div class="form-small row">
+          <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+            {% include "includes/comment_form.html" with form=form form_action=form_action %}
+          </div>
+        </div>
+      {% endif %}        
     </div>
-</main>
+  </main>
 {% endblock content %}
 
 {% block javascript %} 
-    <script src="{% static 'js/thread-detail.js' %}"></script>
+  <script src="{% static 'js/thread-detail.js' %}"></script>
 {% endblock javascript %}

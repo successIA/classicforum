@@ -19,11 +19,12 @@ def upload(request):
         if form.is_valid():            
             attachment = form.save(commit=False)            
             md5sum = md5(attachment.image)
-            attachment_list = list(
-                Attachment.objects.filter(md5sum=md5sum, is_avatar=False)
+            attachment_qs = Attachment.objects.filter(
+                md5sum=md5sum, is_avatar=False
             )
-            if attachment_list:
-                attachment = attachment_list[0]
+            
+            if attachment_qs:
+                attachment = attachment_qs[0]
             else:
                 attachment.md5sum = md5sum
                 attachment.save()

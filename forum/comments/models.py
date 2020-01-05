@@ -68,10 +68,10 @@ class Comment(TimeStampedModel):
     def __str__(self):
         return self.message[:32]
 
-    def _set_position(self):
+    def set_position(self):
         self.position = self.thread.comment_count + 1
 
-    def _set_message(self):
+    def set_message(self):
         from forum.comments.utils import (
             get_rendered_message,
             get_mentioned_users_in_message,
@@ -171,10 +171,6 @@ class Comment(TimeStampedModel):
     def get_precise_url(self, page_num=None):
         if not page_num:
             count = self.position + self.offset
-            # count = self.position - self.offset
-            # print("POSITION:", self.position)
-            # print("OFFSET:", self.offset)
-            # print("COUNT:", count)
             page_num = ceil(count / COMMENT_PER_PAGE)
         return '%s?page=%s&read=True#comment%s' % (
             self.thread.get_absolute_url(), page_num, self.pk
@@ -240,20 +236,6 @@ class Comment(TimeStampedModel):
         return self.thread.get_absolute_url()
 
 
-class CommentRevisionQuerySet(models.query.QuerySet):
-    pass
-    # def create_from_comment(self, comment):
-    #     instance = self.create(
-    #         comment=comment,
-    #         message=comment.message,
-    #         marked_message=comment.marked_message
-    #     )
-    #     mentioned_users = comment.mentioned_users.all()
-    #     instance.mentioned_users.add(*mentioned_users)
-    #     # Attachment.objects.sync_with_comment(comment, instance.message)
-    #     sync_attachment_with_comment(comment.pk, message=instance.message)
-
-
 class CommentRevision(models.Model):
     comment = models.ForeignKey(
         Comment, on_delete=models.CASCADE, related_name="revisions"
@@ -266,22 +248,9 @@ class CommentRevision(models.Model):
         related_name='comment_rev_mention'
     )
     created = models.DateTimeField(auto_now_add=True)
-    objects = CommentRevisionQuerySet.as_manager()
 
     def __str__(self):
         return 'Comment History-%s' % (self.created)
-
-    # def get_message_as_markdown(self):
-    #     from markdown import markdown
-    #     text, comment_info_list = bbcode_quote(self.message)
-    #     return mark_safe(markdown(text, safe_mode='escape'))
-
-
-# from forum.threads.models import Thread
-# for thread in Thread.objects.all():
-#      starting_comment = thread.starting_comment
-#      starting_comment.user = thread.user
-#      starting_comment.save()
 
 
 # class CommentVoteQuerySet(models.query.QuerySet):

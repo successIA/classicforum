@@ -1,24 +1,25 @@
 {% if category_list %}
-{% for category in category_list %}
+  {% for category in category_list %}
     <style scoped>
-        a.list-group-item:focus,
-        a.list-group-item:hover {
-            {% comment %} background-color: hsl(204, 20%, 93%) !important; {% endcomment %}
-            background-color: #DAE0E5 !important;
-        }
+      a.list-group-item:focus,
+      a.list-group-item:hover {
+          {% comment %} background-color: hsl(204, 20%, 93%) !important; {% endcomment %}
+          background-color: #DAE0E5 !important;
+      }
     </style>
     {% if current_category == category %}
-        <a href="{% url 'categories:category_detail' category.slug %}"
-            class="list-group-item list-group-item-action category-active text-primary" style="background-color: #DAE0E5;">
-            <i class="{{ category.icon }} mr-3"></i>{{ category.title }}
-        </a>
-        {% else %}
-        <a href="{% url 'categories:category_detail' category.slug %}" class="list-group-item list-group-item-action bg-light">
-            <i class="{{ category.icon }} mr-3"></i>{{ category.title }}
-        </a>
+      <a href="{% url 'categories:category_detail' category.slug %}"
+        class="list-group-item list-group-item-action category-active text-primary" style="background-color: #DAE0E5;">
+        <i class="{{ category.icon }} mr-3"></i>{{ category.title }}
+      </a>
+    {% else %}
+      <a href="{% url 'categories:category_detail' category.slug %}" class="list-group-item list-group-item-action bg-light">
+        <i class="{{ category.icon }} mr-3"></i>{{ category.title }}
+      </a>
     {% endif %}
-{% endfor %}
-
+  {% endfor %}
 {% else %}
-    <li style="margin: 14px 90px 10px; color: #FFF; "><strong>No available category at this moment, please check back later.</strong></li>
+  <li>
+    <strong>No available category at this moment, please check back later.</strong>
+  </li>
 {% endif %}

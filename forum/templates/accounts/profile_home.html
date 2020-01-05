@@ -1,95 +1,79 @@
 {% extends 'profile_base.html' %}
 
-{% load static %}
-{% load humanize %}
-
 {% load forum_template_tags %}
+{% load humanize %}
+{% load static %}
 
 {% block profile_content %}
-<main>
+  <main>
     <div class="container ">
         <!-- Profile Info -->
-        <div class="row offset-lg-1">
-            <div class="col-7 col-lg-7 col-xl-8 mt-4">
-                <!-- Mobile -->
-                <img src="{% if userprofile.avatar_url %}{{ userprofile.avatar_url }}{% else %}{% static 'img/avatar.svg' %}{% endif %}"
-                    height="90" width="90" class="mr-3 rounded-circle d-md-none avatar" alt="..." /><!-- Mobile -->
+      <div class="row offset-lg-1">
+        <div class="col-7 col-lg-7 col-xl-8 mt-4">
+          <!-- Mobile -->
+          <img src="{{ userprofile.get_avatar_url }}" height="90" width="90" class="mr-3 rounded-circle d-md-none avatar" alt="..." /><!-- Mobile -->
 
-                <!-- Desktop -->
-                <div class="d-none d-md-table-cell">
-                    <img src="{% if userprofile.avatar_url %}{{ userprofile.avatar_url }}{% else %}{% static 'img/avatar.svg' %}{% endif %}"
-                        height="150" width="150" class="mr-3 rounded-circle d-none d-sm-block avatar" alt="..." />
-                </div><!-- Desktop -->
+          <!-- Desktop -->
+          <div class="d-none d-md-table-cell">
+            <img src="{{ userprofile.get_avatar_url }}" height="150" width="150" class="mr-3 rounded-circle d-none d-sm-block avatar" alt="..." />
+          </div><!-- Desktop -->
 
-                <div class="d-none d-md-table-cell align-top">
-                    {% include 'accounts/includes/profile_home_info_fragment.html' with userprofile=userprofile %}
-                </div>
-            </div>
+          <div class="d-none d-md-table-cell align-top">
+            {% include 'accounts/includes/profile_home_info_fragment.html' with userprofile=userprofile %}
+          </div>
+        </div>
 
-            <div
-                class="col-5 mt-4 d-flex align-items-start justify-content-end justify-content-lg-end justify-content-xl-end col-lg-3 col-xg-2">
-                {% if request.user.is_authenticated and request.user == userprofile %}
-                <a href="{% url 'accounts:user_edit' userprofile.username %}"
-                    class="btn btn-outline-primary float-right">
-                    Edit profile
+        <div class="col-5 mt-4 d-flex align-items-start justify-content-end justify-content-lg-end justify-content-xl-end col-lg-3 col-xg-2">
+          {% if request.user.is_authenticated and request.user == userprofile %}
+            <a href="{% url 'accounts:user_edit' userprofile.username %}" class="btn btn-outline-primary float-right">
+              Edit profile
+            </a>
+          {% endif %}
+
+          {% if request.user.is_authenticated %}
+            {% if request.user != userprofile %}
+              {% if request.user in userprofile.followers.all %}
+                <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-outline-primary mt-2 font-weight-bold">
+                    <i class="fas fa-check mr-1"></i>Following
                 </a>
-                {% endif %}
+              {% else %}
+                <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-primary text-bold mt-2 font-weight-bold">
+                  Follow
+                </a>
+              {% endif %}
+            {% endif %}
+          {% endif %}
+        </div>
+      </div><!-- Profile Info -->
 
-                {% if request.user.is_authenticated %}
-                    {% if request.user != userprofile %}
-                        {% if request.user in userprofile.followers.all %}
-                            <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-outline-primary mt-2 font-weight-bold">
-                                <i class="fas fa-check mr-1"></i>Following
-                            </a>
-                        {% else %}
-                            <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-primary text-bold mt-2 font-weight-bold">
-                                Follow
-                            </a>
-                        {% endif %}
-                    {% endif %}
-                {% endif %}
-            </div>
-        </div><!-- Profile Info -->
+      <!-- Profile Info (responsive-fix)-->
+      <div class="d-md-none row mt-2">
+        <div class="col-12">
+          {% include 'accounts/includes/profile_home_info_fragment.html' with userprofile=userprofile %}
+        </div>
+      </div><!-- Profile Info (responsive-fix)-->
 
-        <!-- Profile Info (responsive-fix)-->
-        <div class="d-md-none row mt-2">
-            <div class="col-12">
-                {% include 'accounts/includes/profile_home_info_fragment.html' with userprofile=userprofile %}
-            </div>
-        </div><!-- Profile Info (responsive-fix)-->
-
-        <!-- Profile Activity -->
-        <div class="row mt-3 offset-lg-1">
-            <div class="col-sm-12">
-                {% include 'accounts/includes/profile_home_activity.html' with userprofile=userprofile active_category=active_category %}
-            </div>
-        </div><!-- Profile Activity -->
+      <!-- Profile Activity -->
+      <div class="row mt-3 offset-lg-1">
+        <div class="col-sm-12">
+          {% include 'accounts/includes/profile_home_activity.html' with userprofile=userprofile active_category=active_category %}
+        </div>
+      </div><!-- Profile Activity -->
 
         <!-- Profile Stats -->
-        <div class="row mt-3 offset-lg-1 mb-4">
-            <div class="col-sm-12">
-                {% include 'accounts/includes/profile_home_stats.html' with userprofile=userprofile total_upvotes=total_upvotes total_upvoted=total_upvoted %}
-            </div>
-        </div><!-- Profile Stats -->
-
-        <div class="row offset-lg-1 mb-5">
-            <div class="col-12 col-lg-8">
-                {% comment %} <!-- Recent Header -->
-                <ul class="nav border-top shadow-sm mb-4 py-0" style="margin-left: -20rem; margin-right: -35rem;">
-                    <li class="nav-item " style="margin-left: 20rem; margin-right: 35rem;">
-                        <a class="nav-link active pl-0 text-dark" href="#">
-                            <h
-                            5 class="py-0 my-0 mb-1">Recent Posts</h5>
-                        </a>
-                    </li>
-                </ul><!-- Recent Posts Header --> {% endcomment %}
-
-
-                <!-- Recent Posts Tab Panel -->
-                <div class="col-12">
-                    {% include 'accounts/includes/profile_home_recent_posts.html' with userprofile=userprofile recent_comments=recent_comments recent_threads=recent_threads %}
-                </div><!-- Recent Posts Tab Panel -->
-            </div>
+      <div class="row mt-3 offset-lg-1 mb-4">
+        <div class="col-sm-12">
+          {% include 'accounts/includes/profile_home_stats.html' with userprofile=userprofile total_upvotes=total_upvotes total_upvoted=total_upvoted %}
         </div>
-</main>
+      </div><!-- Profile Stats -->
+
+      <div class="row offset-lg-1 mb-5">
+        <div class="col-12 col-lg-8">
+          <!-- Recent Posts Tab Panel -->
+          <div class="col-12">
+            {% include 'accounts/includes/profile_home_recent_posts.html' with userprofile=userprofile recent_comments=recent_comments recent_threads=recent_threads %}
+          </div><!-- Recent Posts Tab Panel -->
+        </div>
+      </div>
+  </main>
 {% endblock profile_content %}

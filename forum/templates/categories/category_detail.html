@@ -1,70 +1,72 @@
 {% extends 'base.html' %}
 
-{% load static %}
-{% load humanize %}
-
 {% load forum_template_tags %}
+{% load humanize %}
+{% load static %}
 
 {% block title %}
-{{ category.title }}
+  {{ category.title }}
 {% endblock title %}
 
 {% block content %}
-<div class="container-fluid border-top border-bottom">
+  <div class="container-fluid border-top border-bottom">
     <div class="row align-items-center">
-        {% include 'includes/thread_filter_ctrl.html' with dropdown_active_text=dropdown_active_text %}
-        {% comment %} <ol
-            class="d-none d-md-flex ml-md-auto breadcrumb bg-white justify-content-end align-items-center rounded-0 py-0 pt-auto mb-0 ">
-            <li class="breadcrumb-item"><a href="/"><small class="font-weight-bold text-muted">Home</small></a></li>
-            <li class="breadcrumb-item"><a href="{{ category.get_absolute_url }}"><small
-                        class="font-weight-bold text-secondary">{{ category.title }}</a></small></li>
-            <li class="breadcrumb-item active text-muted" aria-current="page"><small
-                    class="font-weight-bold">{{ threads.number }}</small></li>
-        </ol> {% endcomment %}
-        {% include 'includes/thread_add_partial.html' %}
-        
+      {% include 'includes/thread_filter_ctrl.html' with dropdown_active_text=dropdown_active_text %}
+      <ol class="d-none d-md-flex ml-md-auto breadcrumb bg-white justify-content-end align-items-center 
+        rounded-0 py-0 pt-auto mb-0 ">
+        <li class="breadcrumb-item">
+          <a href="/"><small class="font-weight-bold text-muted">Home</small></a>
+        </li>
+        <li class="breadcrumb-item"><a href="{{ category.get_absolute_url }}">
+          <small class="font-weight-bold text-secondary">{{ category.title }}</a></small>
+        </li>
+        <li class="breadcrumb-item active text-muted" aria-current="page">
+          <small class="font-weight-bold">{{ threads.number }}</small>
+        </li>
+      </ol> 
+      {% include 'includes/thread_add_partial.html' %}
     </div>
-</div>
-<main>
+  </div>
+  
+  <main>
     <div class="container">
-        <div class="row mt-5">
-            <div class="col-sm-12 col-md-10 offset-md-1 col-lg-9 col-xl-8 offset-lg-1">
-                {% include "includes/messages.html" with messages=messages%}
-                <ul class="list-group mb-4 thread-list-group">
-                    {% for thread in threads %}
-                    <li class="list-group-item">
-                        {% include "includes/thread.html" with thread=thread category=category %}
-                    </li>
-                    {% empty %}
-                    {% comment %} <li class="list-group-item text-primary text-center font-weight-bold">
-                        No Available threads for the current selection.
-                    </li> {% endcomment %}
-                    <div class="card">
-                        <div class="text-center text-secondary mt-3 mb-3">
-                            <div style="font-size: 2rem"><i class="fas fa-book"></i></div>
-                            <div>
-                                <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">{% empty_thread_description dropdown_active_text %}</p>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
-                {% include "includes/pagination.html" with page_obj=threads %}
-            </div>
-        </div>
-
-        {% if request.user.is_authenticated %}
-            <div class="form-small row">
-                <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
-                {% include "includes/comment_form.html" with form=form form_action=form_action %}
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-10 offset-md-1 col-lg-9 col-xl-8 offset-lg-1">
+          {% include "includes/messages.html" with messages=messages%}
+          <ul class="list-group mb-4 thread-list-group">
+            {% for thread in threads %}
+              <li class="list-group-item">
+                {% include "includes/thread.html" with thread=thread category=category %}
+              </li>
+            {% empty %}
+              <div class="card">
+                <div class="text-center text-secondary mt-3 mb-3">
+                  <div style="font-size: 2rem"><i class="fas fa-book"></i></div>
+                  <div>
+                    <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">
+                      {% empty_thread_description dropdown_active_text %}
+                    </p>
+                  </div>
                 </div>
-            </div>
-        {% endif %}        
+              </div>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+          {% include "includes/pagination.html" with page_obj=threads %}
+        </div>
+      </div>
+
+      {% if request.user.is_authenticated %}
+        <div class="form-small row">
+          <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+            {% include "includes/comment_form.html" with form=form form_action=form_action %}
+          </div>
+        </div>
+      {% endif %}        
     </div>
-</main>
+  </main>
 {% endblock content %}

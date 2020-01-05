@@ -71,8 +71,8 @@ def perform_comment_save(comment, prev_msg=None):
         and not comment.is_starting_comment else False
     )
     
-    if is_pure_comment_create: comment._set_position()    
-    mentions = comment._set_message()
+    if is_pure_comment_create: comment.set_position()    
+    mentions = comment.set_message()
     comment.save()
 
     if is_pure_comment_create:

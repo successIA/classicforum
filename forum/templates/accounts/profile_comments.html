@@ -1,45 +1,42 @@
 {% extends 'profile_base.html' %}
 
-{% load static %}
-{% load humanize %}
-
 {% load forum_template_tags %}
+{% load humanize %}
+{% load static %}
 
 {% block profile_content %}
-<main>
-  <div class="container mt-lg-4">
-    <div class="row offset-lg-1">
-      <div class="col-12">
-        <h5 class="mb-3">All Comments</h5>
-      </div>
+  <main>
+    <div class="container mt-lg-4">
+      <div class="row offset-lg-1">
+        <div class="col-12">
+          <h5 class="mb-3">All Comments</h5>
+        </div>
 
-      <div class="col-12 col-lg-8">
-        <!-- Comment Section -->
-        <ul class="list-group mb-4">
-          {% for comment in comments %}
-            <li class="list-group-item">
-              {% include "includes/comment.html" with comment=comment %}
-            </li>
-          {% empty %}
-            <div class="card">
-              <div class="text-center text-secondary mt-2">
-                <div style="font-size: 2rem"><i class="far fa-comments"></i></div>
-                <div>
-                    <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No comments yet</p>
+        <div class="col-12 col-lg-8">
+          <ul class="list-group mb-4">
+            {% for comment in comments %}
+              <li class="list-group-item">
+                {% include "includes/comment.html" with comment=comment %}
+              </li>
+            {% empty %}
+              <div class="card">
+                <div class="text-center text-secondary mt-2">
+                  <div style="font-size: 2rem"><i class="far fa-comments"></i></div>
+                  <div>
+                      <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No comments yet</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          {% endfor %}
-        </ul><!-- Comment Section -->
+            {% endfor %}
+          </ul>
+        </div>
       </div>
-    </div>
 
-    <div class="row">
-      <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
-        {% include "includes/comment_pagination.html" with comments=comments %}
-      </div>
+      <div class="row">
+        <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+          {% include "includes/comment_pagination.html" with comments=comments %}
+        </div>
+      </div>      
     </div>
-    
-  </div>
-</main>
+  </main>
 {% endblock profile_content %}

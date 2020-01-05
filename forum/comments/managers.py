@@ -63,8 +63,8 @@ class CommentQuerySet(models.query.QuerySet):
             comment_qs = self.filter(pk=int(pk))
         except:
             return None
-        if comment_qs.exists():
-            return comment_qs.first()
+        if comment_qs:
+            return comment_qs[0]
 
     def pure(self):
         return self.filter(is_starting_comment=False)
