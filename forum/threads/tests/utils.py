@@ -6,7 +6,8 @@ fake = Faker()
 
 
 def make_threads(
-    count=1, user=None, category=None, title=None, message=None
+    count=1, user=None, category=None, 
+    title=None, message=None, visible=True
 ):
     from forum.accounts.models import User
     from forum.categories.models import Category
@@ -17,7 +18,7 @@ def make_threads(
         user = User.objects.create_user(username=fake.name())
     if not category:
         category = Category.objects.create(
-            title=fake.sentence(), description=fake.texts()
+            title=fake.sentence()[:50], description=fake.texts()
         )
 
     threads = []
@@ -29,6 +30,7 @@ def make_threads(
             body="NA",
             user=user,
             category=category,
+            visible=visible,
             created=timezone.now(),
             modified=timezone.now()
         )

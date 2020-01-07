@@ -1,5 +1,6 @@
 from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch
 from django.db import models
+from django.shortcuts import get_object_or_404
 
 
 class CommentQuerySet(models.query.QuerySet):
@@ -69,7 +70,21 @@ class CommentQuerySet(models.query.QuerySet):
         return self.filter(is_starting_comment=False)
 
     def pure_and_active(self):
-        return self.active().filter(is_starting_comment=False)
-
+        return self.active().pure()
+    
+    def pure_and_active_or_404(self, pk):
+        return get_object_or_404(
+            self.model, visible=True, is_starting_comment=False, pk=pk
+        )
+    
+    def pure_and_thread_active_or_404(self, pk):
+        return get_object_or_404(
+            self.model, 
+            thread__visible=True,
+            visible=True, 
+            is_starting_comment=False, 
+            pk=pk
+        )
+    
     def active(self, *args, **kwargs):
         return self.filter(visible=True)

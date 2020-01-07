@@ -35,6 +35,13 @@ $(document).ready(function() {
     return validateImage(data);
   };
 
+  $(".nav-container")
+    .last()
+    .attr(
+      "style", 
+      "box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);"
+    )
+
   var SideBarToggler = {
     $menuToggle: $("#menu-toggle"),
     $sidebarOverlay: $(".sidebar-overlay"),
