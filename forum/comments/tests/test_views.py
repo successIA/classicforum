@@ -80,6 +80,50 @@ class CommentCreateViewTest(CommentViewsTest):
         self.assertEquals(response.status_code, 200)
         form = response.context.get('form')
         self.assertTrue(form.errors)
+    
+    def test_view_should_not_render_hidden_thread_for_regular_user(self):
+        """
+        A comment form cannot be displayed for regular users when thread
+        is hidden
+        """
+        Thread.objects.all().delete()
+        thread = make_threads(visible=False)
+        login(self, self.user, 'password')
+        create_url = reverse(
+            'comments:comment_create', kwargs={'thread_slug': thread.slug}
+        )
+        response = self.client.get(create_url)
+        self.assertEquals(response.status_code, 404)
+    
+    # def test_view_should_render_hidden_thread_for_comment_moderator(self):
+    #     """
+    #     A comment form can be displayed for comment users when thread
+    #     is hidden
+    #     """
+    #     Thread.objects.all().delete()
+    #     thread = make_threads(visible=False)
+    #     login(self, self.user, 'password')
+    #     create_url = reverse(
+    #         'comments:comment_create', kwargs={'thread_slug': thread.slug}
+    #     )
+    #     response = self.client.get(f"{create_url}?hidden=1")
+    #     self.assertEquals(response.status_code, 200)
+    
+    def test_view_should_not_allow_post_for_hidden_thread(self):
+        current_count = Comment.objects.count()
+        login(self, self.user, 'password')
+        data = {'message': 'hello word'}
+
+        Thread.objects.all().delete()
+        thread = make_threads(visible=False)
+        login(self, self.user, 'password')
+        create_url = reverse(
+            'comments:comment_create', kwargs={'thread_slug': thread.slug}
+        )
+    
+        response = self.client.post(create_url, data)
+        self.assertEquals(response.status_code, 404)
+        self.assertEquals(Comment.objects.count(), current_count)
 
 
 class CommentCreateViewWithMentionTest(CommentViewsTest):
@@ -238,6 +282,39 @@ class CommentUpdateViewTest(CommentViewsTest):
         )
         response = self.client.post(update_url, data)
         self.assertEquals(response.status_code, 404)
+    
+    def test_view_should_not_render_hidden_thread_for_regular_user(self):
+        """
+        A comment form cannot be displayed for regular users when thread
+        is hidden
+        """
+        Thread.objects.all().delete()
+        thread = make_threads(visible=False)
+        comment = make_comment(self.user, thread)
+        login(self, self.user, 'password')
+        update_url = reverse(
+            'comments:comment_update', 
+            kwargs={'thread_slug': thread.slug, 'pk': comment.pk}
+        )
+        response = self.client.get(update_url)
+        self.assertEquals(response.status_code, 404)
+    
+    def test_view_should_not_allow_post_for_hidden_thread(self):
+        Thread.objects.all().delete()
+        thread = make_threads(visible=False)
+        comment = make_comment(
+            self.user, thread, message='hello world 23'
+        )
+        update_url = reverse(
+            'comments:comment_update', 
+            kwargs={'thread_slug': thread.slug, 'pk': comment.pk}
+        )
+        login(self, self.user, 'password')
+        data = {'message': 'hello world 23'}
+        response = self.client.post(update_url, data)
+        self.assertEquals(response.status_code, 404)
+        comment.refresh_from_db()
+        self.assertEquals(comment.message, 'hello world 23')
 
 
 class CommentReplyViewTest(CommentViewsTest):

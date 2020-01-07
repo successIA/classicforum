@@ -29,7 +29,7 @@ from forum.threads.models import Thread, ThreadRevision
 from forum.categories.views import category_detail
 from forum.comments.forms import CommentForm
 from forum.threads.forms import ThreadForm
-from forum.threads.mixins import thread_owner_required
+from forum.threads.mixins import thread_adder, thread_owner_required
 from forum.core.constants import THREAD_PER_PAGE
 from forum.core.utils import get_post_login_redirect_url
 
@@ -90,8 +90,11 @@ def create_thread(request, slug=None, filter_str=None, page=None):
         return thread_list(request, filter_str, page, form)
 
 
-def thread_detail(request, thread_slug, form=None, form_action=None):
-    thread = get_object_or_404(Thread, slug=thread_slug)
+@thread_adder
+def thread_detail(
+    request, thread_slug, thread=None, form=None, form_action=None
+):
+    # thread = get_object_or_404(Thread, slug=thread_slug)
     ctx = {
         'thread': thread,
         'starting_comment': thread.starting_comment,
@@ -123,6 +126,7 @@ def thread_detail(request, thread_slug, form=None, form_action=None):
 
 
 @login_required
+@thread_adder
 @thread_owner_required
 def update_thread(request, thread_slug, thread=None):
     message = thread.starting_comment.message
@@ -150,13 +154,15 @@ def update_thread(request, thread_slug, thread=None):
             return HttpResponseRedirect(thread.get_absolute_url())
     form_action = thread.get_thread_update_form_action()
     return thread_detail(
-        request, thread_slug, form=form, form_action=form_action
+        request, thread_slug, 
+        thread=thread, form=form, form_action=form_action
     )
 
 
 @login_required
-def follow_thread(request, thread_slug):
-    thread = get_object_or_404(Thread, slug=thread_slug)
+@thread_adder
+def follow_thread(request, thread_slug, thread=None):
+    # thread = get_object_or_404(Thread, slug=thread_slug)
     ThreadFollowership.objects.toggle(request.user, thread)
     followers_count = thread.followers.count()
     if request.is_ajax():

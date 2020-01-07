@@ -106,3 +106,14 @@ def unhide_post_permission_required(f):
     wrap.__name__ = f.__name__
     return wrap
 
+# def view_post_permission_required(f):
+#     def wrap(request, *args, **kwargs):
+#         if kwargs.get("thread_slug") and kwargs.get("pk"):
+
+#         if not post.visible:
+#             if (
+#                 request.user.is_moderator and 
+#                 request.user.moderator.is_moderating(post)
+#             ):
+#                 return f(request, *args, **kwargs)
+#         raise Http404

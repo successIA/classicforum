@@ -7,7 +7,11 @@ from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 
 from forum.comments.forms import CommentForm
-from forum.comments.mixins import comment_owner_required, vote_perm_required
+from forum.comments.mixins import (
+    comment_owner_required, 
+    vote_perm_required,
+    comment_adder
+)
 from forum.comments.models import Comment, CommentRevision
 from forum.comments.utils import (
     get_comment_reply_form,
@@ -17,10 +21,11 @@ from forum.comments.utils import (
 from forum.notifications.models import Notification
 from forum.threads.models import Thread
 from forum.threads.views import thread_detail
-
+from forum.threads.mixins import thread_adder
 
 @login_required
-def create_comment(request, thread_slug):
+@thread_adder
+def create_comment(request, thread_slug, thread=None):
     thread = get_object_or_404(Thread, slug=thread_slug)
     form = CommentForm(extra='edit-message')
     if request.method == 'POST':
@@ -33,10 +38,13 @@ def create_comment(request, thread_slug):
                 comment = form.save(commit=False)
                 perform_comment_save(comment) 
             return HttpResponseRedirect(comment.get_precise_url())
-    return thread_detail(request, thread_slug, form=form)
+    return thread_detail(
+        request, thread_slug, form=form, thread=thread
+    )
 
 
 @login_required
+@comment_adder
 @comment_owner_required
 def update_comment(request, thread_slug, pk, comment=None):
     form = CommentForm(instance=comment, extra='edit-message')
@@ -60,13 +68,19 @@ def update_comment(request, thread_slug, pk, comment=None):
             return HttpResponseRedirect(comment.get_precise_url())
 
     form_action = comment.get_update_form_action()
-    kwargs = {'form': form, 'form_action': form_action}
+    kwargs = {
+        'form': form, 
+        'form_action': form_action, 
+        'thread': comment.thread
+    }
     return thread_detail(request, thread_slug, **kwargs)
 
 
 @login_required
-def reply_comment(request, thread_slug, pk):
-    parent_comment = get_object_or_404(Comment, pk=pk)
+@comment_adder
+def reply_comment(request, thread_slug, pk, comment=None):
+    # parent_comment = get_object_or_404(Comment, pk=pk)
+    parent_comment = comment
     form = get_comment_reply_form(parent_comment)
     if request.method == 'POST':
         form = CommentForm(request.POST, extra='edit-message')
@@ -89,11 +103,16 @@ def reply_comment(request, thread_slug, pk):
             return HttpResponseRedirect(comment.get_precise_url())
 
     form_action = parent_comment.get_reply_form_action()
-    kwargs = {'form': form, 'form_action': form_action}
+    kwargs = {
+        'form': form, 
+        'form_action': form_action, 
+        'thread': comment.thread
+    }
     return thread_detail(request, thread_slug, **kwargs)
 
 
 @login_required
+@comment_adder
 @vote_perm_required
 def upvote_comment(request, thread_slug=None, pk=None, comment=None):
     comment.upvote(request.user)
@@ -101,6 +120,7 @@ def upvote_comment(request, thread_slug=None, pk=None, comment=None):
 
 
 @login_required
+@comment_adder
 @vote_perm_required
 def downvote_comment(request, thread_slug=None, pk=None, comment=None):
     comment.downvote(request.user)

@@ -108,8 +108,19 @@ class ThreadListViewTest(ThreadsViewsTest):
             self.assertEquals(
                 response.context['threads_url'], '/threads/%s' % (filter_str)
             )
+    
+    def test_view_should_not_render_hidden_thread_for_regular_user(self):
+        Thread.objects.all().delete()
+        thread = make_threads(visible=False)
+        response = self.client.get(self.list_url)
+        self.assertEquals(len(response.context['threads']), 0)
 
+        thread = make_threads()
+        response = self.client.get(self.list_url)
+        self.assertEquals(len(response.context['threads']), 1)
+        self.assertEquals(Thread.objects.count(), 2)
 
+    
 class ThreadCreateViewTest(ThreadsViewsTest):
     def setUp(self):
         super().setUp()
@@ -257,6 +268,14 @@ class ThreadDetailViewTest(ThreadsViewsTest):
         response = self.client.get(self.detail_url)
         self.assertIn('is_thread_follower', response.context)
 
+    def test_view_should_not_render_hidden_thread_for_regular_user(self):
+        thread = make_threads(visible=False)
+        detail_url = reverse(
+            'thread_detail', kwargs={'thread_slug': thread.slug}
+        )
+        response = self.client.get(detail_url)
+        self.assertEqual(response.status_code, 404)
+
 
 class ThreadUpdateViewTest(ThreadsViewsTest):
     def setUp(self):
@@ -313,6 +332,15 @@ class ThreadUpdateViewTest(ThreadsViewsTest):
         response = self.client.get(self.update_url)
         self.assertEquals(response.status_code, 200)
         self.assertIsInstance(response.context['form'], ThreadForm)
+    
+    def test_view_should_not_render_hidden_thread_for_regular_user(self):
+        login(self, self.user, 'password')
+        thread = make_threads(visible=False)
+        update_url = reverse(
+            'thread_detail', kwargs={'thread_slug': thread.slug}
+        )
+        response = self.client.get(update_url)
+        self.assertEqual(response.status_code, 404)
 
     def test_empty_data_rejection(self):
         login(self, self.user, 'password')
@@ -347,6 +375,29 @@ class ThreadUpdateViewTest(ThreadsViewsTest):
         self.assertEquals(self.thread.category.pk, self.category.pk)
         self.assertEquals(self.thread.title, 'java language specifications')
         self.assertEquals(self.thread.starting_comment.message, 'polymorphism')
+
+    def test_view_should_not_allow_post_for_hidden_thread(self):
+        thread = make_threads(
+            user=self.user, category=self.category, 
+            title='python programming 23', message='hello world 23', 
+            visible=False
+        )        
+        login(self, self.user, 'password')
+        data = {
+            'category': self.category.pk,
+            'title': 'java language specifications',
+            'message': 'polymorphism'
+        }
+        update_url = reverse(
+            'thread_detail', kwargs={'thread_slug': thread.slug}
+        )
+        response = self.client.post(update_url, data)
+        self.assertEquals(response.status_code, 404)
+        
+        thread.refresh_from_db()
+        self.assertEquals(thread.category.pk, self.category.pk)
+        self.assertEquals(thread.title, 'python programming 23')
+        self.assertEquals(thread.starting_comment.message, 'hello world 23')
 
     def test_category_cannot_be_changed(self):
         login(self, self.user, 'password')

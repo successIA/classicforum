@@ -1,26 +1,48 @@
 {% load forum_template_tags %}
 
 <style scoped>
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+  }
   .sidebar-item.category-active {
-    {% comment %} {% if is_scroller %}background-color: #cbd3da;{% endif %} {% endcomment %}
     color: #9c27b0 !important;
     font-weight: 600;
   }
 
-  a.sidebar-item.nav-link:focus,
   a.sidebar-item.nav-link:hover {
-    background-color: #cbd3da !important;
+    color: #9c27b0 !important;
+  }
+
+  .sidebar-item .sidebar-item-icon {
+    display: inline-block;
+    width: 1.3rem;
+    text-align: center;
+    margin-right: 1rem;
+  }
+
+  @media (max-width: 992px) {
+    .sidebar-item .sidebar-item-icon {
+      margin-right: .6rem;
+    }
   }
 </style>
+
 <a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'stats' %} tab-control" 
   href="{% url 'accounts:user_stats' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
-  <i class="{{ is_scroller|yesno:"ml-0 mr-2," }} far fa-id-badge" style="font-size: 1.1rem; margin-left: .7rem; margin-right: 1.43rem;"></i>Information
+  <span class="sidebar-item-icon">
+    <i class="far fa-id-badge"></i>
+  </span>
+  <span>Information</span>
 </a>
 
 {% if request.user.is_authenticated and request.user == userprofile %}
   <a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'user_notifs' %}"
       href="{{ request.user.notif_url }}" data-target="{{ dropdown_active_text2 }}">
-    <i class="{{ is_scroller|yesno:"ml-0 mr-2,ml-2 mr-4" }} far fa-bell" style="font-size: 1.1rem; margin-left: 0; margin-right: 0.5rem;"></i>Notifications
+    <span class="sidebar-item-icon">
+      <i class="far fa-bell"></i>
+    </span>
+    <span>Notifications</span>
     {% if request.user.notif_count %}
       <span class="badge badge-pill bg-info text-white align-text-bottom ml-2">
           {{ request.user.notif_count }}
@@ -29,35 +51,56 @@
   </a>
   <a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'settings' %} tab-control" 
     href="{% url 'accounts:user_edit' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
-    <i class="{{ is_scroller|yesno:"ml-0 mr-2,ml-2" }} fas fa-user-cog" style="font-size: 1.1rem; margin-right: 1.1rem;"></i>Settings
+    <span class="sidebar-item-icon">
+      <i class="fas fa-user-cog"></i>
+    </span>
+    <span>Settings</span>
   </a>
 {% endif %}
 
 <a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'replies' %}" 
   href="{% url 'accounts:user_comments' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
-  <i class="{{ is_scroller|yesno:"ml-0 mr-2,ml-2" }} far fa-comments" style="font-size: 1.1rem; margin-right: 1.3rem;"></i>Replies
+  <span class="sidebar-item-icon">
+    <i class="far fa-comments"></i>
+  </span>
+  <span>Replies</span>
 </a>
 
 {% if request.user.is_authenticated and request.user == userprofile %}
   <a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'new' %}" 
     href="{% url 'accounts:thread_new' userprofile.username 'new' %}" data-target="{{ dropdown_active_text2 }}">
-    <i class="{{ is_scroller|yesno:"ml-0 mr-2,ml-2" }} fas fa-info-circle" style="font-size: 1.1rem; margin-right: 1.45rem;"></i>New
+    <span class="sidebar-item-icon">
+      <i class="fas fa-info-circle"></i>
+    </span>
+    <span>New</span>
   </a>
   <a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'following' %}" 
     href="{% url 'accounts:thread_following' userprofile.username 'following' %}" data-target="{{ dropdown_active_text2 }}">
-    <i class="{{ is_scroller|yesno:"ml-0 mr-2,ml-2" }} fas fa-rss" style="font-size: 1.1rem; margin-right: 1.57rem;"></i>Following
+    <span class="sidebar-item-icon">
+      <i class="fas fa-rss"></i>
+    </span>
+    <span>Following</span>
   </a>       
 {% endif %}
 
 <a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'me' %}" 
   href="{% url 'accounts:thread_user' userprofile.username 'me' %}" data-target="{{ dropdown_active_text2 }}">
-  <i class="{{ is_scroller|yesno:"ml-0 mr-2,ml-2 mr-4" }} fas fa-book" style="font-size: 1.1rem; margin-left: 0; margin-right: 1rem;"></i>Threads
+  <span class="sidebar-item-icon">
+    <i class="fas fa-book"></i>
+  </span>
+  <span>Threads</span>
 </a>
 <a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'user_following' %}" 
   href="{% url 'accounts:user_following' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
-  <i class="{{ is_scroller|yesno:"ml-0 mr-2,ml-2" }} fas fa-user-friends" style="font-size: 1.1rem; margin-right: 1.1rem;"></i>User Following
+  <span class="sidebar-item-icon">
+    <i class="fas fa-user-friends" ></i>
+  </span>
+  <span>User Following</span>
 </a>
 <a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'user_followers' %}" 
   href="{% url 'accounts:user_followers' userprofile.username %}#232" data-target="{{ dropdown_active_text2 }}">
-  <i class="{{ is_scroller|yesno:"ml-0 mr-2,ml-2" }} fas fa-users" style="font-size: 1.1rem; margin-right: 1.1rem; "></i>Followers
+  <span class="sidebar-item-icon">
+    <i class="fas fa-users"></i>
+  </span>
+  <span>Followers</span>
 </a>
