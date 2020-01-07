@@ -29,6 +29,10 @@ GLOBAL STYLE
   // background-color: hsla(240, 80%, 84%, 0.76);
 }
 
+.bg-sidebar {
+  background-color: #9575CD;
+}
+
 #user-search-dropdown > li:hover {
   /*border: 0px solid rgba(41, 98, 255, 1);*/
   // color: $primary;
@@ -43,6 +47,8 @@ GLOBAL STYLE
 body {
   overflow-x: hidden;
   // background-color: #e0e0e0;
+  // background-color: #E9EBEE;
+  background-color: rgba(149, 117, 205, 0.178);
 }
 
 .sidebar-overlay {
@@ -234,18 +240,18 @@ body {
 }
 
 /*--- COMMENT ---*/
-.thread-heading {
-  @media (min-width: 768px) {
-    margin-left: -0.875rem;
-    margin-right: -0.875rem;
-  }
-}
-.comment-heading {
-  @media (min-width: 768px) {
-    margin-left: -0.875rem;
-    margin-right: -0.875rem;
-  }
-}
+// .thread-heading {
+//   @media (min-width: 768px) {
+//     margin-left: -0.875rem;
+//     margin-right: -0.875rem;
+//   }
+// }
+// .comment-heading {
+//   @media (min-width: 768px) {
+//     margin-left: -0.875rem;
+//     margin-right: -0.875rem;
+//   }
+// }
 // .comment-list-group {
   // margin-left: -15px;
   // margin-right: -15px;
@@ -409,12 +415,12 @@ blockquote {
 /*--- END OF COMMENT BODY MARKDOWN STYLING ---*/
 
 /*--- POST CREATION FORM ---*/
-@media (max-width: 480px) {
-  .form-small {
-      margin-left: 0;
-      margin-right: 0;
-  }
-}
+// @media (max-width: 480px) {
+//   .form-small {
+//       margin-left: 0;
+//       margin-right: 0;
+//   }
+// }
 /*--- END OF POST CREATION FORM ---*/
 
 

@@ -168,6 +168,9 @@ class ThreadFollowership(TimeStampedModel):
     new_comment_count = models.PositiveIntegerField(default=0)
     objects = ThreadFollowershipQuerySet.as_manager()
 
+    class Meta:
+        verbose_name = "Thread Followership"
+		
     def __str__(self):
         return f'{self.thread.title} - {self.user.username}'
 
@@ -179,14 +182,6 @@ class ThreadFollowership(TimeStampedModel):
         self.__class__.objects.filter(
             user=self.user, thread=self.thread,
         ).update(first_new_comment=next_comment, new_comment_count=count)
-
-    def _get_position_of_comment_in_page(self, comments):
-        position = 0
-        for comment in comments:
-            position += 1
-            if self.first_new_comment.pk == comment.pk:
-                break
-        return position
 
     def _get_next_first_new_comment(self, comments):
         from forum.comments.models import Comment
@@ -204,6 +199,14 @@ class ThreadFollowership(TimeStampedModel):
                 return None
         else:
             return None
+
+    def _get_position_of_comment_in_page(self, comments):
+        position = 0
+        for comment in comments:
+            position += 1
+            if self.first_new_comment.pk == comment.pk:
+                break
+        return position
 
     def _get_next_new_comment_count(self, first_new_comment):
         if first_new_comment:
@@ -225,6 +228,10 @@ class ThreadRevision(models.Model):
     message = models.TextField()
     marked_message = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    
+    class Meta:
+        verbose_name = "Thread Revision"
 
     def __str__(self):
         return 'Thread History-%s' % (self.created)

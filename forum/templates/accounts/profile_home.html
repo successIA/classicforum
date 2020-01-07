@@ -7,7 +7,7 @@
 {% block profile_content %}
   <main>
     <div class="container ">
-        <!-- Profile Info -->
+      <!-- Profile Info -->
       <div class="row offset-lg-1">
         <div class="col-7 col-lg-7 col-xl-8 mt-4">
           <!-- Mobile -->
@@ -30,17 +30,15 @@
             </a>
           {% endif %}
 
-          {% if request.user.is_authenticated %}
-            {% if request.user != userprofile %}
-              {% if request.user in userprofile.followers.all %}
-                <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-outline-primary mt-2 font-weight-bold">
-                    <i class="fas fa-check mr-1"></i>Following
-                </a>
-              {% else %}
-                <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-primary text-bold mt-2 font-weight-bold">
-                  Follow
-                </a>
-              {% endif %}
+          {% if request.user.is_authenticated and request.user != userprofile %}
+            {% if request.user in userprofile.followers.all %}
+              <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-outline-primary mt-2 font-weight-bold">
+                  <i class="fas fa-check mr-1"></i>Following
+              </a>
+            {% else %}
+              <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-primary text-bold mt-2 font-weight-bold">
+                Follow
+              </a>
             {% endif %}
           {% endif %}
         </div>

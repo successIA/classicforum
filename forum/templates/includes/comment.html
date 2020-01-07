@@ -20,13 +20,13 @@
 {% endif %}
 
 <div class="media flex-column flex-md-row" id="comment{{ comment.id }}">
-  <div class="d-flex mb-2">
+  <div class="d-flex mb-1">
     <a href="{{ comment.user.get_absolute_url }}">
       <img src="{{ comment.user.get_avatar_url }}" width="60" height="60" class="avatar mr-3" alt="..." />
     </a>
 
     <div class="d-flex d-md-none align-items-center">
-      <h6>
+      <strong>
         <a href="{{ comment.user.get_absolute_url }}" style="color: inherit; text-decoration: none;">
           {{ comment.user.username }}
         </a>
@@ -34,12 +34,12 @@
           <small class="d-inline-block font-weight-bold">{{ comment.created|naturaltime|splittime }}</small>
           {% if comment.unread %}<span class="badge badge-info">New</span>{% endif %}
         </span>
-      </h6>
+      </strong>
     </div>
   </div>
 
   <div class="media-body w-100">
-    <h6 class="d-md-block d-none font-weight-bold">
+    <strong class="d-md-block d-none font-weight-bold">
       <a href="{{ comment.user.get_absolute_url }}" style="color: inherit; text-decoration: none;">
         {{ comment.user.username }}
       </a>
@@ -47,24 +47,26 @@
         <small class="d-inline-block font-weight-bold">{{ comment.created|naturaltime|splittime }}</small>
       </span>
       {% if comment.unread %}<span class="badge badge-info">New</span>{% endif %}
-    </h6>
+    </strong>
 
     <div class="btn-group position-absolute more-option">
       <a class="dropdown-toggle nav-profile-img text-dark" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
         <i class="fas fa-ellipsis-h text-muted d-inline-block px-2 py-2"></i>
       </a>
 
-      <div class="dropdown-menu shadow dropdown-menu-right">
-        <a class="dropdown-item py-2" href="#"><i class="far fa-flag mr-3"></i>Report</a>
+      <div class="dropdown-menu shadow dropdown-menu-right" style="width: 12rem;">
+        <a class="dropdown-item py-2" href="#">
+          <span class="position-absolute" style="margin-left: 2.1rem;">Report</span><i class="far fa-flag"></i>
+        </a>
 
         {% if request.user.is_authenticated and request.user != comment.user  %}
           {% if request.user in comment.user.followers %}
             <a class="dropdown-item py-2" href="{{ comment.user.get_user_follow_url }}">
-              <i class="fas fa-user-friends"></i>Unfollow
+              <span class="position-absolute" style="margin-left: 2.1rem;">Unfollow</span><i class="fas fa-user-friends"></i>
             </a>
           {% else %}
             <a class="dropdown-item py-2" href="{{ comment.user.get_user_follow_url }}">
-              <i class="fas fa-user-friends"></i>Follow
+              <span class="position-absolute" style="margin-left: 2.1rem;">Follow</span><i class="fas fa-user-friends"></i>
             </a>
           {% endif %}
         {% endif %}
@@ -72,42 +74,40 @@
         {% if request.user.is_authenticated and request.user == comment.user %}
           {% if comment.is_starting_comment %}
             <a class="dropdown-item py-2" href="{% url_with_page_num thread.get_update_url comments.number %}">
-              <i class="far fa-edit"></i>Update
+              <span class="position-absolute" style="margin-left: 2.1rem;">Edit</span><i class="far fa-edit"></i>
             </a>
           {% else %}
             <a class="dropdown-item py-2" href="{% url_with_page_num comment.get_update_url comments.number %}">
-              <i class="far fa-edit"></i>Update
+              <span class="position-absolute" style="margin-left: 2.1rem;">Edit</span><i class="far fa-edit"></i>
             </a>
           {% endif %}
         {% endif %}
           
         {% if request.user.is_authenticated and request.user.is_moderator %}
           {% if comment.is_starting_comment %}
-            {% can_hide_post comment.thread request.user as can_hide_thread %}
-            {% if can_hide_thread %}                            
+            {% if can_hide_thread %}{# can_hide_thread is already initialised  at the top #}           
               <a href="#" data-toggle="modal" data-target="#deleteModal_{{ comment.pk }}" class="dropdown-item py-2">
-                <i class="fas fa-eye-slash" style="margin-right: .7rem;"></i>Hide thread
+                <span class="position-absolute" style="margin-left: 2.1rem;">Hide thread</span><i class="fas fa-eye-slash"></i>
               </a>
             {% endif %} 
           {% else %}
-            {% can_hide_post comment request.user as can_hide_comment %}
-            {% if can_hide_comment %}                    
+            {% if can_hide_comment %}{# can_hide_comment is already initialised  at the top #}               
               <a href="#" data-toggle="modal" data-target="#deleteModal_{{ comment.pk }}" class="dropdown-item py-2">
-                  <i class="fas fa-eye-slash" style="margin-right: .7rem;"></i>Hide comment
+                <span class="position-absolute mr-4" style="margin-left: 2.1rem;">Hide comment</span><i class="fas fa-eye-slash"></i>
               </a>
             {% endif %}
           {% endif %}            
         {% endif %}
           
         <a class="dropdown-item py-2" href="#" data-toggle="modal" data-target="#commentHistoryModal{{ comment.pk }}">
-          <i class="fas fa-history mr-3"></i>See edits
+          <span class="position-absolute" style="margin-left: 2.1rem;">See edits</span><i class="fas fa-history"></i>
         </a>
       </div>
     </div>
 
     <div class="mb-1 comment-message">
-      <h4>{{ comment.position }} {{ comment.offset }}</h4>
-      <p>{{ comment.marked_message|safe }}</p>
+      {% comment %} <h4>{{ comment.position }} {{ comment.offset }}</h4> {% endcomment %}
+      {{ comment.marked_message|safe }}
     </div>
 
     <div id="comment-control-wrapper" class=" media-footer d-flex justify-content-between justify-content-md-start">
@@ -117,13 +117,15 @@
         </a>
       </div>
       <div>
-        <a href="{{ comment.get_upvote_url }}" class="btn btn-link btn-sm control-btn mr-3 {% if request.user in comment.upvoters.all %}text-primary{% else %}text-muted {% endif %}">
+        <a href="{{ comment.get_upvote_url }}" class="btn btn-link btn-sm control-btn mr-3 
+          {% if request.user in comment.upvoters.all %}text-primary{% else %}text-muted{% endif %}">
           <i class="fas fa-chevron-up mr-1"></i><span class="d-none d-sm-inline-block">Upvote</span>
           {{ comment.upvoters.count }}
         </a>
       </div>
       <div>
-        <a href="{{ comment.get_downvote_url }}" class="btn btn-link btn-sm control-btn mr-3 {% if request.user in comment.downvoters.all %}text-danger{% else %}text-muted{% endif %}">
+        <a href="{{ comment.get_downvote_url }}" class="btn btn-link btn-sm control-btn mr-3 
+          {% if request.user in comment.downvoters.all %}text-danger{% else %}text-muted{% endif %}">
           <i class="fas fa-chevron-down mr-1"></i><span class="d-none d-sm-inline-block">Downvote</span>
           {{ comment.downvoters.count }}
         </a>

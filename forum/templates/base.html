@@ -15,6 +15,9 @@
     {% compress css %}
       <link type="text/x-scss" href="{% static 'scss/styles.scss' %}" rel="stylesheet" media="screen" />
     {% endcompress %}
+
+    {% block stylesheet %}{% endblock stylesheet %}
+    
     <title>
       {% block title %}
         Forum
@@ -29,7 +32,7 @@
     <div class="d-flex" id="wrapper">
       {% block sidebar %}
         <!-- Sidebar -->
-        <div class="bg-light border-right" id="sidebar-wrapper">
+        <div class="bg-light" id="sidebar-wrapper">
           <div class="sidebar-heading font-weight-bold">
             <span class="d-inline-block d-md-none" id="close-sidebar">&times;</span>
             <a class="navbar-brand" href="/">
@@ -37,7 +40,7 @@
               <span>ClassicForum</span>
             </a>
           </div>
-          <div class="list-group list-group-flush">
+          <div class="list-group list-group-flush" style="margin-top: 4.8rem;">
             {% if category %}
               {% get_category_list category %}
             {% else %}
@@ -57,17 +60,19 @@
       <!-- Page Content -->
       <div id="page-content-wrapper">
         <!-- Navigation -->
-        <nav class="flex-nowrap navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <nav class="flex-nowrap navbar navbar-expand-lg navbar-light bg-light">
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="menu-toggle">
             <span class="navbar-toggler-icon"></span>
           </button>
+
           <div class="around-search-bar d-flex d-lg-none justify-content-start align-items-center ml-2 ml-lg-0 mr-auto">
             <a class="navbar-brand" href="/">
               <img src="{% static 'assets/bootstrap-solid.svg' %}" width="30" height="30" alt="" />
               <span class="d-none d-md-inline-block">ClassicForum</span>
             </a>
           </div>
+
           {% comment %} <form class="form-inline my-2 my-lg-0 justify-content-end d-none d-md-flex mr-lg-auto"> {% endcomment %}
           <form action="{% url 'search:search' %}" class="search-bar form-inline my-0 my-lg-0 justify-content-end d-none ml-3 ml-md-0 d-md-flex mr-lg-auto">
             <div class="position-relative d-flex align-items-center">
@@ -93,15 +98,14 @@
 
               {% if request.user.is_authenticated %}
                 <span class="d-inline-block d-md-none mr-4 text-dark">
-                  <i class="fas fa-search" id="search-icon" style="font-size: 1.1rem;"></i>
+                  <i class="fas fa-search search-icon" style="font-size: 1.1rem;"></i>
                 </span>
               {% endif %}
 
               {% if request.user.is_authenticated %}
                 <span class="mr-4 position-relative d-flex justify-content-center align-items-center">
                   <a class="notif-icon text-decoration-none text-dark" href="{{ request.user.notif_url }}">
-                    <i style="font-size: 1.5rem;"
-                      class="notif-icon far fa-bell"></i>
+                    <i style="font-size: 1.5rem;" class="notif-icon far fa-bell"></i>
                     {% if request.user.notif_count %}
                       {% comment %} <span style="font-size: 0.7rem; position: absolute; top: -.67rem; right: -.63rem; min-width: 1em; 
                                         padding: .25em .4em; text-align: center;"
@@ -128,6 +132,7 @@
                     {% endif %}
                   </a>
                 </span>
+
                 <div class="btn-group">
                   <a class="dropdown-toggle nav-profile-img text-dark" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false" href="#">
@@ -150,10 +155,11 @@
                   </div>
                 </div>
               {% else %}
-                <!-- Login/Register navigation for Desktop/Tablet -->
-                <div class="d-none d-md-flex justify-content-end align-items-center">
-                  <span class="d-inline-block d-lg-none mr-3 text-dark"><i class="fas fa-search"></i></span>
-                  <!-- Search Icon for Tablet -->
+                
+                <!-- Login/Register navigation for Desktop/Tablet/Mobile -->
+                <div class="d-md-flex justify-content-end align-items-center">
+                  <!-- Search Icon for Tablet/Mobile -->
+                  <span class="d-inline-block d-lg-none mr-3 text-dark"><i class="fas fa-search search-icon"></i></span><!-- Search Icon for Tablet/Mobile -->
                   <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn mr-2">
                     Register
                   </a>
@@ -166,13 +172,13 @@
           </div>
         </nav>
         
-        {% if not request.user.is_authenticated %}
+        {% comment %} {% if not request.user.is_authenticated %}
           <!-- Login/Register and Search Icon navigation for mobile devices -->
-          <div class="container-fluid d-block d-md-none">
+          <div class="container-fluid d-block bg-white d-md-none around-search-bar">
             <div class="row">
               <div class="col-12 py-2">
                 <div class="d-flex  align-items-center">
-                  <span class="d-inline-block d-lg-none mr-auto text-dark"><i class="fas fa-search"></i></span>
+                  <span class="d-inline-block d-lg-none mr-auto text-dark"><i class="fas fa-search search-icon"></i></span>
                   <a href="{% url 'accounts:signup' %}" class="btn btn-primary mr-2">
                     Register
                   </a>
@@ -183,50 +189,48 @@
               </div>
             </div>
           </div>
-        {% endif %}
+        {% endif %} {% endcomment %}
 
         {% block content %}{% endblock content %}        
       </div>
     </div>
 
-  <style scoped>
-    .floating-action-btn {
-      width: 50px;
-      height: 50px;
-      position: fixed; 
-      right: 1.5rem;
-      bottom: 1.5rem;
-      z-index: 2;
-    }
-  </style>
+    <style scoped>
+      .floating-action-btn {
+        width: 50px;
+        height: 50px;
+        position: fixed; 
+        right: 1.5rem;
+        bottom: 1.5rem;
+        z-index: 2;
+      }
+    </style>
 
-  {% if show_floating_btn %}
-    <a href="{{scroll_or_login}}" style="display: flex; text-decoration: none;" 
-      class="rounded-circle bg-secondary add-thread-btn floating-action-btn align-items-center justify-content-center text-white">
-    <i class="fas fa-pen"></i>
-  </a>
-  {% endif %}
+    {% if show_floating_btn %}
+      <a href="{{scroll_or_login}}" style="display: flex; text-decoration: none;" 
+        class="rounded-circle bg-secondary add-thread-btn floating-action-btn align-items-center justify-content-center text-white">
+        <i class="fas fa-pen"></i>
+      </a>
+    {% endif %}
 
-  <ul class="mention-dropdown"></ul>
+    <ul class="mention-dropdown"></ul>
 
-  <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
-  <script src="{% static 'js/popper.min.js' %}"></script>
-  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
-  {% if request.user.is_authenticated and threads or thread %}
-    <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
-    <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
-    <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
+    {% if request.user.is_authenticated and threads or thread %}
+      <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+      <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
+      <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
 
-    <script src="{% static 'js/easymde.min.js' %}"></script>
-    <script src="{% static 'js/easymde-custom.js' %}"></script>
-    <script src="{% static 'js/jquery-file-upload-custom.js' %}"></script>
-  {% endif %}
+      <script src="{% static 'js/easymde.min.js' %}"></script>
+      <script src="{% static 'js/easymde-custom.js' %}"></script>
+      <script src="{% static 'js/jquery-file-upload-custom.js' %}"></script>
+    {% endif %}
 
-  <script src="{% static 'js/script.js' %}"></script>
-    
-  {% block javascript %}{% endblock javascript %}
-
+    <script src="{% static 'js/script.js' %}"></script>
+      
+    {% block javascript %}{% endblock javascript %}
   </body>
-
 </html>

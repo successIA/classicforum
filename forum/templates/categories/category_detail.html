@@ -9,10 +9,10 @@
 {% endblock title %}
 
 {% block content %}
-  <div class="container-fluid border-top border-bottom">
+  <div class="container-fluid shadow-sm bg-white">
     <div class="row align-items-center">
       {% include 'includes/thread_filter_ctrl.html' with dropdown_active_text=dropdown_active_text %}
-      <ol class="d-none d-md-flex ml-md-auto breadcrumb bg-white justify-content-end align-items-center 
+      {% comment %} <ol class="d-none d-md-flex ml-md-auto breadcrumb bg-white justify-content-end align-items-center 
         rounded-0 py-0 pt-auto mb-0 ">
         <li class="breadcrumb-item">
           <a href="/"><small class="font-weight-bold text-muted">Home</small></a>
@@ -23,7 +23,7 @@
         <li class="breadcrumb-item active text-muted" aria-current="page">
           <small class="font-weight-bold">{{ threads.number }}</small>
         </li>
-      </ol> 
+      </ol>  {% endcomment %}
       {% include 'includes/thread_add_partial.html' %}
     </div>
   </div>
@@ -62,7 +62,7 @@
 
       {% if request.user.is_authenticated %}
         <div class="form-small row">
-          <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+          <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
             {% include "includes/comment_form.html" with form=form form_action=form_action %}
           </div>
         </div>

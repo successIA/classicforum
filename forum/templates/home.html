@@ -5,7 +5,7 @@
 {% load static %}
 
 {% block content %}
-  <div class="container-fluid border-bottom">
+  <div class="container-fluid shadow-sm bg-white">
     <div class="row align-items-center">
       {% include 'includes/thread_filter_ctrl.html' with dropdown_active_text=dropdown_active_text %}
       {% include 'includes/thread_add_partial.html' %}
@@ -56,7 +56,7 @@
 
       {% if request.user.is_authenticated %}
         <div class="form-small row">
-          <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+          <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
             {% include "includes/comment_form.html" with form=form form_action=form_action %}
           </div>
         </div>

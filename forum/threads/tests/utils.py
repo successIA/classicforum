@@ -50,7 +50,7 @@ def make_threads(
     return threads
 
 
-def make_only_thread(user, category, count=1):
+def make_only_thread(user, category, count=1, visible=True):
     from forum.threads.models import Thread
     if count > 1:
         thread_list = []
@@ -61,6 +61,7 @@ def make_only_thread(user, category, count=1):
                     body="NA",
                     user=user,
                     category=category,
+                    visible=visible,
                     created=timezone.now(),
                     modified=timezone.now()
                 )
@@ -72,6 +73,7 @@ def make_only_thread(user, category, count=1):
             body="NA",
             user=user,
             category=category,
+            visible=visible,
             created=timezone.now(),
             modified=timezone.now()
         )

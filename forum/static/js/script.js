@@ -85,7 +85,8 @@ $(document).ready(function() {
   SideBarToggler.init();
 
   var SearchBarToggler = {
-    $icon: $('#search-icon'),
+    // $icon: $('#search-icon'),
+    $icon: $('.search-icon'),
     $aroundSearchBar: null,
     $searchBar: null,
     $searchInput: null,
@@ -119,6 +120,7 @@ $(document).ready(function() {
     bindOpenEvent: function() {
       var self = this;
       self.$icon.on('click', function() {
+        console.log('clicked search icon')
         self.$aroundSearchBar = $('.around-search-bar');
         self.$searchBar = $('.search-bar');
         self.$searchInput = self.$searchBar.find('input');
