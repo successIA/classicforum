@@ -1,20 +1,24 @@
 {% if category_list %}
   {% for category in category_list %}
     <style scoped>
-      a.list-group-item:focus,
-      a.list-group-item:hover {
-          {% comment %} background-color: hsl(204, 20%, 93%) !important; {% endcomment %}
-          background-color: #DAE0E5 !important;
+      .sidebar-item.category-active {
+        {% comment %} {% if is_scroller %}background-color: #cbd3da;{% endif %} {% endcomment %}
+        color: #9c27b0 !important;
+        font-weight: 600;
+      }
+      a.sidebar-item.nav-link:focus,
+      a.sidebar-item.nav-link:hover {
+        background-color: #cbd3da !important;
       }
     </style>
     {% if current_category == category %}
       <a href="{% url 'categories:category_detail' category.slug %}"
-        class="list-group-item list-group-item-action category-active text-primary" style="background-color: #DAE0E5;">
-        <i class="{{ category.icon }} mr-3"></i>{{ category.title }}
+        class="sidebar-item nav-link category-active text-primary">
+        <span class="position-absolute" style="margin-left: 2.3rem;">{{ category.title }}</span><i class="{{ category.icon }} ml-1"></i>
       </a>
     {% else %}
-      <a href="{% url 'categories:category_detail' category.slug %}" class="list-group-item list-group-item-action bg-light">
-        <i class="{{ category.icon }} mr-3"></i>{{ category.title }}
+      <a href="{% url 'categories:category_detail' category.slug %}" class="sidebar-item nav-link text-muted">
+        <span class="position-absolute" style="margin-left: 2.3rem;">{{ category.title }}</span><i class="{{ category.icon }} ml-1"></i>
       </a>
     {% endif %}
   {% endfor %}

@@ -54,7 +54,9 @@ def get_profile_sidebar_list(
 
 
 @register.inclusion_tag('includes/filter_dropdown_body.html')
-def get_filter_dropdown_body(dropdown_active_text, is_auth=False, category=None):
+def get_filter_dropdown_body(
+    dropdown_active_text, is_auth=False, category=None
+):
     filter_list = None
     if is_auth:
         filter_list = [
@@ -98,6 +100,7 @@ def profile_threads_text(filter_str):
         text = text_dict.get('me')
     return text
 
+
 @register.simple_tag
 def empty_thread_description(filter_str):
     desc_dict = {
@@ -112,6 +115,7 @@ def empty_thread_description(filter_str):
     if not description:
         description = desc_dict.get('me')
     return description
+
 
 @register.simple_tag
 def active_category_class(dropdown_active_text2, filter_str):

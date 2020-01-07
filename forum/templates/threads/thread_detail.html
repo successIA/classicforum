@@ -11,7 +11,7 @@
 
 {% block content %}
   <!-- Breadcrumb -->
-  <nav aria-label="breadcrumb" class="d-none d-md-block">
+  <nav aria-label="breadcrumb" class="d-none d-md-block shadow-sm">
     <ol class="breadcrumb bg-white border-bottom justify-content-end rounded-0 py-2">
       <li class="breadcrumb-item">
         <a href="{{ category.get_absolute_url }}">
@@ -55,7 +55,7 @@
 
               <a href="{{ thread.get_thread_follow_url}}" class="btn btn-light text-muted btn-sm thread-follow-btn">
                 <span class="toggle">
-                  {% if is_thread_follower %} Unfollow{% else %}Follow{% endif %}
+                  <i class="fas fa-rss mr-1"></i>{% if is_thread_follower %}Following{% else %}Follow{% endif %}
                 </span>
                 <span class="count">{{ thread_followers_count }}</span>
               </a>
@@ -81,7 +81,7 @@
 
           {% if comments.number == 1 and comments %}
             <div class="comment-heading my-2">
-              <h5>Comments</h5>
+              <h4>Comments</h4>
             </div>
           {% endif %}
 
@@ -112,7 +112,7 @@
 
       {% if request.user.is_authenticated %}
         <div class="form-small row">
-          <div class="col-sm-12 px-0 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
+          <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
             {% include "includes/comment_form.html" with form=form form_action=form_action %}
           </div>
         </div>

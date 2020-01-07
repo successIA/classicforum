@@ -3,7 +3,6 @@ from django.db import models
 
 
 class CommentQuerySet(models.query.QuerySet):
-
     def get_new_for_user(self, user, thread, time):
         if not user.is_authenticated:
             return

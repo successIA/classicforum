@@ -11,94 +11,102 @@
         <div class="col-sm-12 col-md-10 offset-md-1 col-lg-9 col-xl-8 offset-lg-1">
           <h4>Moderators</h4>
           {% include "includes/messages.html" with messages=messages%}
-          <div class="mb-2 d-flex flex-row-reverse">
-            <a href="{% url "moderation:moderator_create" %}" class="btn btn-light btn-sm text-primary">
-              <i class="fas fa-plus mr-2"></i>Add Moderator
-            </a>
-          </div>
-          <ul class="list-group mb-4">            
-            {% if moderators %}
-              <div class="table-responsive">
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th scope="col">Moderator</th>
-                      <th scope="col">Categories</th>
-                      <th scope="col"></th>
-                      <th scope="col"></th>
-                    </tr>
-                  </thead>
-                  <tbody>                  
-                  {% for moderator in moderators %}     
-                    {% with moderator.user.username as username %}
+          <div class="card p-3">
+            <div class="mb-2 d-flex flex-row-reverse">
+              <a href="{% url "moderation:moderator_create" %}" class="btn btn-primary btn-sm text-white">
+                <i class="fas fa-plus mr-2"></i>Add Moderator
+              </a>
+            </div>
+            <ul class="list-group mb-4">            
+              {% if moderators %}
+                <style scoped>
+                  .table.moderators-table thead th {
+                    border-bottom: 0px solid #dee2e6;
+                  }
+                </style>
+                <div class="table-responsive">
+                  <table class="moderators-table table">
+                    <thead class="thead-light">
                       <tr>
-                        <td>
-                          <a href="{% url "moderation:moderator_detail" username %}">
-                            <strong>{{ username }}</strong>
-                          </a>
-                        </td>
-                        <td>
-                          {% for category in moderator.categories.all %}
-                            {% if forloop.counter > 1 %}
-                              <br>
-                            {% endif %}
-                            <a href="{{ category.get_absolute_url }}" target="_blank" rel="noopener noreferrer">
-                              <strong class="text-secondary">{{ category.title }}<strong>
-                            </a>                            
-                          {% endfor %}
-                        </td>
-                        <td>
-                          <a class="float-right btn btn-sm btn-light text-secondary" href="{% url "moderation:moderator_update" username %}">
-                            <span class="d-flex align-items-center"><i class="fas fa-pen mr-2" style="font-size: 0.8rem;"></i>Edit</span>
-                          </a>
-                        </td>
-                        <td>
-                          <div class="modal fade" id="deleteModal_{{ username }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
-                            aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                  </button>
-                                </div>
-                                <div class="modal-body">
-                                  <strong>{{ username }}</strong> will no longer be a moderator. Are you sure?
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                                  <form method="post" action="{% url "moderation:moderator_delete" username %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                  </form>
+                        <th scope="col">Moderator</th>
+                        <th scope="col">Categories</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>                  
+                    {% for moderator in moderators %}     
+                      {% with moderator.user.username as username %}
+                        <tr>
+                          <td>
+                            <a href="{% url "moderation:moderator_detail" username %}">
+                              <strong>{{ username }}</strong>
+                            </a>
+                          </td>
+                          <td>
+                            {% for category in moderator.categories.all %}
+                              {% if forloop.counter > 1 %}
+                                <br>
+                              {% endif %}
+                              <a href="{{ category.get_absolute_url }}" target="_blank" rel="noopener noreferrer">
+                                <strong class="text-secondary">{{ category.title }}<strong>
+                              </a>                            
+                            {% endfor %}
+                          </td>
+                          <td>
+                            <a class="float-right btn btn-sm btn-light text-secondary" href="{% url "moderation:moderator_update" username %}">
+                              <span class="d-flex align-items-center"><i class="fas fa-pen mr-2" style="font-size: 0.8rem;"></i>Edit</span>
+                            </a>
+                          </td>
+                          <td>
+                            <div class="modal fade" id="deleteModal_{{ username }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+                              aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <strong>{{ username }}</strong> will no longer be a moderator. Are you sure?
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                                    <form method="post" action="{% url "moderation:moderator_delete" username %}">
+                                      {% csrf_token %}
+                                      <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          <a href="#" data-toggle="modal" data-target="#deleteModal_{{ username }}" class="btn btn-sm btn-light text-danger">
-                            <span class="d-flex align-items-center">
-                              <i class="fas fa-trash mr-2" style="font-size: 0.8rem;"></i>Delete
-                            </span>
-                          </a>
-                        </td>
-                      </tr>
-                    {% endwith %}          
-                  {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            {% else %}
-              <div class="card">
-                <div class="text-center text-secondary mt-3 mb-3">
-                  <div style="font-size: 2rem"><i class="fas fa-users"></i></div>
-                  <div>
-                    <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No moderators yet</p>
-                  </div>
+                            <a href="#" data-toggle="modal" data-target="#deleteModal_{{ username }}" class="btn btn-sm btn-light text-danger">
+                              <span class="d-flex align-items-center">
+                                <i class="fas fa-trash mr-2" style="font-size: 0.8rem;"></i>Delete
+                              </span>
+                            </a>
+                          </td>
+                        </tr>
+                      {% endwith %}          
+                    {% endfor %}
+                    </tbody>
+                  </table>
                 </div>
-              </div> 
-            {% endif %}              
-          </ul>
+              {% else %}
+                <div class="card">
+                  <div class="text-center text-secondary mt-3 mb-3">
+                    <div style="font-size: 2rem"><i class="fas fa-users"></i></div>
+                    <div>
+                      <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No moderators yet</p>
+                    </div>
+                  </div>
+                </div> 
+              {% endif %}              
+            </ul>
+          </div>
+          
         </div>
       </div>
     </div>

@@ -8,7 +8,7 @@ fake = Faker()
 
 
 def make_comment(
-    user, thread, is_starting_comment=False, count=1, message=fake.text()
+    user, thread, is_starting_comment=False, count=1, message=fake.text(), visible=True
 ):
     comment_list = []
     for _ in range(count):
@@ -19,6 +19,7 @@ def make_comment(
                 category=thread.category,
                 thread=thread,
                 is_starting_comment=is_starting_comment,
+                visible=visible,
                 created=timezone.now(),
                 modified=timezone.now()
             )

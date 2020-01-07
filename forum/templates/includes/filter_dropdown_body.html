@@ -1,14 +1,14 @@
 <a class="filter dropdown-toggle text-dark" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
-  <span class="{% if dropdown_active_text in filter_dropdown_list_item_keys %}
-                {% for key, value in filter_dropdown_list %}
-                  {% if key == dropdown_active_text %}
-                      text-primary font-weight-bold
-                  {% endif %}
-                {% endfor %}
-              {% else %}
-                text-dark
-              {% endif %}"
-  >
+  <span 
+    class="{% if dropdown_active_text in filter_dropdown_list_item_keys %}
+            {% for key, value in filter_dropdown_list %}
+              {% if key == dropdown_active_text %}
+                text-primary font-weight-bold
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            text-dark
+          {% endif %}">
     {% if dropdown_active_text in filter_dropdown_list_item_keys %}
         {% for key, value in filter_dropdown_list %}
             {% if key == dropdown_active_text %}

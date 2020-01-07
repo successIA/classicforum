@@ -36,7 +36,7 @@
       {% if thread.final_comment_user %}
         <a href="{{ thread.final_comment_user.get_absolute_url }}" class="text-muted">
           <small class="mr-4">
-            <i class="far fa-user"></i>{{ thread.final_comment_user.username|capfirst }}
+            <i class="far fa-user text-muted mr-1"></i>{{ thread.final_comment_user.username|capfirst }}
           </small>
         </a>
       {% else %}
@@ -57,7 +57,7 @@
       </small>
 
       <small class="mr-4">
-        <i class="far fa-eye"></i>{{ thread.views }}
+        <i class="far fa-eye mr-1"></i>{{ thread.views }}
       </small>
     </div>
   </div>

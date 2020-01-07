@@ -26,7 +26,20 @@ class Moderator(TimeStampedModel):
 	def __str__(self):
 		return self.user.username
 	
-	def _get_hidden_posts(self, post):
+	def save(self, *args, **kwargs):
+		adding = self._state.adding
+		super(Moderator, self).save(*args, **kwargs)
+		if adding:
+			self.user.is_moderator = True
+			self.user.save(update_fields=["is_moderator"])
+
+	def delete(self, *args, **kwargs):
+		user = self.user
+		super(Moderator, self).delete(*args, **kwargs)
+		user.is_moderator = False
+		user.save(update_fields=["is_moderator"])
+	
+	def get_hidden_posts(self, post):
 		if isinstance(post, Thread):
 			return self.hidden_threads.all()
 		if isinstance(post, Comment):
@@ -48,8 +61,11 @@ class Moderator(TimeStampedModel):
 	def is_moderating_post(self, post):
 		return post.category in self.categories.all()
 
-	def is_supermoderator_and_moderating_post(self, post):
-		return self.user.is_supermoderator and self.is_moderating_post(post)
+	def is_supermoderating_post(self, post):
+		return (
+			self.user.is_supermoderator and 
+			self.is_moderating_post(post)
+		)
 
 	def can_hide_post(self, post):
 		is_starting_comment = (
@@ -65,20 +81,20 @@ class Moderator(TimeStampedModel):
 				return True
 			if not post.user.moderator.is_moderating_post(post):
 				return True
-			if self.is_supermoderator_and_moderating_post(post):
+			if self.is_supermoderating_post(post):
 				return True
 		return False
 	
 	def can_unhide_post(self, post):
 		if not post.visible and self.is_moderating_post(post):
-			if post in self._get_hidden_posts(post) or (
-				self.is_supermoderator_and_moderating_post(post)
+			if post in self.get_hidden_posts(post) or (
+				self.is_supermoderating_post(post)
 			):
 				return True
 		return False
 
 	def get_common_categories(self, obj):
-		if obj.user == self.user:
+		if obj == self:
 			return self.categories.all()
 		else:
 			obj_pk_list = [c.pk for c in obj.categories.all()]
@@ -152,6 +168,9 @@ class ModeratorEvent(models.Model):
 	)
 	created_at = models.DateTimeField(default=timezone.now)
 
+	class Meta:
+		verbose_name = "Moderator Event"
+		
 	def __str__(self):
 		event_type = self.__class__.EVENT_TYPE_CHOICES[self.event_type][1]
 		return f"{self.user.username} - {event_type}"
