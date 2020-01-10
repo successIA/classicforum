@@ -2,6 +2,7 @@
 
 {% load forum_template_tags %}
 {% load humanize %}
+{% load moderation_template_tags %}
 {% load static %}
 
 {% block content %}
@@ -16,11 +17,25 @@
     <div class="container">
       <div class="row mt-4">
         <div class="col-sm-12 col-md-10 offset-md-1 col-lg-9 col-xl-8 offset-lg-1">
+          <h1>PREV: {{ prev_url }}</h1>
+          <h1>NEXT: {{ next_url }}</h1>
+
+          {% include "includes/thread_toggle.html" with unseen_query=unseen_querystring url="/" text="threads" %}
+
           <ul class="list-group mb-4 thread-list-group">
             {% for thread in threads %}
-            <li class="list-group-item">
-              {% include "includes/thread.html" with thread=thread %}
-            </li>
+              {% if thread.visible %}
+                <li class="list-group-item">
+                  {% include "includes/thread.html" with thread=thread %}
+                </li>  
+              {% else %}
+                {% can_see_post request thread as can_see_thread %}
+                {% if can_see_thread %}
+                  <li class="list-group-item bg-light">
+                    {% include "includes/thread.html" with thread=thread %}
+                  </li> 
+                {% endif %}  
+              {% endif %}
             {% empty %}
               {% if dropdown_active_text == 'recent' %}            
                 <div class="card">

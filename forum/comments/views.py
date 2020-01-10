@@ -26,7 +26,7 @@ from forum.threads.mixins import thread_adder
 @login_required
 @thread_adder
 def create_comment(request, thread_slug, thread=None):
-    thread = get_object_or_404(Thread, slug=thread_slug)
+    # thread = get_object_or_404(Thread, slug=thread_slug)
     form = CommentForm(extra='edit-message')
     if request.method == 'POST':
         form = CommentForm(request.POST, extra='edit-message')

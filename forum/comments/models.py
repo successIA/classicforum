@@ -172,9 +172,15 @@ class Comment(TimeStampedModel):
         if not page_num:
             count = self.position + self.offset
             page_num = ceil(count / COMMENT_PER_PAGE)
-        return '%s?page=%s&read=True#comment%s' % (
-            self.thread.get_absolute_url(), page_num, self.pk
-        )
+        url = self.thread.get_absolute_url()
+        if not self.thread.visible:
+            url = f'{url}&page={page_num}&read=True#comment{self.pk}'
+        else:
+            url = f'{url}?page={page_num}&read=True#comment{self.pk}'
+        return url
+        # return '%s?page=%s&read=True#comment%s' % (
+        #     self.thread.get_absolute_url(), page_num, self.pk
+        # )
 
     def get_reply_url(self):
         return reverse(

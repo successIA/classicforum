@@ -1,6 +1,7 @@
 from django import template
 
 from forum.moderation.models import Moderator
+from forum.moderation.utils import can_see_post as can_see_post_
 
 register = template.Library()
 
@@ -26,4 +27,15 @@ def is_thread_moderator(thread, user):
         return user.moderator.is_moderating_thread(thread)
     return False
 
+@register.simple_tag
+def can_see_post(request, thread):
+    if thread.visible:
+        return True
+    else:
+        if can_see_post_(request, thread):
+            return True
+        else:
+            return False
+
+         
 

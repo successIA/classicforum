@@ -16,6 +16,7 @@ from forum.threads.models import (
 from forum.threads.utils import (
     get_filtered_threads,
     get_additional_thread_detail_ctx,
+    add_thread_pagination_url_ctx,
     perform_thread_post_update_actions,
     perform_thread_post_create_actions,
 )
@@ -28,14 +29,19 @@ from forum.categories.models import Category
 from forum.threads.models import Thread, ThreadRevision
 from forum.categories.views import category_detail
 from forum.comments.forms import CommentForm
+from forum.moderation.utils import can_view_hidden_posts
 from forum.threads.forms import ThreadForm
 from forum.threads.mixins import thread_adder, thread_owner_required
-from forum.core.constants import THREAD_PER_PAGE
+from forum.core.constants import THREAD_PER_PAGE, UNSEEN_THREAD_QUERYSTR
 from forum.core.utils import get_post_login_redirect_url
 
 
 def thread_list(request, filter_str=None, page=1, form=None):
     thread_qs = Thread.objects.active()
+    unseen_querystring = False
+    if can_view_hidden_posts(request):
+        thread_qs = Thread.objects.filter()
+        unseen_querystring = True
     thread_data = get_filtered_threads(request, filter_str, thread_qs)
     thread_paginator = get_paginated_queryset(
         thread_data[1], THREAD_PER_PAGE, page
@@ -45,8 +51,10 @@ def thread_list(request, filter_str=None, page=1, form=None):
         kwargs={'filter_str': thread_data[0], 'page': page}
     )
     home_url = Thread.get_precise_url(thread_data[0], page)
+    
     context = {
         'threads': thread_paginator,
+        'unseen_querystring': unseen_querystring,
         'show_floating_btn': True,
         'scroll_or_login': get_post_login_redirect_url(home_url),
         'threads_url': "/threads/%s" % (thread_data[0]),
@@ -54,6 +62,15 @@ def thread_list(request, filter_str=None, page=1, form=None):
         'form_action': form_action + '#comment-form',
         'dropdown_active_text': thread_data[0]
     }
+    if unseen_querystring:
+        add_thread_pagination_url_ctx(
+            context, Thread, thread_paginator, 
+            filterstring=thread_data[0], querystr=f"?{UNSEEN_THREAD_QUERYSTR}"    
+        )
+    else:
+        add_thread_pagination_url_ctx(
+            context, Thread, thread_paginator, filterstring=thread_data[0]
+        )
     return render(request, 'home.html', context)
 
 
@@ -100,7 +117,7 @@ def thread_detail(
         'starting_comment': thread.starting_comment,
         'form': form if form else CommentForm,
     }
-
+    
     ctx.update(get_additional_thread_detail_ctx(request, thread, form_action))
 
     comments = ctx['comments']
@@ -152,6 +169,7 @@ def update_thread(request, thread_slug, thread=None):
                 perform_comment_save(comment, prev_msg) 
                 perform_thread_post_update_actions(thread)           
             return HttpResponseRedirect(thread.get_absolute_url())
+
     form_action = thread.get_thread_update_form_action()
     return thread_detail(
         request, thread_slug, 

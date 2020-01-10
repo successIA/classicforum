@@ -5,6 +5,9 @@ from datetime import datetime, timedelta
 from django.utils.timesince import timesince
 from forum.core.constants import COMMENT_PER_PAGE
 from forum.categories.models import Category
+from forum.comments.models import Comment
+from forum.threads.models import Thread
+
 
 register = template.Library()
 
@@ -87,6 +90,19 @@ def url_with_page_num(url, page_number):
         url, page_number
     )
 
+@register.simple_tag
+def url_with_page_num_2(url, page_number):
+    return '%s?page=%s' % (
+        url, page_number
+    )
+
+@register.simple_tag
+def precise_post_update_url(post, page_num):
+    url = f'{post.get_update_url()}?page={page_num}'
+    if not post.visible:
+        url = f"{url}&unseen=1"
+    return f'{url}#comment-form'
+
 
 @register.simple_tag
 def profile_threads_text(filter_str):
@@ -123,3 +139,6 @@ def active_category_class(dropdown_active_text2, filter_str):
         return 'category-active'
     else:
         return ''
+
+
+# def url_with_querystring(page_num):

@@ -3,13 +3,14 @@
 		<ul class="pagination justify-content-center">
 				{% if page_obj.has_previous %}
 					<li class="page-item">
+          {% comment %} {% url_with_page_num page_obj.previous_page_number page_url_template %} {% endcomment %}
 						<a class="page-link" 
 							href="{% if use_page_txt %}
-												?page={{ page_obj.previous_page_number }} 
+											?page={{ page_obj.previous_page_number }}{% if unseen_query %}&unseen=1{% endif %} 
 										{% elif append_query_str %}                       
-												{{ threads_url }}/{{ page_obj.previous_page_number }}/?q={{ query }}
+											{{ threads_url }}/{{ page_obj.previous_page_number }}/?q={{ query }}{% if unseen_query %}&unseen=1{% endif %} 
 										{% else %}
-												{{ threads_url }}/{{ page_obj.previous_page_number }}/
+											{{ threads_url }}/{{ page_obj.previous_page_number }}{% if unseen_query %}?unseen=1{% endif %}/ 
 										{% endif %}">
 								&laquo;
 							</a>
@@ -44,9 +45,9 @@
 						<li class="page-item">
 							<a class="page-link" 
 								href="{% if use_page_txt %}
-									?page={{ i }}
+									?page={{ i }}{% if unseen_query %}&unseen=1{% endif %} 
 								{% elif append_query_str %}                       
-									{{ threads_url }}/{{ i }}/?q={{ query }}  
+									{{ threads_url }}/{{ i }}/?q={{ query }}{% if unseen_query %}&unseen=1{% endif %}   
 								{% else %}
 									{{ threads_url }}/{{ i }}/
 								{% endif %}">
@@ -58,11 +59,11 @@
 						<li class="page-item">
 							<a class="page-link" 
 								href="{% if use_page_txt %}
-													?page={{ i }}      
+													?page={{ i }}{% if unseen_query %}&unseen=1{% endif %} 
 											{% elif append_query_str %}                       
-													{{ threads_url }}/{{ i }}/?q={{ query }}                  
+													{{ threads_url }}/{{ i }}/?q={{ query }}{% if unseen_query %}&unseen=1{% endif %}                   
 											{% else %}
-													{{ threads_url }}/{{ i }}/
+													{{ threads_url }}/{{ i }}{% if unseen_query %}?unseen=1{% endif %}/ 
 											{% endif %}">
 								{{ i }}
 							</a>
@@ -71,11 +72,11 @@
 						<li class="page-item">
 							<a class="page-link" 
 								href="{% if use_page_txt %}
-												?page={{ i }}
+												?page={{ i }}{% if unseen_query %}&unseen=1{% endif %} 
 											{% elif append_query_str %}                       
-												{{ threads_url }}/{{ i }}/?q={{ query }}
+												{{ threads_url }}/{{ i }}/?q={{ query }}{% if unseen_query %}&unseen=1{% endif %} 
 											{% else %}
-												{{ threads_url }}/{{ i }}/
+												{{ threads_url }}/{{ i }}{% if unseen_query %}?unseen=1{% endif %}/ 
 											{% endif %}">
 								{{ i }}
 							</a>
@@ -85,11 +86,11 @@
 						<li class="page-item">
 							<a class="page-link" 
 								href="{% if use_page_txt %}
-												?page={{ i }}
+												?page={{ i }}{% if unseen_query %}&unseen=1{% endif %} 
 											{% elif append_query_str %}                       
-												{{ threads_url }}/{{ i }}/?q={{ query }}                                                              
+												{{ threads_url }}/{{ i }}/?q={{ query }}{% if unseen_query %}&unseen=1{% endif %}                                                               
 											{% else %}
-												{{ threads_url }}/{{ i }}/
+												{{ threads_url }}/{{ i }}{% if unseen_query %}?unseen=1{% endif %}/ 
 											{% endif %}">
 								{{ i }}
 							</a>
@@ -101,11 +102,11 @@
 				<li class="page-item">
 					<a class="page-link" 
 						href="{% if use_page_txt %}
-										?page={{ page_obj.next_page_number }}
+										?page={{ page_obj.next_page_number }}{% if unseen_query %}&unseen=1{% endif %} 
 									{% elif append_query_str %}                       
-										{{ threads_url }}/{{ page_obj.next_page_number }}/?q={{ query }}                                                                              
+										{{ threads_url }}/{{ page_obj.next_page_number }}/?q={{ query }}{% if unseen_query %}&unseen=1{% endif %}                                                                          
 									{% else %}
-										{{ threads_url }}/{{ page_obj.next_page_number }}/
+										{{ threads_url }}/{{ page_obj.next_page_number }}{% if unseen_query %}?unseen=1{% endif %}/ 
 									{% endif %}">
 						&raquo;
 					</a>
@@ -122,11 +123,11 @@
 				<li class="page-item">
 					<a class="page-link" 
 						href="{% if use_page_txt %}
-										?page={{ page_obj.previous_page_number }}
+										?page={{ page_obj.previous_page_number }}{% if unseen_query %}&unseen=1{% endif %} 
 									{% elif append_query_str %}                       
-										{{ threads_url }}/{{ page_obj.previous_page_number }}/?q={{ query }}
+										{{ threads_url }}/{{ page_obj.previous_page_number }}/?q={{ query }}{% if unseen_query %}&unseen=1{% endif %} 
 									{% else %}
-										{{ threads_url }}/{{ page_obj.previous_page_number }}/
+										{{ threads_url }}/{{ page_obj.previous_page_number }}{% if unseen_query %}?unseen=1{% endif %}/ 
 									{% endif %}">
 						Previous
 					</a>
@@ -145,11 +146,11 @@
 				<li class="page-item">
 					<a class="page-link" 
 						href="{% if use_page_txt %}
-										?page={{ page_obj.next_page_number }}
+										?page={{ page_obj.next_page_number }}{% if unseen_query %}&unseen=1{% endif %} 
 									{% elif append_query_str %}                       
-										{{ threads_url }}/{{ page_obj.next_page_number }}/?q={{ query }                     
+										{{ threads_url }}/{{ page_obj.next_page_number }}/?q={{ query }{% if unseen_query %}&unseen=1{% endif %}                     
 									{% else %}
-										{{ threads_url }}/{{ page_obj.next_page_number }}/
+										{{ threads_url }}/{{ page_obj.next_page_number }}{% if unseen_query %}?unseen=1{% endif %}/ 
 									{% endif %}">
 						Next
 					</a>
