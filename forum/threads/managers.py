@@ -23,133 +23,12 @@ class ThreadQuerySet(models.query.QuerySet):
             return self.generate_slug(instance, new_slug=new_slug)
         return slug
 
-    # def get_all(self, cat_slug=None):
-    #     if cat_slug:
-    #         qs = self.active().filter(category__slug=cat_slug)
-    #         if qs:
-    #             return qs, qs.first().category
-    #     return self.active(), False
-
-    # def get_by_activity(self, user):
-    #     return self.get_related().filter(
-    #         readers=user
-    #     ).annotate(
-    #         new_c_id=Min('threadactivity__comment'),
-    #         new_c_num=Count('threadactivity__comment')
-    #     )
-
-    # def get_for_user(self, user):
-    #     queryset = self
-    #     if not user.is_authenticated:
-    #         return queryset.get_related()
-
-    #     qs = self.get_by_activity(user)
-    #     qs2 = self.get_related().exclude(
-    #         readers=user
-    #     ).annotate(
-    #         new_c_id=Value('0', output_field=CharField()),
-    #         new_c_num=Value('0', output_field=CharField())
-    #     )
-    #     return qs.union(qs2)
-
-    # def get_recent(self, user):
-    #     return self.get_for_user(user).order_by('-final_comment_time')
-
-    # def get_new_for_user(self, user):
-    #     queryset = self
-    #     if not user.is_authenticated:
-    #         return queryset.get_related()
-
-    #     return self.get_by_activity(user)
-
-    # def get_following_for_user(self, user):
-    #     queryset = self
-    #     if not user.is_authenticated:
-    #         return queryset.get_related()
-
-    #     qs = queryset.get_related().filter(
-    #         readers=user, followers=user
-    #     ).annotate(
-    #         new_c_id=Min('threadactivity__comment'),
-    #         new_c_num=Count('threadactivity__comment')
-    #     )
-
-    #     qs2 = queryset.get_related().exclude(
-    #         readers=user
-    #     ).filter(
-    #         followers=user
-    #     ).annotate(
-    #         new_c_id=Value('0', output_field=CharField()),
-    #         new_c_num=Value('0', output_field=CharField())
-    #     )
-    #     return qs.union(qs2).order_by('-comment_count')
-
-    # def get_only_for_user(self, user):
-    #     queryset = self
-    #     if not user.is_authenticated:
-    #         return queryset.get_related()
-
-    #     qs = queryset.get_related().filter(
-    #         user=user, readers=user
-    #     ).annotate(
-    #         new_c_id=Min('threadactivity__comment'),
-    #         new_c_num=Count('threadactivity__comment')
-    #     )
-
-    #     qs2 = queryset.get_related().filter(
-    #         user=user
-    #     ).exclude(
-    #         readers=user
-    #     ).annotate(
-    #         new_c_id=Value('0', output_field=CharField()),
-    #         new_c_num=Value('0', output_field=CharField())
-    #     )
-    #     return qs.union(qs2).order_by('-comment_count')
-
-    # def get_recent_for_user(self, request, user, count=5):
-    #     is_auth = request.user.is_authenticated
-    #     if is_auth and request.user.is_owner(user):
-    #         return self.get_only_for_user(
-    #             user
-    #         ).order_by('-final_comment_time')[:count]
-    #     return self.active().get_related().filter(
-    #         user=user
-    #     ).order_by('-final_comment_time')[:count]
-
-    # def get_with_no_reply(self, category=None):
-    #     queryset = self
-    #     queryset = queryset.filter(comment_count=1).get_related()
-    #     if not category:
-    #         return queryset.order_by('-created')
-    #     queryset = queryset.filter(category=category).order_by('-created')
-    #     return queryset
-
-    # def get_by_days_from_now(self, user, days=None):
-    #     queryset = self
-    #     if days:
-    #         dt = timezone.now() - timedelta(days=days)
-    #         queryset = queryset.filter(created__gte=dt)
-    #     return queryset.get_for_user(user).order_by('comment_count')
-
-    # def get_by_category(self, category=None):
-    #     if not category:
-    #         return self.active().get_related()
-    #     return self.active().filter(category=category).get_related()
-
-    # def get_related(self):
-    #     return self.select_related(
-    #         'user', 'category', 'final_comment_user', 'starting_comment'
-    #     )
-
-    # def active(self, *args, **kwargs):
-    #     return self.filter(visible=True)
-
     def get_all(self, cat_slug=None):
         if cat_slug:
-            qs = self.active().filter(category__slug=cat_slug)
+            qs = self.filter(category__slug=cat_slug)
             if qs:
                 return qs, qs.first().category
-        return self.active(), False
+        return self, False
 
     def get_for_user(self, user):
         queryset = self
@@ -223,7 +102,7 @@ class ThreadQuerySet(models.query.QuerySet):
             return self.get_only_for_user(
                 user
             ).order_by('-final_comment_time')[:count]
-        return self.active().get_related().filter(
+        return self.get_related().filter(
             user=user
         ).order_by('-final_comment_time')[:count]
 
@@ -244,8 +123,8 @@ class ThreadQuerySet(models.query.QuerySet):
 
     def get_by_category(self, category=None):
         if not category:
-            return self.active().get_related()
-        return self.active().filter(category=category).get_related()
+            return self.get_related()
+        return self.filter(category=category).get_related()
 
     def get_related(self):
         return self.select_related(
@@ -258,5 +137,5 @@ class ThreadQuerySet(models.query.QuerySet):
         #     # 'userprofile__attachment_set'
         # )
 
-    def active(self, *args, **kwargs):
+    def active(self, visible=True):
         return self.filter(visible=True)

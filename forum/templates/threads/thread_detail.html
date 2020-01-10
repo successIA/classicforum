@@ -34,6 +34,13 @@
       <div class="row mt-4">
         <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
           {% include "includes/messages.html" with messages=messages%}
+          <h4>PREV: {{ prev_url }}</h4>
+          <h4>NEXT: {{ next_url }}</h4>
+          <h4>THREAD_CREATE_URL:</h4>
+          <h4>THREAD_UPDATE_URL:</h4>
+          <h4>COMMENT_CREATE_URL:</h4>
+          <h4>COMMENT_UPDATE_URL:</h4>
+          <h4>COMMEN_REPLY_URL:</h4>
             <!-- Thread Heading -->
           <div class="thread-heading">
             <h4 class="mt-0 mb-0">
@@ -52,7 +59,8 @@
               <small class="d-inline-block mr-auto dull-color"><i class="far fa-eye"></i>
                 {{ thread.views }} view{{ thread.views|pluralize }}
               </small>
-
+              {% url_with_page_num_2 thread.get_absolute_url comments.number as url %}
+              {% include "includes/thread_toggle.html" with unseen_query=unseen_querystring url=url text="comments" %}
               <a href="{{ thread.get_thread_follow_url}}" class="btn btn-light text-muted btn-sm thread-follow-btn">
                 <span class="toggle">
                   <i class="fas fa-rss mr-1"></i>{% if is_thread_follower %}Following{% else %}Follow{% endif %}
@@ -88,7 +96,7 @@
           <!-- Comment Section -->
           <ul class="list-group mb-2 comment-list-group">
             {% for comment in comments %}
-              <li class="list-group-item">
+              <li class="list-group-item {% if not comment.visible %}bg-light{% endif %}">
                 {% include "includes/comment.html" with comment=comment %}
               </li>
             {% empty %}
@@ -106,7 +114,7 @@
 
       <div class="row">
         <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1 mt-4">
-          {% include "includes/pagination.html" with page_obj=comments use_page_txt=True %}
+          {% include "includes/pagination.html" with page_obj=comments use_page_txt=True unseen_query=unseen_querystring %}
         </div>
       </div>
 

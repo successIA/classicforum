@@ -9,6 +9,7 @@ from forum.accounts.tests.utils import login
 from forum.categories.models import Category, CategoryQuerySet
 from forum.categories.tests.utils import make_category
 from forum.comments.forms import CommentForm
+from forum.moderation.tests.utils import make_moderator
 from forum.threads.forms import ThreadForm
 from forum.threads.models import (
     Thread, ThreadRevision
@@ -120,7 +121,20 @@ class ThreadListViewTest(ThreadsViewsTest):
         self.assertEquals(len(response.context['threads']), 1)
         self.assertEquals(Thread.objects.count(), 2)
 
-    
+    def test_view_should_render_hidden_thread_for_moderator(self):
+        Thread.objects.all().delete()
+        thread = make_threads(visible=False)
+        login(self, self.user, 'password')
+        make_moderator(self.user, thread.category)
+        response = self.client.get(f"{self.list_url}?unseen=1")
+        self.assertEquals(len(response.context['threads']), 1)
+
+        thread = make_threads()
+        response = self.client.get(f"{self.list_url}?unseen=1")
+        self.assertEquals(len(response.context['threads']), 2)
+        self.assertEquals(Thread.objects.count(), 2)
+
+
 class ThreadCreateViewTest(ThreadsViewsTest):
     def setUp(self):
         super().setUp()
@@ -275,7 +289,36 @@ class ThreadDetailViewTest(ThreadsViewsTest):
         )
         response = self.client.get(detail_url)
         self.assertEqual(response.status_code, 404)
+    
+    def test_view_should_not_render_hidden_comment_for_regular_user(self):
+        comment = make_comment(self.user, self.thread)
+        hidden_comment = make_comment(self.user, self.thread, visible=False)
+        response = self.client.get(f"{self.detail_url}?unseen=1")
+        self.assertEquals(len(response.context['comments']), 1)
+        
+        login(self, self.user, 'password')
+        response = self.client.get(f"{self.detail_url}?unseen=1")
+        self.assertEquals(len(response.context['comments']), 1)
 
+        
+    def test_view_should_render_hidden_comment_for_moderator(self):
+        comment = make_comment(self.user, self.thread)
+        hidden_comment = make_comment(self.user, self.thread, visible=False)
+
+        login(self, self.user, 'password')
+        random_user = self.make_user(username="random")
+        cat = make_category(title="Random category")
+        make_moderator(random_user, cat)
+        # response = self.client.get(f"{self.detail_url}?unseen=1")
+        response = self.client.get(f"{self.detail_url}?unseen_c=1")
+        self.assertEquals(len(response.context['comments']), 1)
+
+        make_moderator(self.user, self.thread.category)
+        # response = self.client.get(f"{self.detail_url}?unseen=1")
+        response = self.client.get(f"{self.detail_url}?unseen_c=1")
+        self.assertEquals(len(response.context['comments']), 2)
+        
+        
 
 class ThreadUpdateViewTest(ThreadsViewsTest):
     def setUp(self):
@@ -389,15 +432,42 @@ class ThreadUpdateViewTest(ThreadsViewsTest):
             'message': 'polymorphism'
         }
         update_url = reverse(
-            'thread_detail', kwargs={'thread_slug': thread.slug}
+            'thread_update', kwargs={'thread_slug': thread.slug}
         )
-        response = self.client.post(update_url, data)
+        
+        update_hidden_url = f'{update_url}?unseen=1'
+        response = self.client.post(update_hidden_url, data)
         self.assertEquals(response.status_code, 404)
         
         thread.refresh_from_db()
         self.assertEquals(thread.category.pk, self.category.pk)
         self.assertEquals(thread.title, 'python programming 23')
         self.assertEquals(thread.starting_comment.message, 'hello world 23')
+
+    def test_view_should_allow_hidden_thread_post_for_moderator(self):
+        thread = make_threads(
+            user=self.user, category=self.category, 
+            title='python programming 23', message='hello world 23', 
+            visible=False
+        )        
+        make_moderator(self.user, thread.category)
+        login(self, self.user, 'password')
+        data = {
+            'category': self.category.pk,
+            'title': 'java language specifications',
+            'message': 'polymorphism'
+        }
+        update_url = reverse(
+            'thread_update', kwargs={'thread_slug': thread.slug}
+        )
+        update_hidden_url = f'{update_url}?unseen=1'
+        response = self.client.post(update_hidden_url, data)
+        self.assertEquals(response.status_code, 302)
+        
+        thread.refresh_from_db()
+        self.assertEquals(thread.category.pk, self.category.pk)
+        self.assertEquals(thread.title, 'java language specifications')
+        self.assertEquals(thread.starting_comment.message, 'polymorphism')
 
     def test_category_cannot_be_changed(self):
         login(self, self.user, 'password')
