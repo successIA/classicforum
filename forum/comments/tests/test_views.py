@@ -92,7 +92,6 @@ class CommentCreateWithHiddenThreadTest(CommentViewsTest):
             'comments:comment_create', 
             kwargs={'thread_slug': self.thread.slug}
         )
-        self.create_hidden_url = f"{self.create_url}?unseen=1"
         self.data = {'message': 'hello word'}
 
     def test_view_should_not_render_hidden_thread_for_regular_user(self):
@@ -101,13 +100,13 @@ class CommentCreateWithHiddenThreadTest(CommentViewsTest):
         is hidden
         """
         login(self, self.user, 'password')
-        response = self.client.get(self.create_hidden_url)
+        response = self.client.get(self.create_url)
         self.assertEquals(response.status_code, 404)    
     
     def test_view_should_not_allow_post_for_hidden_thread(self):
         current_count = Comment.objects.count()
         login(self, self.user, 'password')
-        response = self.client.post(self.create_hidden_url, self.data)
+        response = self.client.post(self.create_url, self.data)
         self.assertEquals(response.status_code, 404)
         self.assertEquals(Comment.objects.count(), current_count)
     
@@ -118,16 +117,16 @@ class CommentCreateWithHiddenThreadTest(CommentViewsTest):
         """
         make_moderator(self.user, self.category)
         login(self, self.user, 'password')
-        response = self.client.get(self.create_hidden_url)
+        response = self.client.get(self.create_url)
         self.assertEquals(response.status_code, 200)
     
-    def test_view_should_allow_hidden_thread_post_for_moderator(self):
+    def test_view_should_prevent_moderators_from_posting(self):
         current_count = Comment.objects.count()
         login(self, self.user, 'password')
         make_moderator(self.user, self.category)
-        response = self.client.post(self.create_hidden_url, self.data)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(Comment.objects.count(), current_count + 1)
+        response = self.client.post(self.create_url, self.data)
+        self.assertEquals(response.status_code, 403)
+        self.assertEquals(Comment.objects.count(), current_count)
     
 
 class CommentCreateViewWithMentionTest(CommentViewsTest):
@@ -298,7 +297,7 @@ class CommentUpdateWithHiddenThread(CommentViewsTest):
             'comments:comment_update', 
             kwargs={'thread_slug': self.thread.slug, 'pk': self.comment.pk}
         )
-        self.update_hidden_url = f"{self.update_url}?unseen=1"
+        self.update_url = f"{self.update_url}"
         self.data = {'message': 'hello world 23'}
 
     def test_view_should_not_render_hidden_thread_for_regular_user(self):
@@ -307,7 +306,7 @@ class CommentUpdateWithHiddenThread(CommentViewsTest):
         is hidden
         """
         login(self, self.user, 'password')
-        response = self.client.get(self.update_hidden_url)
+        response = self.client.get(self.update_url)
         self.assertEquals(response.status_code, 404)
     
     def test_view_should_render_hidden_thread_for_moderator(self):
@@ -317,25 +316,25 @@ class CommentUpdateWithHiddenThread(CommentViewsTest):
         """
         make_moderator(self.user, self.category)
         login(self, self.user, 'password')
-        response = self.client.get(self.update_hidden_url)
+        response = self.client.get(self.update_url)
         self.assertEquals(response.status_code, 200)
     
     def test_view_should_not_allow_post_for_hidden_thread(self):
         login(self, self.user, 'password')
-        response = self.client.post(self.update_hidden_url, self.data)
+        response = self.client.post(self.update_url, self.data)
         self.assertEquals(response.status_code, 404)
         prev_msg = self.comment.message
         self.comment.refresh_from_db()
         self.assertEquals(self.comment.message, prev_msg)
 
-    def test_view_should_allow_hidden_thread_post_for_moderator(self):
+    def test_view_should_prevent_moderators_from_posting(self):
         make_moderator(self.user, self.category)
         login(self, self.user, 'password')
-        response = self.client.post(self.update_hidden_url, self.data)
-        self.assertEquals(response.status_code, 302)
+        response = self.client.post(self.update_url, self.data)
+        self.assertEquals(response.status_code, 403)
         prev_msg = self.comment.message
         self.comment.refresh_from_db()
-        self.assertEquals(self.comment.message, self.data["message"])
+        self.assertEquals(self.comment.message, prev_msg)
 
 
 class CommentUpdateWithHiddenComment(CommentViewsTest):
@@ -346,36 +345,35 @@ class CommentUpdateWithHiddenComment(CommentViewsTest):
             'comments:comment_update', 
             kwargs={'thread_slug': self.thread.slug, 'pk': self.comment.pk}
         )
-        self.update_hidden_url = f"{self.update_url}?unseen=1"
         self.data = {'message': 'hello world 23'}
 
     def test_view_should_not_render_hidden_comment(self):
         login(self, self.user, 'password')
-        response = self.client.get(self.update_hidden_url)
+        response = self.client.get(self.update_url)
         self.assertEquals(response.status_code, 404)
 
     def test_view_should_not_render_hidden_comment_for_moderator(self):
         make_moderator(self.user, self.category)
         login(self, self.user, 'password')
-        response = self.client.get(self.update_hidden_url)
+        response = self.client.get(self.update_url)
         self.assertEquals(response.status_code, 200)
     
     def test_view_should_not_allow_post_for_hidden_comment(self):
         login(self, self.user, 'password')
-        response = self.client.post(self.update_hidden_url, self.data)
+        response = self.client.post(self.update_url, self.data)
         self.assertEquals(response.status_code, 404)
         prev_msg = self.comment.message
         self.comment.refresh_from_db()
         self.assertEquals(self.comment.message, prev_msg)
 
-    def test_view_should_allow_hidden_comment_post_for_moderator(self):
+    def test_view_should_prevent_moderators_from_posting(self):
         make_moderator(self.user, self.category)
         login(self, self.user, 'password')
-        response = self.client.post(self.update_hidden_url, self.data)
-        self.assertEquals(response.status_code, 302)
+        response = self.client.post(self.update_url, self.data)
+        self.assertEquals(response.status_code, 403)
         prev_msg = self.comment.message
         self.comment.refresh_from_db()
-        self.assertEquals(self.comment.message, self.data["message"])
+        self.assertEquals(self.comment.message, prev_msg)
 
     
 class CommentReplyViewTest(CommentViewsTest):

@@ -1,3 +1,5 @@
+from forum.accounts.models import User
+from forum.categories.models import Category
 from forum.threads.tests.utils import make_threads
 make_threads(count=30, user=User.objects.get(username="aia99"), category=Category.objects.get(slug="programming"))
 

@@ -12,9 +12,11 @@ def make_comment(
 ):
     comment_list = []
     for _ in range(count):
+        message = message if message else fake.text()
         comment_list.append(
             Comment(
-                message=message if count == 1 else fake.text(),
+                message=message,
+                marked_message=message,
                 user=user,
                 category=thread.category,
                 thread=thread,

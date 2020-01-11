@@ -17,25 +17,11 @@
     <div class="container">
       <div class="row mt-4">
         <div class="col-sm-12 col-md-10 offset-md-1 col-lg-9 col-xl-8 offset-lg-1">
-          <h1>PREV: {{ prev_url }}</h1>
-          <h1>NEXT: {{ next_url }}</h1>
-
-          {% include "includes/thread_toggle.html" with unseen_query=unseen_querystring url="/" text="threads" %}
-
           <ul class="list-group mb-4 thread-list-group">
             {% for thread in threads %}
-              {% if thread.visible %}
-                <li class="list-group-item">
-                  {% include "includes/thread.html" with thread=thread %}
-                </li>  
-              {% else %}
-                {% can_see_post request thread as can_see_thread %}
-                {% if can_see_thread %}
-                  <li class="list-group-item bg-light">
-                    {% include "includes/thread.html" with thread=thread %}
-                  </li> 
-                {% endif %}  
-              {% endif %}
+              <li class="list-group-item">
+                {% include "includes/thread.html" with thread=thread %}
+              </li>               
             {% empty %}
               {% if dropdown_active_text == 'recent' %}            
                 <div class="card">
@@ -65,7 +51,7 @@
 
       <div class="row mt-3 mb-3">
         <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
-          {% include "includes/pagination.html" with page_obj=threads  %}
+          {% include "includes/pagination.html" with page_obj=threads base_url=base_url prev_url=prev_url next_url=next_url %}
         </div>
       </div>
 

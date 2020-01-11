@@ -84,12 +84,9 @@ class Thread(TimeStampedModel):
         return self.user == user
 
     def get_absolute_url(self):
-        url = reverse(
+        return reverse(
             'thread_detail', kwargs={'thread_slug': self.slug}
         )
-        if not self.visible:
-            url = f'{url}?unseen=1'
-        return url
 
     @staticmethod
     def get_precise_url(filter_str, page):
@@ -97,52 +94,22 @@ class Thread(TimeStampedModel):
             "threads:thread_list_filter",
             kwargs={'filter_str': filter_str, 'page': page}
         )
-
-    @staticmethod
-    def get_precise_url2(**kwargs):
-        if isinstance(kwargs["model"], Thread):
-            url = reverse(
-                'thread_detail', kwargs={'thread_slug': kwargs["model"].slug}
-            )
-            return f'{url}?page={kwargs["page"]}'
-        else:
-            return reverse("threads:thread_list_filter", kwargs={
-                'filter_str': kwargs["filterstring"], 
-                'page': kwargs["page"]
-            })
     
-    # def get_precise_url2(self, **kwargs):
-    #     url = reverse(
-    #         'thread_detail', kwargs={'thread_slug': self.slug}
-    #     )
-    #     return f'{url}?page={kwargs.get("page")}'    
-
     def get_update_url(self):
         return reverse('thread_update', kwargs={'thread_slug': self.slug})
 
     def get_thread_update_form_action(self):
-        url = self.get_update_url()
-        if not self.visible:
-            url = f'{url}?unseen=1'
-        return url
+        return self.get_update_url()
 
     def get_comment_create_form_action(self, page_num):
-        url = reverse(
-            'comments:comment_create',
-            kwargs={'thread_slug': self.slug}
+        return '%s?page=%s' % (
+            reverse(
+                'comments:comment_create',
+                kwargs={'thread_slug': self.slug}
+            ),
+            page_num
         )
-        url = f'{url}?page={page_num}'
-        # url = '%s?page=%s' % (
-        #     reverse(
-        #         'comments:comment_create',
-        #         kwargs={'thread_slug': self.slug}
-        #     ),
-        #     page_num
-        # )
-        if not self.visible:
-            url = f'{url}&unseen=1'
-        return f'{url}#comment-form'
-
+      
     def get_thread_follow_url(self):
         return reverse('thread_follow', kwargs={'thread_slug': self.slug})
     

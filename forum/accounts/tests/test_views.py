@@ -243,7 +243,7 @@ class UserThreadListTest(TestCase):
             self.assertEqual(response.context['userprofile'], user)
             self.assertEqual(
                 response.context['dropdown_active_text2'], filter_str)
-            self.assertEqual(response.context['threads_url'] + '/', url)
+            self.assertEqual(response.context['base_url'][0], url)
             self.assertIsInstance(response.context['threads'], Page)
 
 

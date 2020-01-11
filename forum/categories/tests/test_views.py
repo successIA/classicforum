@@ -47,7 +47,8 @@ class CategoryDetailView(CategoryViewTest):
         self.assertIsInstance(response.context['threads'], Page)
         self.assertEquals(response.context['threads'].number, 1)
         self.assertEquals(
-            response.context['threads_url'], '/categories/progromming-group/recent'
+            response.context['base_url'],  
+            [f'/categories/progromming-group/recent/', '/']
         )
         form_action = '%s#comment-form' % reverse(
             'categories:category_thread_create',
@@ -90,8 +91,8 @@ class CategoryDetailView(CategoryViewTest):
                 response.context['dropdown_active_text'], filter_str
             )
             self.assertEquals(
-                response.context['threads_url'],
-                '/categories/%s/%s' % (self.category.slug, filter_str)
+                response.context['base_url'],
+                [f'/categories/{self.category.slug}/{filter_str}/', '/']
             )
 
     def test_auth_filter_str_for_anonymous_user(self):
@@ -122,6 +123,6 @@ class CategoryDetailView(CategoryViewTest):
                 response.context['dropdown_active_text'], filter_str
             )
             self.assertEquals(
-                response.context['threads_url'],
-                '/categories/%s/%s' % (self.category.slug, filter_str)
+                response.context['base_url'],
+                [f'/categories/{self.category.slug}/{filter_str}/', '/']
             )
