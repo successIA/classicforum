@@ -15,16 +15,16 @@ def make_threads(
     from forum.comments.models import Comment
 
     if not user:
-        user = User.objects.create_user(username=fake.name())
+        user = User.objects.create_user(username=Faker().name())
     if not category:
         category = Category.objects.create(
-            title=fake.sentence()[:50], description=fake.texts()
+            title=Faker().sentence()[:50], description=Faker().texts()
         )
 
     threads = []
     for i in range(count):
-        title = title if title else fake.sentence()
-        message = message if message else fake.text()
+        title = title if title else Faker().sentence()
+        message = message if message else Faker().text()
         thread = Thread.objects.create(
             title=title,
             body="NA",
@@ -36,6 +36,7 @@ def make_threads(
         )
         comment = Comment.objects.create(
             message=message,
+            marked_message=message,
             user=user,
             category=thread.category,
             thread=thread,

@@ -28,24 +28,29 @@ def get_rendered_message(message, user_value_list):
     rendered_message = BBCodeQuoteWithMarkdownParser(message).parse()
     return rendered_message
 
+
 def get_bbcode_message_quote(parent_comment):
     open_quote_tag = f'[quote="{parent_comment.user.username}, comment:{parent_comment.id}"]\n'
     close_quote_tag = '\n[/quote]\n'
     return f'{open_quote_tag}{parent_comment.message}{close_quote_tag}'
 
+
 def get_comment_reply_form(comment):
     message = get_bbcode_message_quote(comment)
     return CommentForm.get_for_reply(message, extra='edit-message')
 
+
 def find_parent_info_in_comment(message):
     text, comment_info_list = bbcode_quote(message)
     return comment_info_list
+
 
 def get_user_value_list(user_list):
     return [
         {'username': usr.username, 'url': usr.get_absolute_url()}
         for usr in user_list
     ]
+
 
 def get_mentioned_users_in_message(message):
     mentions = find_mentioned_usernames(message)

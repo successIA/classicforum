@@ -17,7 +17,10 @@ from forum.accounts.tokens import account_activation_token
 from forum.accounts.utils import (get_mentioned_users_context,
                                   get_signup_email_confirm_form_entries)
 from forum.comments.models import Comment
-from forum.core.utils import get_paginated_queryset
+from forum.core.utils import (
+    add_pagination_context,
+    get_paginated_queryset,
+)
 from forum.notifications.models import Notification
 from forum.threads.models import Thread
 from forum.threads.utils import get_filtered_threads
@@ -63,11 +66,16 @@ def user_notification_list(request, username):
         request.user
     )
     request.user.update_notification_info(request, notif_url, notif_count)
+
+    base_url = [f'/accounts/{request.user.username}/notifications/?page=', '']
     ctx = {
         'userprofile': request.user,
         'dropdown_active_text2': 'user_notifs',
-        'notifications': notifs
+        'notifications': notifs,
+        'base_url': base_url
     }
+    add_pagination_context(base_url, ctx, notifs)
+
     return render(request, 'accounts/profile_notif.html', ctx)
 
 
@@ -103,16 +111,20 @@ def user_profile_edit(request, username):
 
 
 def user_comment_list(request, username):
-    user = User.objects.filter(username=username).first()
+    user = get_object_or_404(User, username=username)
     comment_qs = Comment.objects.filter(user=user).exclude(
         is_starting_comment=True
     ).get_related().order_by('id')
     comments = get_paginated_queryset(comment_qs, 10, request.GET.get('page'))
+    url = reverse('accounts:user_comments', kwargs={'username':  username})
+    base_url = [f'{url}?page=', '']
     ctx = {
         'comments': comments,
+        'base_url': base_url,
         'dropdown_active_text2': 'replies',
         'userprofile': user
     }
+    add_pagination_context(base_url, ctx, comments)
     return render(request, 'accounts/profile_comments.html', ctx)
 
 
@@ -127,12 +139,14 @@ def user_thread_list(request, username, filter_str, page):
     thread_qs = Thread.objects.active()
     thread_data = get_filtered_threads(request, filter_str, thread_qs)
     thread_paginator = get_paginated_queryset(thread_data[1], 10, page)
+    base_url = [f'/accounts/{username}/{thread_data[0]}/', '/']
     ctx = {
         'userprofile': user,
         'threads': thread_paginator,
-        'threads_url': '/accounts/%s/%s' % (username, thread_data[0]),
+        'base_url': base_url,
         'dropdown_active_text2': thread_data[0]
     }
+    add_pagination_context(base_url, ctx, thread_paginator)
     return render(request, 'accounts/profile_threads.html', ctx)
 
 

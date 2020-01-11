@@ -2,16 +2,13 @@ from django.http import Http404
 
 from forum.accounts.utils import get_user_list_without_creator
 from forum.comments.models import Comment
-from forum.core.constants import (
-    COMMENT_PER_PAGE, 
-    UNSEEN_COMMENT_QUERYSTR, 
-    UNSEEN_THREAD_QUERYSTR,
-)
+from forum.core.constants import COMMENT_PER_PAGE
 from forum.core.utils import (
+    add_pagination_context,
+    append_querystring,
     get_paginated_queryset,
-    get_post_login_redirect_url
+    get_post_login_redirect_url,
 )
-from forum.moderation.utils import is_auth_and_moderator, can_see_post
 from forum.notifications.models import Notification
 from forum.threads.models import ThreadFollowership
 
@@ -44,30 +41,9 @@ def get_filtered_threads(request, filter_str=None, thread_qs=None):
     return [filter_str, threads_dict[filter_str]]
 
 
-def get_create_form_action(self, filter_str, page):
-    return reverse(
-        'threads:thread_list_filter',
-        kwargs={'filter_str': filter_str, 'page': page}
-    )
-
-
-def join_with_invisible_threads(request, thread_qs):
-    from ..threads.models import Thread
-
-    unseen = request.GET.get("unseen")
-    if unseen:
-        try:
-            unseen = int(unseen)
-            if is_auth_and_moderator(request) and unseen == 1:
-                return Thread.objects.filter()
-        except ValueError:
-            pass
-    return thread_qs
-
-
 def get_additional_thread_detail_ctx(request, thread, form_action):
     category = thread.category
-    comment_paginator, has_invisible_comments = get_comment_paginator(
+    comment_paginator = get_comment_paginator(
         request, thread
     )
     if not form_action:
@@ -76,87 +52,26 @@ def get_additional_thread_detail_ctx(request, thread, form_action):
         )
     first_page = True if comment_paginator.number == 1 else False
     thread_url = f'{thread.get_absolute_url()}?page={comment_paginator.number}'
+    base_url = [f'{thread.get_absolute_url()}?page=', '']
     ctx = {
         'category': category,
         'comments': comment_paginator,
-        'unseen_querystring': has_invisible_comments,
+        'base_url': base_url,
         'scroll_or_login': get_post_login_redirect_url(thread_url),
         'show_floating_btn': True,
         'form_action': form_action,
         'first_page': first_page
     }
-
-    if not thread.visible or has_invisible_comments:
-        if not thread.visible and has_invisible_comments:
-            querystring = f"&{UNSEEN_THREAD_QUERYSTR}&{UNSEEN_COMMENT_QUERYSTR}"
-        elif not thread.visible:
-            querystring = f"&{UNSEEN_THREAD_QUERYSTR}"
-        elif has_invisible_comments:
-            querystring = f"&{UNSEEN_COMMENT_QUERYSTR}"
-        add_thread_pagination_url_ctx(
-            ctx, thread, comment_paginator, querystr=querystring   
-        )
-    else:
-        add_thread_pagination_url_ctx(
-            ctx, thread, comment_paginator
-        )
+    add_pagination_context(base_url, ctx, comment_paginator)
     return ctx
 
 
 def get_comment_paginator(request, thread):
-    comment_qs = Comment.objects.get_for_thread(thread)
-    unseen_querystring = False
-    # if can_see_post(request, thread):
-    if (
-        is_auth_and_moderator(request) and 
-        request.user.moderator.is_moderating_post(thread) and
-        str(request.GET.get("unseen_c")) == "1"
-    ):
-        comment_qs = _join_comments_visible_to_user(
-            request, thread, comment_qs
-        )
-        unseen_querystring = True
-    
+    comment_qs = Comment.objects.get_for_thread(thread)    
     page_num = request.GET.get('page')
     return get_paginated_queryset(
         comment_qs, COMMENT_PER_PAGE, page_num
-    ), unseen_querystring
-
-
-def _join_comments_visible_to_user(request, thread, comment_qs):
-    categories = request.user.moderator.categories.all()
-    comment_qs = Comment.objects.filter(
-        thread=thread, category__in=categories
-    ).get_related().union(comment_qs).order_by('created')
-    return comment_qs
-
-
-# {{ threads_url }}/{{ page_obj.previous_page_number }}{% if unseen_query %}?unseen=1{% endif %}/ 
-def add_thread_pagination_url_ctx(
-    context, model, paginator, filterstring=None, querystr=None
-):
-    # from ..threads.models import Thread
-
-    if paginator.has_next():
-        next_url = model.get_precise_url2(
-            model=model, 
-            filterstring=filterstring, 
-            page=paginator.next_page_number()
-        )
-        if querystr:
-            next_url = f"{next_url}{querystr}"
-        context["next_url"] = next_url
-    if paginator.has_previous():
-        prev_url = model.get_precise_url2(
-            model=model, 
-            filterstring=filterstring, 
-            page=paginator.previous_page_number()
-        )
-        if querystr:
-            prev_url = f"{prev_url}{querystr}"
-        context["prev_url"] = prev_url
-    
-
+    )
 
 def perform_thread_post_create_actions(thread):
     ThreadFollowership.objects.get_or_create(

@@ -66,7 +66,7 @@
 
       <div class="row mt-3">
         <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
-          {% include "includes/pagination.html" with page_obj=results append_query_str=True %}
+          {% include "includes/pagination.html" with page_obj=results base_url=base_url prev_url=prev_url next_url=next_url %}
         </div>
       </div>
     </div>

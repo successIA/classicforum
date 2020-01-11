@@ -3,6 +3,7 @@
 {% load crispy_forms_tags %}
 {% load forum_template_tags %}
 {% load humanize %}
+{% load moderation_template_tags %}
 {% load static %}
 
 {% block title %}
@@ -34,14 +35,7 @@
       <div class="row mt-4">
         <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
           {% include "includes/messages.html" with messages=messages%}
-          <h4>PREV: {{ prev_url }}</h4>
-          <h4>NEXT: {{ next_url }}</h4>
-          <h4>THREAD_CREATE_URL:</h4>
-          <h4>THREAD_UPDATE_URL:</h4>
-          <h4>COMMENT_CREATE_URL:</h4>
-          <h4>COMMENT_UPDATE_URL:</h4>
-          <h4>COMMEN_REPLY_URL:</h4>
-            <!-- Thread Heading -->
+          <!-- Thread Heading -->
           <div class="thread-heading">
             <h4 class="mt-0 mb-0">
               <a href="{{ thread.get_absolute_url }}" class="text-dark">{{ thread.title }}</a>
@@ -59,8 +53,7 @@
               <small class="d-inline-block mr-auto dull-color"><i class="far fa-eye"></i>
                 {{ thread.views }} view{{ thread.views|pluralize }}
               </small>
-              {% url_with_page_num_2 thread.get_absolute_url comments.number as url %}
-              {% include "includes/thread_toggle.html" with unseen_query=unseen_querystring url=url text="comments" %}
+
               <a href="{{ thread.get_thread_follow_url}}" class="btn btn-light text-muted btn-sm thread-follow-btn">
                 <span class="toggle">
                   <i class="fas fa-rss mr-1"></i>{% if is_thread_follower %}Following{% else %}Follow{% endif %}
@@ -96,9 +89,9 @@
           <!-- Comment Section -->
           <ul class="list-group mb-2 comment-list-group">
             {% for comment in comments %}
-              <li class="list-group-item {% if not comment.visible %}bg-light{% endif %}">
+              <li class="list-group-item">
                 {% include "includes/comment.html" with comment=comment %}
-              </li>
+              </li>              
             {% empty %}
               <div class="text-center text-secondary mt-2">
                 <div style="font-size: 2rem"><i class="far fa-comments"></i></div>
@@ -114,7 +107,7 @@
 
       <div class="row">
         <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1 mt-4">
-          {% include "includes/pagination.html" with page_obj=comments use_page_txt=True unseen_query=unseen_querystring %}
+          {% include "includes/pagination.html" with page_obj=comments base_url=base_url prev_url=prev_url next_url=next_url %}
         </div>
       </div>
 
