@@ -60,7 +60,7 @@
       <!-- Page Content -->
       <div id="page-content-wrapper">
         <!-- Navigation -->
-        <nav class="nav-container flex-nowrap navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="nav-container flex-nowrap navbar navbar-expand-lg  main-nav {# navbar-light bg-light #}">
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="menu-toggle">
             <span class="navbar-toggler-icon"></span>
@@ -86,13 +86,16 @@
             <div class="d-flex justify-content-end align-items-center">
               {% if request.user.is_authenticated and request.user.is_superuser %}
                 <div class="mr-3">
-                  <a href="{% url 'moderation:moderator_list' %}">Manage moderators</a>
+                  <a href="{% url 'moderation:moderator_list' %}" class="text-white">
+                    Manage moderators</a>
                 </div>
               {% endif %}
 
               {% if request.user.is_authenticated and request.user.is_moderator %}
                 <div class="mr-3">
-                  <a href="{% url 'moderation:moderator_detail' request.user.username %}">Moderation Profile</a>
+                  <a href="{% url 'moderation:moderator_detail' request.user.username %}" class="text-white">
+                    Moderation Profile
+                  </a>
                 </div>
               {% endif %}
 
@@ -160,7 +163,7 @@
                 <div class="d-md-flex justify-content-end align-items-center">
                   <!-- Search Icon for Tablet/Mobile -->
                   <span class="d-inline-block d-lg-none mr-3 text-dark"><i class="fas fa-search search-icon"></i></span><!-- Search Icon for Tablet/Mobile -->
-                  <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn mr-2">
+                  <a href="{% url 'accounts:signup' %}" class="btn btn-outline-info btn mr-2">
                     Register
                   </a>
                   <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary">

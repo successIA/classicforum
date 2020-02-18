@@ -11,13 +11,13 @@
 {% if request.user.is_authenticated %}
   <div class="col col-md-2 col-lg-2 position-relative py-2 text-center" style="max-width: 8rem;">
     <div class="btn-group">
-      {% get_filter_dropdown_body dropdown_active_text True category %}
+      {% get_thread_filter_dropdown dropdown_active_text True category %}
     </div>
   </div>
 {% endif %}
 
 <div class="col col-md-2 col-lg-2 col-xl-1 position-relative py-2 text-center">
   <div class="btn-group">
-    {% get_filter_dropdown_body dropdown_active_text False category %}
+    {% get_thread_filter_dropdown dropdown_active_text False category %}
   </div>
 </div>

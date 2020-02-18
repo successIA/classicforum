@@ -11,9 +11,9 @@
           {% endif %}">
     {% if dropdown_active_text in filter_dropdown_list_item_keys %}
         {% for key, value in filter_dropdown_list %}
-            {% if key == dropdown_active_text %}
-                {{ value }}
-            {% endif %}
+          {% if key == dropdown_active_text %}
+            {{ value }}
+          {% endif %}
         {% endfor %}
     {% else %}
         {{ filter_text }}
