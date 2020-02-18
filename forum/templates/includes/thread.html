@@ -10,18 +10,6 @@
       <a href="{% thread_url thread.get_absolute_url thread.comment_count thread.new_c_id thread.new_c_num %}" class="text-dark">
         {{ thread.title }}
       </a>
-
-      {% if not category %}
-        <span class="badge badge-secondary py-1">
-          <small class="font-weight-bold ">{{ thread.category.title }}</small>
-        </span>
-      {% endif %}
-
-      {% if thread.new_c_num > 0 %}
-        <span class="badge badge-info py-1 ml-2">
-          <small class="font-weight-bold ">{{ thread.new_c_num }} new</small>
-        </span>
-      {% endif %}
     </h5>
 
     <div class="media-footer text-muted">
@@ -59,6 +47,17 @@
       <small class="mr-4">
         <i class="far fa-eye mr-1"></i>{{ thread.views }}
       </small>
+      {% if not category %}
+        <span class="badge badge-light text-muted font-weight-bold py-1">
+          {{ thread.category.title }}
+        </span>
+      {% endif %}
+
+      {% if thread.new_c_num > 0 %}
+        <span class="badge badge-info py-1 ml-2">
+          {{ thread.new_c_num }} new
+        </span>
+      {% endif %}
     </div>
   </div>
 </div>

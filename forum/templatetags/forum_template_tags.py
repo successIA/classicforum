@@ -57,8 +57,8 @@ def get_profile_sidebar_list(
     }
 
 
-@register.inclusion_tag('includes/filter_dropdown_body.html')
-def get_filter_dropdown_body(
+@register.inclusion_tag('includes/thread_filter_dropdown.html')
+def get_thread_filter_dropdown(
     dropdown_active_text, is_auth=False, category=None
 ):
     filter_list = None
