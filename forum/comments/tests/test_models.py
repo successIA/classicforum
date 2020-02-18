@@ -4,11 +4,6 @@ from django.utils import timezone
 from faker import Faker
 from test_plus import TestCase
 
-# from forum.categories.models import Category, CategoryQuerySet
-# from forum.threads.models import (
-#     Thread, ThreadRevision, ThreadActivity
-# )
-
 from forum.categories.models import Category
 from forum.comments.models import Comment
 from forum.threads.models import Thread

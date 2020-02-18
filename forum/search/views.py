@@ -6,6 +6,7 @@ from forum.threads.utils import get_paginated_queryset
 from forum.core.constants import THREAD_PER_PAGE
 from forum.core.utils import add_pagination_context
 
+
 def search(request, page=1):
     query = request.GET.get('q')
     query =  query.strip() if query else ''

@@ -1,7 +1,5 @@
 import re
 
-# from django.utils.html import mark_safe
-
 from markdown import markdown
 
 

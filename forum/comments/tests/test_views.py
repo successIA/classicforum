@@ -442,7 +442,6 @@ class CommentReplyViewTest(CommentViewsTest):
 
 
 class CommentUpvoteTest(CommentViewsTest):
-
     def setUp(self):
         super().setUp()
         self.comment = Comment.objects.create(

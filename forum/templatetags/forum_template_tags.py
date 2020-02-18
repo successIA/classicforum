@@ -133,6 +133,7 @@ def active_category_class(dropdown_active_text2, filter_str):
     else:
         return ''
 
+
 @register.filter
 def paginate_url(base_url, page):
     return f"{base_url[0]}{page}{base_url[1]}"

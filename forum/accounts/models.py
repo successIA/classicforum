@@ -25,9 +25,6 @@ class User(AbstractUser):
     followers = models.ManyToManyField(
         'self', related_name='following', symmetrical=False, blank=True
     )
-    # following = models.ManyToManyField(
-    #     'self', related_name='followers',  blank=True
-    # )
     last_seen = models.DateTimeField(default=timezone.now)
     email_confirmed = models.BooleanField(default=False)
     avatar_url = models.CharField(max_length=255, blank=True, null=True)

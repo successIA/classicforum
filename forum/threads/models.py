@@ -21,14 +21,16 @@ class Thread(TimeStampedModel):
     category = models.ForeignKey(
         'categories.Category', on_delete=models.CASCADE
     )
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
     likes = models.PositiveIntegerField(default=0)
     views = models.PositiveIntegerField(default=0)
     visible = models.BooleanField(default=True)
     followers = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        through='ThreadFollowership', related_name='thread_following'
+        through='ThreadFollowership', 
+        related_name='thread_following'
     )
     starting_comment = models.ForeignKey(
         'comments.Comment', on_delete=models.SET_NULL,
@@ -66,19 +68,12 @@ class Thread(TimeStampedModel):
             'final_comment_user', 'final_comment_time', 'comment_count'
         ])
 
-
     def set_starting_comment(self, comment):
         self.starting_comment=comment
         self.final_comment_time=comment.created
         self.save(update_fields=[
             'starting_comment', 'final_comment_time'
         ])
-
-    # def toggle_follower(self, follower):
-    #     if follower not in self.followers.all():
-    #         self.followers.add(follower)
-    #     else:
-    #         self.followers.remove(follower)
 
     def is_owner(self, user):
         return self.user == user
@@ -218,6 +213,7 @@ class ThreadFollowership(TimeStampedModel):
         else:
             return 0
 
+
 class ThreadRevision(models.Model):
     thread = models.ForeignKey(
         Thread, on_delete=models.CASCADE, related_name="revisions"
@@ -231,112 +227,8 @@ class ThreadRevision(models.Model):
     marked_message = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
 
-    
     class Meta:
         verbose_name = "Thread Revision"
 
     def __str__(self):
         return 'Thread History-%s' % (self.created)
-
-
-# class ThreadActivityQuerySet(models.query.QuerySet):
-#     def create_activities(self, thread, comment):
-#         # # 1 - 10
-#         # # read 7
-#         # # 1 - 6  8 -10
-#         # ThreadActivity.objects.create(
-#         #     user=user,
-#         #     thread=thread,
-#         #     start_comment=start_comment,
-#         #     end_comment=end_comment
-#         # )
-
-#         # ThreadActivity.objects.exclude(user=user).filter(
-#         #     thread=thread, new_comment_count=0
-#         # ).update(new_comment_count=F('new_comment_count') + 1, comment=comment)
-
-#         # comment = ThreadActivity.objects.filter(
-#         #     thread=thread, user=user).first().comment
-
-#         # comment_pk_list[-1].created > comment.created
-#         # count = 0
-#         # for comment_r in comment_pk_list:
-#         #     if comment_r.created >= comment.created:
-#         #         count += 1
-#         #     if comment_pk_list.has_next():
-#         #         comment = comment_pk_list[]
-
-#         # ThreadActivity.objects.filter(
-#         #     thread=thread
-#         #     user=user
-#         #     new_comment_count__gte=count
-#         # ).update(new_comment_count=F('new_comment_count') - count, comment=comment)
-
-#         # Thread.objects.filter(
-#         #     readers=user, threadactivity__comment_count__gt=0
-#         # ).annotate(
-#         #     new_c_num=F('threadactivity__new_comment_count')
-#         # ).annotate(
-#         #     new_c_id=F('threadactivity__new_comment')
-#         # )
-
-#         # for user in thread.followers.all():
-#         #     threadactivity_qs = ThreadActivity.objects.filter(
-#         #         user=user, thread=thread)
-#         #     if threadactivity_qs:
-#         #         threadactivity_qs.filter(
-#         #             user=user, thread=thread
-#         #         ).update(end_comment=comment)
-#         #     else:
-#         #         ThreadActivity.objects.create(
-#         #             user=user, thread=thread,
-#         #             start_comment=comment, end_comment=comment
-#         #         )
-
-#         #     comment_pk_list
-#         #     threadactivity_qs = ThreadActivity.objects.filter(
-#         #         user=user, thread=thread)
-#         #     if threadactivity_qs:
-#         #         for threadactivity in threadactivity_qs:
-#         #             if comment[-1].created < threadactivity.end_comment.created:
-
-#                         # if thread_activity.st
-#         users = [usr for usr in thread.followers.all()
-#                  if usr.pk != comment.user.pk]
-#         activities = []
-#         for user in users:
-#             activities.append(
-#                 self.model(
-#                     user=user, thread=thread, comment=comment
-#                 )
-#             )
-#         if activities:
-#             self.bulk_create(activities)
-
-#     def update_activity_actions(self, user, thread, comments):
-#         queryset = self.filter(
-#             user=user, thread=thread
-#         ).select_related('comment')
-
-#         comment_pk_list = []
-#         for comment in comments:
-#             for model in queryset:
-#                 if comment.pk == model.comment.pk:
-#                     comment.unread = True
-#                     comment_pk_list.append(comment.pk)
-#         if comment_pk_list:
-#             self.filter(
-#                 user=user, thread=thread, comment__in=comment_pk_list
-#             ).delete()
-
-
-# class ThreadActivity(TimeStampedModel):
-#     comment = models.ForeignKey('comments.Comment', on_delete=models.CASCADE)
-#     thread = models.ForeignKey('threads.Thread', on_delete=models.CASCADE)
-#     user = models.ForeignKey(
-#         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-#     )
-#     objects = ThreadActivityQuerySet.as_manager()
-
-#     class Meta:
-#         verbose_name_plural = 'Thread Activities'

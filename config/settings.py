@@ -14,8 +14,6 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# ROOT_DIR = environ.Path(__file__) - 3  # (forum/config/settings/base.py - 3 = bootcamp/)
-# APPS_DIR = ROOT_DIR.path('bootcamp')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -92,7 +90,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join('forum', 'templates')],
-        # 'DIRS': [os.path.join('forum', 'templates'), os.path.join('forum', 'templates2')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -106,7 +103,6 @@ TEMPLATES = [
             'libraries': {
                 'forum_template_tags': 'forum.templatetags.forum_template_tags',
                 'moderation_template_tags': 'forum.templatetags.moderation_template_tags',
-
             }
         },
     },

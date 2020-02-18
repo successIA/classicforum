@@ -30,7 +30,7 @@ from forum.categories.views import category_detail
 from forum.comments.forms import CommentForm
 from forum.threads.forms import ThreadForm
 from forum.threads.mixins import thread_adder, thread_owner_required
-from forum.core.constants import THREAD_PER_PAGE, ALL_THREAD_QUERYSTRING
+from forum.core.constants import THREAD_PER_PAGE
 from forum.core.utils import (
     get_post_login_redirect_url, 
     add_pagination_context,
