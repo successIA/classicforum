@@ -1,8 +1,5 @@
-// $primary: #9b27b062;
-
 $primary: #9c27b0;
 $breadcrumb-divider: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxwYXRoIGQ9Ik0yLjUgMEwxIDEuNSAzLjUgNCAxIDYuNSAyLjUgOGw0LTQtNC00eiIgZmlsbD0iY3VycmVudENvbG9yIi8+PC9zdmc+);
-// @import "node_modules/bootstrap/scss/bootstrap";
 @import "../bootstrap/bootstrap";
 
 /*-------------------------------------------
@@ -16,10 +13,8 @@ GLOBAL STYLE
 
 
 .bg-light-purple {
-  /*border: 0px solid rgba(41, 98, 255, 1);*/
   color: $primary;
   background-color: lightskyblue;
-  // background-color: hsla(240, 80%, 84%, 0.76);
 }
 
 .bg-sidebar {
@@ -27,11 +22,7 @@ GLOBAL STYLE
 }
 
 #user-search-dropdown > li:hover {
-  /*border: 0px solid rgba(41, 98, 255, 1);*/
-  // color: $primary;
   background-color: lightskyblue;
-
-  // background-color: hsla(240, 80%, 84%, 0.76);
 }
 
 /*-------------------------------------------
@@ -40,10 +31,6 @@ GLOBAL STYLE
 
 body {
   overflow-x: hidden;
-  // background-color: #e0e0e0;
-  // background-color: #E9EBEE;
-  // background-color: rgba(149, 117, 205, 0.178);
-  // background-color: #E6ECF0;
   background-color: #F0F4F5;
 }
 
@@ -157,7 +144,6 @@ body {
   display: inline-block;
   font-size: 1.4rem;
   color: gray;
-  // margin-left: .3rem;
   cursor: pointer;
 }
 .search-bar-hide{
@@ -196,71 +182,13 @@ body {
   border: 1px solid rgb(230, 236, 240);
 }
 
-// .thread-list-group {
-  // margin-left: -15px;
-  // margin-right: -15px;
-  // .list-group-item {
-  //   padding: 0.75rem 0.97rem;
-  // }
-// }
-
-/*--- PAGINATION ---*/
-// .pagination {
-//   li {
-//     margin: 0.2rem;
-//   }
-//   li a {
-//     display: inline-block;
-//     width: 1.5rem;
-//     height: 1.5rem;
-//     text-align: center;
-//     border: 1px solid rgb(230, 236, 240);
-//     border-radius: 3px !important;
-//     font-size: 0.8rem;
-//     color: #424242;
-//     text-decoration: none;
-//   }
-//   li a:hover {
-//     background-color: $info;
-//     color: #fff;
-//     border: 0px solid gray;
-//   }
-
-//   .active {
-//     background-color: $info;
-//     color: #fff;
-//     border: 0px solid gray;
-//   }
-// }
-/*--- END OF PAGINATION ---*/
 
 .dull-color {
   color: #6c757d;
 }
 
-/*--- COMMENT ---*/
-// .thread-heading {
-//   @media (min-width: 768px) {
-//     margin-left: -0.875rem;
-//     margin-right: -0.875rem;
-//   }
-// }
-// .comment-heading {
-//   @media (min-width: 768px) {
-//     margin-left: -0.875rem;
-//     margin-right: -0.875rem;
-//   }
-// }
-// .comment-list-group {
-  // margin-left: -15px;
-  // margin-right: -15px;
-  // .list-group-item {
-  //   padding: 0.75rem 0.97rem;
-  // }
-// }
 .comment-time {
   position: relative;
-  // bottom: 0.07rem;
   font-size: 0.95rem;
 }
 .time-dot {
@@ -292,7 +220,6 @@ body {
 
 .control-btn {
   text-decoration: none !important;
-  // color: #607d8b !important;
   text-transform: uppercase;
 }
 .control-btn:hover {
@@ -330,10 +257,6 @@ body {
     font-size: 0.875rem;
     color: #6c757d;
   }
-
-  // .nav-link:hover {
-  //   color: $primary !important;
-  // }
 }
 
 .nav-scroller .nav {
@@ -368,7 +291,6 @@ body {
 
 blockquote {
   font-size: 13.5px !important;
-  /*opacity: 1.2;*/
   background-color: #f8f8f8 !important;
   margin: -3px 0 !important;
   line-height: 1.3;
@@ -413,16 +335,6 @@ blockquote {
 }
 /*--- END OF COMMENT BODY MARKDOWN STYLING ---*/
 
-/*--- POST CREATION FORM ---*/
-// @media (max-width: 480px) {
-//   .form-small {
-//       margin-left: 0;
-//       margin-right: 0;
-//   }
-// }
-/*--- END OF POST CREATION FORM ---*/
-
-
 /* USERNAME SUGGEST STYLING */
 ul.mention-dropdown {
   position: absolute;
@@ -451,15 +363,12 @@ ul.mention-dropdown > li:last-child {
 ul.mention-dropdown > li:hover {
   color: #fff;
   background-color: hsla(240, 80%, 84%, 0.76);
-  /* border: 0px solid #eceff1; */
 }
 
 ul.mention-dropdown > li.item-active {
-  /*border: 0px solid rgba(41, 98, 255, 1);*/
   color: #fff;
   background-color: hsla(240, 80%, 84%, 0.76);
 }
-
 
 ul.mention-dropdown > li > a {
   text-decoration: none;
@@ -484,6 +393,8 @@ margin-bottom: 2px;
 
 
 /* END OF USERNAME SUGGEST STYLING */
+
+/* EDITOR TOOLBAR STYLING */
 .editor-toolbar.fullscreen {
   z-index: 1000;
   button {
@@ -497,12 +408,13 @@ margin-bottom: 2px;
   }
 }
 
-
 @media (min-width: 768px) {
   .CodeMirror {
     z-index: 1000;
   }
 }
+/* END OF EDITOR TOOLBAR STYLING */
+
 /* MESSAGE PREVIEW STYLING */
 .editor-preview {
   img {
@@ -517,12 +429,8 @@ margin-bottom: 2px;
   a.mention {
     display: inline-block;
     font-weight: 600;
-    // color: rgb(41, 98, 255);
     color: $primary;
-
-    /*background: #A6A6A6;*/
     border-radius: 4px;
-    /*text-decoration: none;*/
   }
 
   a.mention:hover {
@@ -531,7 +439,6 @@ margin-bottom: 2px;
 
   blockquote {
     font-size: 13.5px !important;
-    /*opacity: 1.2;*/
     background-color: #f8f8f8 !important;
     margin: -3px 0 !important;
     line-height: 1.3;
@@ -540,14 +447,6 @@ margin-bottom: 2px;
     padding: 10px 10px !important;
   }
 
-  aside.quote {
-    /**
-    -2em is used to bridge the gap created by the <br> tag in
-    the easymde-custom.js BBCodeRenderer object 
-    */
-    // margin: -2em auto 1em;
-
-  }
   p {
     /**
     Used to bridge the gap created by the <br> tag in
@@ -559,7 +458,6 @@ margin-bottom: 2px;
 /* END OF MESSAGE PREVIEW STYLING */
 
 /* MESSAGE THUMBNAIL STYLING */
-
 .img-thumbnails {
   background-color: #eeeeee;
   position: relative;
@@ -577,7 +475,6 @@ margin-bottom: 2px;
 .img-thumbnail-holder {
   margin-top: 3.8em;
 }
-
 /* END MESSAGE THUMBNAIL STYLING */
 
 

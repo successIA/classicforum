@@ -63,12 +63,15 @@ def add_pagination_context(base_url, context, paginator):
         number = paginator.previous_page_number()
         context["prev_url"] = f"{base_url[0]}{number}{base_url[1]}"
 
+
 def strip_leading_slash(text):
     leading_slash_patt = r'^/'
     return re.sub(leading_slash_patt, '', text)
 
+
 def get_post_login_redirect_url(url):
     return f'{settings.LOGIN_URL}?next={url}/#comment-form'
+
 
 def append_querystring(url, querystring):
     if "?" in url:

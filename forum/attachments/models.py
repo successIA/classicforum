@@ -35,7 +35,6 @@ def upload_to(instance, filename):
 
 
 class AttachmentQuerySet(models.query.QuerySet):
-
     def synchronise(self, comment, prev_msg=None):
         if prev_msg:
             self._remove_comment_from_attachment(comment, prev_msg)

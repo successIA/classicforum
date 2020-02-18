@@ -187,7 +187,6 @@ def hide_comment(request, thread_slug, comment_pk, comment=None, mod=None):
     raise Http404
 
 
-
 @login_required
 @unhide_post_permission_required
 def unhide_comment(request, thread_slug, comment_pk, comment=None, mod=None):

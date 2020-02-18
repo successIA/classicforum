@@ -55,11 +55,6 @@ class Comment(TimeStampedModel):
     downvoters = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True, related_name='downvoted_comments'
     )
-    # voters = models.ManyToManyField(
-    #     settings.AUTH_USER_MODEL,
-    #     related_name='voted_comments',
-    #     through=CommentVote
-    # )
     position = models.IntegerField(default=0)
     offset = models.IntegerField(default=0)
     visible = models.BooleanField(default=True)
@@ -251,52 +246,3 @@ class CommentRevision(models.Model):
 
     def __str__(self):
         return 'Comment History-%s' % (self.created)
-
-
-# class CommentVoteQuerySet(models.query.QuerySet):
-
-#     def upvote(self, comment, voter):
-#         from forum.notifications.models import Notification
-
-#         queryset = self.filter(comment=comment, voter=voter)
-#         if queryset.exists():
-#             queryset.first().delete()
-#             notif_qs = Notification.objects.filter(
-#                 sender=voter,
-#                 receiver=comment.user,
-#                 comment=comment,
-#                 notif_type=Notification.COMMENT_UPVOTED
-#             )
-#             if notif_qs.exists():
-#                 notif_qs.first().delete()
-
-#         else:
-#             self.create(comment=comment, voter=voter, vote=CommentVote.UPVOTE)
-#             Notification.objects.create(
-#                 sender=voter,
-#                 receiver=comment.user,
-#                 comment=comment,
-#                 notif_type=Notification.COMMENT_UPVOTED
-#             )
-
-#     def downvote(self, comment, voter):
-#         queryset = self.filter(comment=comment, voter=voter)
-#         if queryset.exists():
-#             queryset.first().delete()
-#         else:
-#             self.create(comment=comment, voter=voter, vote=CommentVote.DOWNVOTE)
-
-
-# class CommentVote(TimeStampedModel):
-#     UPVOTE = 'u'
-#     DOWNVOTE = 'd'
-#     VOTE_CHOICES = (
-#         (UPVOTE, 'upvote'),
-#         (DOWNVOTE, 'downvote')
-#     )
-#     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-#     voter = models.ForeignKey(
-#         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-#     )
-#     vote = models.CharField(max_length=1, choices=VOTE_CHOICES)
-#     objects = CommentVoteQuerySet.as_manager()
