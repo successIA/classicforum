@@ -1,0 +1,35 @@
+{% load humanize %}
+{% load forum_template_tags %}
+{% load static %}
+
+<div class="media">
+  <a href="{% url 'accounts:user_stats' userprofile.username %}" class="text-dark">
+    <img src="{{ notif.sender.get_avatar_url }}" class="mr-3 avatar" alt="..." width="50" height="50" />
+  </a>
+
+  <div class="media-body">
+    <div class="mb-2">
+      <strong>
+        <a class="text-dark font-weight-bold" href="{% url 'accounts:user_stats' userprofile.username %}">
+          {{ notif.sender }}
+        </a>
+      </strong>
+      <span class="text-muted font-weight-light">
+        liked your comment in
+      </span>
+      <span class="text-italic font-weight-bold">
+        <a class="text-dark" href="{{ notif.comment.get_precise_url }}">
+          {{ notif.comment.thread.title }}
+        </a>
+      </span>
+      <span class="text-muted font-weight-light">
+        {{ notif.created|naturaltime|splittime }}.
+      </span>
+    </div>
+
+    {{ notif.comment.marked_message|safe|truncatechars:200 }}    
+    {% if notif.comment.marked_message|length > 200 %}
+      <a class="text-primary" href="{{ notif.comment.get_precise_url }}">read more</a>
+    {% endif %}
+  </div>
+</div>

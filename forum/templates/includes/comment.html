@@ -110,7 +110,7 @@
       {{ comment.marked_message|safe }}
     </div>
 
-    <div id="comment-control-wrapper" class=" media-footer d-flex justify-content-between justify-content-md-start">
+    <div id="comment-control-wrapper" class="media-footer d-flex justify-content-between justify-content-md-start">
       <div>
         <a href="{% url_with_page_num comment.get_reply_url comments.number %}" class="btn btn-link btn-sm control-btn mr-3 text-muted">
           <i class="fas fa-reply mr-1"></i> Reply
@@ -122,6 +122,28 @@
           <i class="fas fa-chevron-up mr-1"></i><span class="d-none d-sm-inline-block">Upvote</span>
           {{ comment.upvoters.count }}
         </a>
+      </div>
+      <div>
+        <form method="post" action="{{ comment.get_like_url }}">
+          {% csrf_token %}
+          <button 
+            type="submit" 
+            class="btn btn-link btn-sm control-btn mr-3 
+              {% if request.user in comment.likers.all %}
+                text-primary
+              {% else %}
+                text-muted
+              {% endif %}"
+          >
+              <i class="far fa-thumbs-up"></i><span class="d-none d-sm-inline-block">Like</span>
+              {{ comment.likers.count }}
+          </button>  
+        </form>
+        {% comment %} <a href="" class="btn btn-link btn-sm control-btn mr-3 
+          {% if request.user in comment.likers.all %}text-primary{% else %}text-muted{% endif %}">
+          <i class="fas fa-chevron-up mr-1"></i><span class="d-none d-sm-inline-block">Like</span>
+          {{ comment.likers.count }}
+        </a> {% endcomment %}
       </div>
       <div>
         <a href="{{ comment.get_downvote_url }}" class="btn btn-link btn-sm control-btn mr-3 

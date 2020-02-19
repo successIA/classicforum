@@ -69,6 +69,7 @@ class Notification(TimeStampedModel):
     THREAD_UPDATED = 'th_upd'
     COMMENT_CREATED = 'co_crd'
     COMMENT_UPVOTED = 'co_upv'
+    COMMENT_LIKED = 'co_lik'
     COMMENT_REPLIED = 'co_rep'
     USER_MENTIONED = 'us_men'
     USER_FOLLOWED = 'us_fld'
@@ -78,6 +79,7 @@ class Notification(TimeStampedModel):
         (THREAD_UPDATED, 'updated'),
         (COMMENT_CREATED, 'commented'),
         (COMMENT_UPVOTED, 'upvoted'),
+        (COMMENT_LIKED, 'liked'),
         (COMMENT_REPLIED, 'posted a reply'),
         (USER_MENTIONED, 'mentioned'),
         (USER_FOLLOWED, 'following')
@@ -85,7 +87,7 @@ class Notification(TimeStampedModel):
 
     NOTIF_THREAD_TYPES = [THREAD_CREATED, THREAD_UPDATED]
     NOTIF_COMMENT_TYPES = [
-        COMMENT_CREATED, COMMENT_UPVOTED, COMMENT_REPLIED, USER_MENTIONED
+        COMMENT_CREATED, COMMENT_UPVOTED, COMMENT_LIKED, COMMENT_REPLIED, USER_MENTIONED
     ]
     NOTIF_USER_TYPES = [USER_FOLLOWED]
 
@@ -100,9 +102,11 @@ class Notification(TimeStampedModel):
         related_name='receiver_notif'
     )
     thread = models.ForeignKey(
-        'threads.Thread', on_delete=models.CASCADE, null=True, blank=True)
+        'threads.Thread', on_delete=models.CASCADE, null=True, blank=True
+    )
     comment = models.ForeignKey(
-        'comments.Comment', on_delete=models.CASCADE, null=True, blank=True)
+        'comments.Comment', on_delete=models.CASCADE, null=True, blank=True
+    )
     notif_type = models.CharField(max_length=6, choices=NOTIF_TYPES)
     unread = models.BooleanField(default=True)
     objects = NotificationQuerySet.as_manager()
@@ -146,6 +150,7 @@ class Notification(TimeStampedModel):
             Notification.THREAD_UPDATED: 'notifications/thread_update.html',
             # Notification.COMMENT_CREATED: 'notifications/comment_create.html',
             Notification.COMMENT_UPVOTED: 'notifications/comment_upvote.html',
+            Notification.COMMENT_LIKED: 'notifications/comment_like.html',
             Notification.COMMENT_REPLIED: 'notifications/comment_reply.html',
             Notification.USER_MENTIONED: 'notifications/comment_mention.html',
             # Notification.USER_FOLLOWED: 'notifications/thread_update.html',
