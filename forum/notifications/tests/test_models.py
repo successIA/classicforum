@@ -44,7 +44,7 @@ class NotificationModelTest(TestCase):
             sender=self.sender,
             receiver=self.receiver,
             thread=self.thread,
-            notif_type=Notification.COMMENT_UPVOTED
+            notif_type=Notification.COMMENT_LIKED
         )
         msg = 'Invalid notification type for field thread'
         with self.assertRaisesMessage(FieldError, msg):
@@ -105,16 +105,16 @@ class NotificationModelTest(TestCase):
         response_string = notification.get_description()
         self.assertIn('updated a thread you are following', response_string)
 
-    def test_get_description_for_comment_upvote(self):
+    def test_get_description_for_comment_like(self):
         notification = Notification(
             sender=self.sender,
             receiver=self.receiver,
             comment=self.comment,
-            notif_type=Notification.COMMENT_UPVOTED,
+            notif_type=Notification.COMMENT_LIKED,
             created=timezone.now()
         )
         response_string = notification.get_description()
-        self.assertIn('upvoted your comment', response_string)
+        self.assertIn('liked your comment', response_string)
 
     def test_get_description_for_comment_replied(self):
         notification = Notification(
@@ -249,7 +249,7 @@ class NotificationQuerySetManagerTest(TestCase):
             sender=self.sender,
             receiver=self.receiver,
             comment=self.comment,
-            notif_type=Notification.COMMENT_UPVOTED
+            notif_type=Notification.COMMENT_LIKED
         )
         notif2 = Notification.objects.create(
             sender=self.sender,
@@ -276,7 +276,7 @@ class NotificationQuerySetManagerTest(TestCase):
             sender=self.sender,
             receiver=self.receiver,
             comment=self.comment,
-            notif_type=Notification.COMMENT_UPVOTED,
+            notif_type=Notification.COMMENT_LIKED,
             unread=False
         )
         notif2 = Notification.objects.create(

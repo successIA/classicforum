@@ -35,14 +35,7 @@ class CommentQuerySet(models.query.QuerySet):
         return self.get_related().filter(
             user=user
         ).exclude(is_starting_comment=True).order_by('-created')[:count]
-
-    def get_user_total_upvotes(self, user):
-        queryset = self.filter(user=user).annotate(upvotes=Count('upvoters'))
-        total_upvotes = 0
-        for model_instance in queryset:
-            total_upvotes = total_upvotes + model_instance.upvotes
-        return total_upvotes
-
+        
     def get_user_total_likes(self, user):
         queryset = self.filter(user=user).annotate(likes=Count('likers'))
         total_likes = 0
@@ -58,9 +51,7 @@ class CommentQuerySet(models.query.QuerySet):
             'revisions',
             'parent__user',
             'parent__thread',
-            'upvoters',
             'likers',
-            'downvoters'
         )
 
     def get_parent(self, pk):

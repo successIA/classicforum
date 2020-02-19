@@ -55,38 +55,15 @@ class CommentModelTest(TestCase):
         self.assertFalse(self.comment.is_owner(second_user))
         self.assertTrue(self.comment.is_owner(self.user))
 
-    def test_downvote_with_new_voter(self):
+    def test_toggle_like_with_new_liker(self):        
         second_user = self.make_user('second_user')
-        self.comment.downvote(second_user)
-        self.assertIn(second_user, self.comment.downvoters.all())
+        self.comment.toggle_like(second_user)
+        self.assertIn(second_user, self.comment.likers.all())
 
-    def test_downvote_with_downvoter(self):
+    def test_toggle_like_with_liker(self):
         second_user = self.make_user('second_user')
-        self.comment.downvoters.add(second_user)
-        self.comment.downvote(second_user)
-        self.assertNotIn(second_user, self.comment.downvoters.all())
+        self.comment.likers.add(second_user)
+        self.comment.toggle_like(second_user)
+        self.assertNotIn(second_user, self.comment.likers.all())
 
-    def test_downvote_with_upvoter(self):
-        second_user = self.make_user('second_user')
-        self.comment.upvoters.add(second_user)
-        self.comment.downvote(second_user)
-        self.assertNotIn(second_user, self.comment.upvoters.all())
-        self.assertIn(second_user, self.comment.downvoters.all())
-
-    def test_upvote_with_new_voter(self):
-        second_user = self.make_user('second_user')
-        self.comment.upvote(second_user)
-        self.assertIn(second_user, self.comment.upvoters.all())
-
-    def test_upvote_with_upvoter(self):
-        second_user = self.make_user('second_user')
-        self.comment.upvoters.add(second_user)
-        self.comment.upvote(second_user)
-        self.assertNotIn(second_user, self.comment.upvoters.all())
-
-    def test_upvote_with_downvoter(self):
-        second_user = self.make_user('second_user')
-        self.comment.downvoters.add(second_user)
-        self.comment.upvote(second_user)
-        self.assertNotIn(second_user, self.comment.downvoters.all())
-        self.assertIn(second_user, self.comment.upvoters.all())
+    

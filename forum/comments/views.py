@@ -9,7 +9,6 @@ from django.utils.decorators import method_decorator
 from forum.comments.forms import CommentForm
 from forum.comments.mixins import (
     comment_owner_required, 
-    vote_perm_required,
     like_perm_required,
     comment_adder
 )
@@ -114,27 +113,11 @@ def reply_comment(request, thread_slug, pk, comment=None):
 
 @login_required
 @comment_adder
-@vote_perm_required
-def upvote_comment(request, thread_slug=None, pk=None, comment=None):
-    comment.upvote(request.user)
-    return HttpResponseRedirect(comment.get_precise_url())
-
-
-@login_required
-@comment_adder
 @like_perm_required
 def like_comment(request, thread_slug=None, pk=None, comment=None):
     if request.method == 'POST':
         comment.toggle_like(request.user)
         return HttpResponseRedirect(comment.get_precise_url())
-
-
-@login_required
-@comment_adder
-@vote_perm_required
-def downvote_comment(request, thread_slug=None, pk=None, comment=None):
-    comment.downvote(request.user)
-    return HttpResponseRedirect(comment.get_precise_url())
 
 
 @login_required

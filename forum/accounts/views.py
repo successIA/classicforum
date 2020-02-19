@@ -45,12 +45,8 @@ def user_profile_stats(request, username):
         'following': user.following.count(),
         'last_posted': comment_qs.get_user_last_posted(user),
         'active_category': active_category,
-        'total_upvotes': comment_qs.get_user_total_upvotes(user),
-        'total_upvoted': comment_qs.filter(upvoters=user).count(),
-
         'total_likes': comment_qs.get_user_total_likes(user),
         'total_liked': comment_qs.filter(likers=user).count(),
-        
         'recent_comments': comment_qs.get_recent_for_user(user, 5),
         'recent_threads': Thread.objects.get_recent_for_user(request, user)
     }
