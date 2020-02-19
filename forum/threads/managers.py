@@ -108,7 +108,7 @@ class ThreadQuerySet(models.query.QuerySet):
 
     def get_with_no_reply(self, category=None):
         queryset = self
-        queryset = queryset.filter(comment_count=1).get_related()
+        queryset = queryset.filter(comment_count=0).get_related()
         if not category:
             return queryset.order_by('-created')
         queryset = queryset.filter(category=category).order_by('-created')
