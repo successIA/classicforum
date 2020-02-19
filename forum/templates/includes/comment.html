@@ -116,13 +116,7 @@
           <i class="fas fa-reply mr-1"></i> Reply
         </a>
       </div>
-      <div>
-        <a href="{{ comment.get_upvote_url }}" class="btn btn-link btn-sm control-btn mr-3 
-          {% if request.user in comment.upvoters.all %}text-primary{% else %}text-muted{% endif %}">
-          <i class="fas fa-chevron-up mr-1"></i><span class="d-none d-sm-inline-block">Upvote</span>
-          {{ comment.upvoters.count }}
-        </a>
-      </div>
+      
       <div>
         <form method="post" action="{{ comment.get_like_url }}">
           {% csrf_token %}
@@ -139,18 +133,6 @@
               {{ comment.likers.count }}
           </button>  
         </form>
-        {% comment %} <a href="" class="btn btn-link btn-sm control-btn mr-3 
-          {% if request.user in comment.likers.all %}text-primary{% else %}text-muted{% endif %}">
-          <i class="fas fa-chevron-up mr-1"></i><span class="d-none d-sm-inline-block">Like</span>
-          {{ comment.likers.count }}
-        </a> {% endcomment %}
-      </div>
-      <div>
-        <a href="{{ comment.get_downvote_url }}" class="btn btn-link btn-sm control-btn mr-3 
-          {% if request.user in comment.downvoters.all %}text-danger{% else %}text-muted{% endif %}">
-          <i class="fas fa-chevron-down mr-1"></i><span class="d-none d-sm-inline-block">Downvote</span>
-          {{ comment.downvoters.count }}
-        </a>
       </div>
     </div>
   </div>

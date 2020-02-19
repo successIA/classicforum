@@ -51,8 +51,8 @@ class UserProfileStatsViewTest(TestCase):
         self.assertIn('following', response.context)
         self.assertIn('last_posted', response.context)
         self.assertIn('active_category', response.context)
-        self.assertIn('total_upvotes', response.context)
-        self.assertIn('total_upvoted', response.context)
+        self.assertIn('total_likes', response.context)
+        self.assertIn('total_liked', response.context)
         self.assertIsInstance(
             response.context['recent_comments'], CommentQuerySet
         )

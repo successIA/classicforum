@@ -441,51 +441,6 @@ class CommentReplyViewTest(CommentViewsTest):
         self.assertTrue(form.errors)
 
 
-class CommentUpvoteTest(CommentViewsTest):
-    def setUp(self):
-        super().setUp()
-        self.comment = Comment.objects.create(
-            message='hello world',
-            category=self.thread.category,
-            thread=self.thread,
-            user=self.user
-        )
-        self.upvote_url = reverse(
-            'comments:upvote',
-            kwargs={'thread_slug': self.thread.slug, 'pk': self.comment.pk}
-        )
-
-    def test_anonymous_user_redirect(self):
-        """An anonymous user should be redirected to the login page"""
-        redirect_url = '%s?next=%s' % (
-            reverse('accounts:login'), self.upvote_url)
-        response = self.client.get(self.upvote_url)
-        self.assertRedirects(response, redirect_url)
-
-    def test_view_should_reject_owner(self):
-        """An owner cannot upvote his/her comment"""
-        login(self, self.user, 'password')
-        response = self.client.get(self.upvote_url)
-        self.assertEquals(response.status_code, 403)
-
-    def test_new_voter(self):
-        """A new voter is permitted to upvote a comment"""
-        second_user = self.make_user('second_user')
-        login(self, second_user, 'password')
-        response = self.client.get(self.upvote_url)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(self.comment.upvoters.count(), 1)
-
-    def test_existing_upvoter(self):
-        """An existing voter is removed from upvoters count"""
-        second_user = self.make_user('second_user')
-        login(self, second_user, 'password')
-        self.client.get(self.upvote_url)
-        response = self.client.get(self.upvote_url)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(self.comment.upvoters.count(), 0)
-
-
 class CommentLikeTest(CommentViewsTest):
     def setUp(self):
         super().setUp()
@@ -528,49 +483,6 @@ class CommentLikeTest(CommentViewsTest):
         self.client.post(self.like_url)
         response = self.client.post(self.like_url)
         self.assertEquals(response.status_code, 302)
-        self.assertEquals(self.comment.upvoters.count(), 0)
+        self.assertEquals(self.comment.likers.count(), 0)
 
 
-class CommentDownvoteTest(CommentViewsTest):
-
-    def setUp(self):
-        super().setUp()
-        self.comment = Comment.objects.create(
-            message='hello world',
-            thread=self.thread,
-            user=self.user
-        )
-        self.downvote_url = reverse(
-            'comments:downvote',
-            kwargs={'thread_slug': self.thread.slug, 'pk': self.comment.pk}
-        )
-
-    def test_anonymous_user_redirect(self):
-        """An anonymous user should be redirected to the login page"""
-        redirect_url = '%s?next=%s' % (
-            reverse('accounts:login'), self.downvote_url)
-        response = self.client.get(self.downvote_url)
-        self.assertRedirects(response, redirect_url)
-
-    def test_view_should_reject_owner(self):
-        """An owner cannot downvote his/her comment"""
-        login(self, self.user, 'password')
-        response = self.client.get(self.downvote_url)
-        self.assertEquals(response.status_code, 403)
-
-    def test_new_voter(self):
-        """A new voter is permitted to downvote a comment"""
-        second_user = self.make_user('second_user')
-        login(self, second_user, 'password')
-        response = self.client.get(self.downvote_url)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(self.comment.downvoters.count(), 1)
-
-    def test_existing_downvoter(self):
-        """An existing voter is removed from downvoters count"""
-        second_user = self.make_user('second_user')
-        login(self, second_user, 'password')
-        self.client.get(self.downvote_url)
-        response = self.client.get(self.downvote_url)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(self.comment.downvoters.count(), 0)

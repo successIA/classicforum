@@ -34,16 +34,6 @@ def comment_owner_required(function):
     return wrap
 
 
-def vote_perm_required(function):
-    def wrap(request, *args, **kwargs):
-        if request.user == kwargs["comment"].user:
-            raise PermissionDenied
-        return function(request, *args, **kwargs)
-    wrap.__doc__ = function.__doc__
-    wrap.__name__ = function.__name__
-    return wrap
-
-
 def like_perm_required(f):
     def wrap(request, *args, **kwargs):
         if request.user == kwargs["comment"].user:

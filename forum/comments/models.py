@@ -49,12 +49,6 @@ class Comment(TimeStampedModel):
         blank=True,
         related_name='comment_mention'
     )
-    upvoters = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, blank=True, related_name='upvoted_comments'
-    )
-    downvoters = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, blank=True, related_name='downvoted_comments'
-    )
     likers = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True, related_name='liked_comments'
     )
@@ -129,36 +123,7 @@ class Comment(TimeStampedModel):
         if last_obj_qs:
             last_obj = last_obj_qs.last()
         return last_obj
-
-    @transaction.atomic
-    def downvote(self, user):
-        if user in self.downvoters.all():
-            self.downvoters.remove(user)
-        else:
-            self.upvoters.remove(user)
-            self.downvoters.add(user)
-            # Incase the user upvoted the comment initially by mistake
-            Notification.objects.filter(
-                sender=user, receiver=self.user,
-                comment=self, notif_type=Notification.COMMENT_UPVOTED
-            ).delete()
-
-    @transaction.atomic
-    def upvote(self, user):
-        if user in self.upvoters.all():
-            self.upvoters.remove(user)
-            Notification.objects.filter(
-                sender=user, receiver=self.user,
-                comment=self, notif_type=Notification.COMMENT_UPVOTED
-            ).delete()
-        else:
-            self.downvoters.remove(user)
-            self.upvoters.add(user)
-            Notification.objects.create(
-                sender=user, receiver=self.user,
-                comment=self, notif_type=Notification.COMMENT_UPVOTED
-            )
-    
+ 
     @transaction.atomic
     def toggle_like(self, user):
         if user in self.likers.all():
@@ -201,24 +166,12 @@ class Comment(TimeStampedModel):
             kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}
         )
 
-    def get_upvote_url(self):
-        return reverse(
-            'comments:upvote',
-            kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}
-        )
-
     def get_like_url(self):
         return reverse(
             'comments:like',
             kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}
         )
-        
-    def get_downvote_url(self):
-        return reverse(
-            'comments:downvote',
-            kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}
-        )
-
+    
     def get_reply_form_action(self):
         page_num = ceil(self.position / COMMENT_PER_PAGE)
         return '%s?page=%s#comment-form' % (
