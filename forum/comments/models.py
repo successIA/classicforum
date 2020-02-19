@@ -55,6 +55,9 @@ class Comment(TimeStampedModel):
     downvoters = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True, related_name='downvoted_comments'
     )
+    likers = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, blank=True, related_name='liked_comments'
+    )
     position = models.IntegerField(default=0)
     offset = models.IntegerField(default=0)
     visible = models.BooleanField(default=True)
@@ -156,6 +159,21 @@ class Comment(TimeStampedModel):
                 comment=self, notif_type=Notification.COMMENT_UPVOTED
             )
     
+    @transaction.atomic
+    def toggle_like(self, user):
+        if user in self.likers.all():
+            self.likers.remove(user)
+            Notification.objects.filter(
+                sender=user, receiver=self.user,
+                comment=self, notif_type=Notification.COMMENT_LIKED
+            ).delete()
+        else:
+            self.likers.add(user)
+            Notification.objects.create(
+                sender=user, receiver=self.user,
+                comment=self, notif_type=Notification.COMMENT_LIKED
+            )
+
     def is_owner(self, user):
         return self.user == user
 
@@ -189,6 +207,12 @@ class Comment(TimeStampedModel):
             kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}
         )
 
+    def get_like_url(self):
+        return reverse(
+            'comments:like',
+            kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}
+        )
+        
     def get_downvote_url(self):
         return reverse(
             'comments:downvote',
@@ -216,14 +240,15 @@ class Comment(TimeStampedModel):
         )
 
     def get_url_for_next_or_prev(self):
+        Klass = self.__class__
         if self.position > 1:
-            next_obj_qs = self.__class__.objects.active().filter(
+            next_obj_qs = Klass.objects.active().filter(
                 pk__gt=self.pk
             ).order_by('pk')
             if next_obj_qs:
                 return next_obj_qs.first().get_precise_url()
             else:
-                prev_obj_qs = self.__class__.objects.active().filter(
+                prev_obj_qs = Klass.objects.active().filter(
                     pk__lt=self.pk
                 ).order_by('pk')
                 if prev_obj_qs:

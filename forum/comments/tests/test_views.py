@@ -486,6 +486,51 @@ class CommentUpvoteTest(CommentViewsTest):
         self.assertEquals(self.comment.upvoters.count(), 0)
 
 
+class CommentLikeTest(CommentViewsTest):
+    def setUp(self):
+        super().setUp()
+        self.comment = Comment.objects.create(
+            message='hello world',
+            category=self.thread.category,
+            thread=self.thread,
+            user=self.user
+        )
+        self.like_url = reverse(
+            'comments:like',
+            kwargs={'thread_slug': self.thread.slug, 'pk': self.comment.pk}
+        )
+
+    def test_anonymous_user_redirect(self):
+        """An anonymous user should be redirected to the login page"""
+        redirect_url = '%s?next=%s' % (
+            reverse('accounts:login'), self.like_url
+        )
+        response = self.client.post(self.like_url)
+        self.assertRedirects(response, redirect_url)
+
+    def test_view_should_reject_owner(self):
+        """An owner cannot like his/her comment"""
+        login(self, self.user, 'password')
+        response = self.client.post(self.like_url)
+        self.assertEquals(response.status_code, 403)
+
+    def test_using_valid_user(self):
+        second_user = self.make_user('second_user')
+        login(self, second_user, 'password')
+        response = self.client.post(self.like_url)
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(self.comment.likers.count(), 1)
+
+    def test_with_existing_liker(self):
+        """An existing liker is removed from likers count"""
+        second_user = self.make_user('second_user')
+        login(self, second_user, 'password')
+        self.client.post(self.like_url)
+        response = self.client.post(self.like_url)
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(self.comment.upvoters.count(), 0)
+
+
 class CommentDownvoteTest(CommentViewsTest):
 
     def setUp(self):

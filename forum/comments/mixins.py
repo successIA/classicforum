@@ -7,6 +7,7 @@ from forum.comments.models import Comment
 from forum.threads.mixins import thread_adder
 from forum.threads.models import Thread
 
+
 def comment_adder(function):
     @thread_adder
     def wrap(request, *args, **kwargs):
@@ -40,4 +41,14 @@ def vote_perm_required(function):
         return function(request, *args, **kwargs)
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
+    return wrap
+
+
+def like_perm_required(f):
+    def wrap(request, *args, **kwargs):
+        if request.user == kwargs["comment"].user:
+            raise PermissionDenied
+        return f(request, *args, **kwargs)
+    wrap.__doc__ = f.__doc__
+    wrap.__name__ = f.__name__
     return wrap

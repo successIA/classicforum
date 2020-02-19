@@ -114,7 +114,7 @@
                           background-color: blue;
                         }
                       </style>
-                      <div class="notif-badge bg-primary text-center rounded-circle text-white">
+                      <div class="notif-badge bg-info text-center rounded-circle text-white">
                         <span>{{ request.user.notif_count }}</span>
                       </div>
                     {% endif %}
@@ -128,25 +128,26 @@
                   </a>
                   <div style="min-width: 12rem;" class="dropdown-menu dropdown-menu-right w-50 shadow-sm">
                     <a class="dropdown-item" href="{{ user.get_absolute_url }}">
-                      My account
+                      My Account
                     </a>
                     <a class="dropdown-item" href="{% url 'accounts:user_edit' request.user.username %}">
-                      Update profile
+                      Update Profile
                     </a>
+                    <a class="dropdown-item" href="{% url 'accounts:password_change' %}">
+                      Change Password
+                    </a>
+                    <div class="dropdown-divider"></div>
                     {% if request.user.is_authenticated and request.user.is_superuser %}
                         <a href="{% url 'moderation:moderator_list' %}" class="dropdown-item">
-                          Manage moderators
+                          Manage Moderators
                         </a>
                     {% endif %}
 
                     {% if request.user.is_authenticated and request.user.is_moderator %}
                         <a href="{% url 'moderation:moderator_detail' request.user.username %}" class="dropdown-item">
-                          Moderation Profile
+                          Moderation Account
                         </a>
                     {% endif %}
-                    <a class="dropdown-item" href="{% url 'accounts:password_change' %}">
-                      Change password
-                    </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{% url 'accounts:logout' %}">
                       Logout

@@ -5,6 +5,7 @@ from forum.comments.views import (
     update_comment,
     reply_comment,
     upvote_comment,
+    like_comment,
     downvote_comment,
     report_comment,
 )
@@ -12,6 +13,7 @@ from forum.comments.views import (
 urlpatterns = [
     url(r'(?P<pk>[0-9]+)/reply/$', reply_comment, name='comment_reply'),
     url(r'(?P<pk>[0-9]+)/upvote/$', upvote_comment, name='upvote'),
+    url(r'(?P<pk>[0-9]+)/like/$', like_comment, name='like'),
     url(r'(?P<pk>[0-9]+)/downvote/$', downvote_comment, name='downvote'),
     url(r'(?P<pk>[0-9]+)/$', update_comment, name='comment_update'),
     url(r'add/$', create_comment, name='comment_create'),

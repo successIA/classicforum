@@ -10,6 +10,7 @@ from forum.comments.forms import CommentForm
 from forum.comments.mixins import (
     comment_owner_required, 
     vote_perm_required,
+    like_perm_required,
     comment_adder
 )
 from forum.comments.models import Comment, CommentRevision
@@ -117,6 +118,15 @@ def reply_comment(request, thread_slug, pk, comment=None):
 def upvote_comment(request, thread_slug=None, pk=None, comment=None):
     comment.upvote(request.user)
     return HttpResponseRedirect(comment.get_precise_url())
+
+
+@login_required
+@comment_adder
+@like_perm_required
+def like_comment(request, thread_slug=None, pk=None, comment=None):
+    if request.method == 'POST':
+        comment.toggle_like(request.user)
+        return HttpResponseRedirect(comment.get_precise_url())
 
 
 @login_required

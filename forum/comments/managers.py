@@ -43,6 +43,13 @@ class CommentQuerySet(models.query.QuerySet):
             total_upvotes = total_upvotes + model_instance.upvotes
         return total_upvotes
 
+    def get_user_total_likes(self, user):
+        queryset = self.filter(user=user).annotate(likes=Count('likers'))
+        total_likes = 0
+        for model_instance in queryset:
+            total_likes = total_likes + model_instance.likes
+        return total_likes
+
     def get_related(self):
         return self.select_related(
             'thread', 'user', 'parent'
@@ -52,6 +59,7 @@ class CommentQuerySet(models.query.QuerySet):
             'parent__user',
             'parent__thread',
             'upvoters',
+            'likers',
             'downvoters'
         )
 
