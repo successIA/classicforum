@@ -57,10 +57,8 @@
         </div>
       </div><!-- Sidebar Fix -->
 
-      <!-- Page Content -->
       <div id="page-content-wrapper">
-        <!-- Navigation -->
-        <nav class="nav-container flex-nowrap navbar navbar-expand-lg  main-nav {# navbar-light bg-light #}">
+        <nav class="nav-container flex-nowrap navbar navbar-expand-lg  main-nav navbar-dark {# bg-light #}">
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="menu-toggle">
             <span class="navbar-toggler-icon"></span>
@@ -69,12 +67,14 @@
           <div class="around-search-bar d-flex d-lg-none justify-content-start align-items-center ml-2 ml-lg-0 mr-auto">
             <a class="navbar-brand" href="/">
               <img src="{% static 'assets/bootstrap-solid.svg' %}" width="30" height="30" alt="" />
-              <span class="d-none d-md-inline-block">ClassicForum</span>
+              <span class="d-none d-md-inline-block text-white">ClassicForum</span>
             </a>
           </div>
 
-          {% comment %} <form class="form-inline my-2 my-lg-0 justify-content-end d-none d-md-flex mr-lg-auto"> {% endcomment %}
-          <form action="{% url 'search:search' %}" class="search-bar form-inline my-0 my-lg-0 justify-content-end d-none ml-3 ml-md-0 d-md-flex mr-lg-auto">
+          <form 
+            action="{% url 'search:search' %}" 
+            class="search-bar form-inline my-0 my-lg-0 justify-content-end d-none ml-3 ml-md-0 d-md-flex mr-lg-auto"
+          >
             <div class="position-relative d-flex align-items-center">
               <i class="fas fa-search search-abs"></i>
               <input class="form-control mr-3 md-mr-0 search-pl" type="search" name="q" value="{{ query }}" placeholder="Search" aria-label="Search" />
@@ -84,30 +84,15 @@
 
           <div class="around-search-bar">            
             <div class="d-flex justify-content-end align-items-center">
-              {% if request.user.is_authenticated and request.user.is_superuser %}
-                <div class="mr-3">
-                  <a href="{% url 'moderation:moderator_list' %}" class="text-white">
-                    Manage moderators</a>
-                </div>
-              {% endif %}
-
-              {% if request.user.is_authenticated and request.user.is_moderator %}
-                <div class="mr-3">
-                  <a href="{% url 'moderation:moderator_detail' request.user.username %}" class="text-white">
-                    Moderation Profile
-                  </a>
-                </div>
-              {% endif %}
-
               {% if request.user.is_authenticated %}
                 <span class="d-inline-block d-md-none mr-4 text-dark">
-                  <i class="fas fa-search search-icon" style="font-size: 1.1rem;"></i>
+                  <i class="fas fa-search search-icon text-white" style="font-size: 1.1rem;"></i>
                 </span>
               {% endif %}
 
               {% if request.user.is_authenticated %}
                 <span class="mr-4 position-relative d-flex justify-content-center align-items-center">
-                  <a class="notif-icon text-decoration-none text-dark" href="{{ request.user.notif_url }}">
+                  <a class="notif-icon text-decoration-none text-white" href="{{ request.user.notif_url }}">
                     <i style="font-size: 1.5rem;" class="notif-icon far fa-bell"></i>
                     {% if request.user.notif_count %}
                       {% comment %} <span style="font-size: 0.7rem; position: absolute; top: -.67rem; right: -.63rem; min-width: 1em; 
@@ -148,6 +133,17 @@
                     <a class="dropdown-item" href="{% url 'accounts:user_edit' request.user.username %}">
                       Update profile
                     </a>
+                    {% if request.user.is_authenticated and request.user.is_superuser %}
+                        <a href="{% url 'moderation:moderator_list' %}" class="dropdown-item">
+                          Manage moderators
+                        </a>
+                    {% endif %}
+
+                    {% if request.user.is_authenticated and request.user.is_moderator %}
+                        <a href="{% url 'moderation:moderator_detail' request.user.username %}" class="dropdown-item">
+                          Moderation Profile
+                        </a>
+                    {% endif %}
                     <a class="dropdown-item" href="{% url 'accounts:password_change' %}">
                       Change password
                     </a>
@@ -157,16 +153,14 @@
                     </a>
                   </div>
                 </div>
-              {% else %}
-                
-                <!-- Login/Register navigation for Desktop/Tablet/Mobile -->
+              {% else %}                
                 <div class="d-md-flex justify-content-end align-items-center">
-                  <!-- Search Icon for Tablet/Mobile -->
-                  <span class="d-inline-block d-lg-none mr-3 text-dark"><i class="fas fa-search search-icon"></i></span><!-- Search Icon for Tablet/Mobile -->
-                  <a href="{% url 'accounts:signup' %}" style="" class="btn btn-primary btn mr-2">
+                  {# Search icon small screen #}
+                  <span class="d-inline-block d-lg-none mr-3 text-white"><i class="fas fa-search search-icon"></i></span>
+                  <a href="{% url 'accounts:signup' %}" style="" class="btn btn-info btn mr-2">
                     Register
                   </a>
-                  <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary">
+                  <a href="{% url 'accounts:login' %}" class="btn btn-outline-info text-white">
                     Login
                   </a>
                 </div>
@@ -174,26 +168,6 @@
             </div>
           </div>
         </nav>
-        
-        {% comment %} {% if not request.user.is_authenticated %}
-          <!-- Login/Register and Search Icon navigation for mobile devices -->
-          <div class="nav-container container-fluid d-block bg-white d-md-none around-search-bar">
-            <div class="row">
-              <div class="col-12 py-2">
-                <div class="d-flex  align-items-center">
-                  <span class="d-inline-block d-lg-none mr-auto text-dark"><i class="fas fa-search search-icon"></i></span>
-                  <a href="{% url 'accounts:signup' %}" class="btn btn-primary mr-2">
-                    Register
-                  </a>
-                  <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary">
-                    Login
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        {% endif %} {% endcomment %}
-
         {% block content %}{% endblock content %}        
       </div>
     </div>

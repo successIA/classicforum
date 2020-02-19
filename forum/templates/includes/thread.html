@@ -4,13 +4,26 @@
 {% load humanize %}
 
 <div class="media">  
-  <img src="{{ thread.user.get_avatar_url }}" height="60" width="60" class="avatar mr-3 d-none d-md-block" alt="..." />
+  <img src="{{ thread.user.get_avatar_url }}" height="60" width="60" class="avatar mr-3 mt-2 d-none d-md-block" alt="..." />
   <div class="media-body">
-    <h5 class="mt-0">
+    <h5 class="mt-0 mb-0">
       <a href="{% thread_url thread.get_absolute_url thread.comment_count thread.new_c_id thread.new_c_num %}" class="text-dark">
         {{ thread.title }}
       </a>
     </h5>
+    
+    <div>
+      {% if not category %}
+        <span class=" d-inline-block mb-1 badge badge-light text-muted font-weight-bold py-1">
+          {{ thread.category.title }}
+        </span>
+      {% endif %}
+      {% if thread.new_c_num > 0 %}
+        <span class="badge badge-info py-1 ml-2">
+          {{ thread.new_c_num }} new
+        </span>
+      {% endif %}
+    </div>
 
     <div class="media-footer text-muted">
       <small class="mr-4"><i class="far fa-comments"></i>
@@ -47,17 +60,6 @@
       <small class="mr-4">
         <i class="far fa-eye mr-1"></i>{{ thread.views }}
       </small>
-      {% if not category %}
-        <span class="badge badge-light text-muted font-weight-bold py-1">
-          {{ thread.category.title }}
-        </span>
-      {% endif %}
-
-      {% if thread.new_c_num > 0 %}
-        <span class="badge badge-info py-1 ml-2">
-          {{ thread.new_c_num }} new
-        </span>
-      {% endif %}
     </div>
   </div>
 </div>
