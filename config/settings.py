@@ -66,7 +66,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-
     # THIRD PARTY MIDDLEWARE
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 
@@ -80,8 +79,6 @@ MIDDLEWARE = [
 
     # PROJECT MIDDLEWARE
     'forum.accounts.middleware.UserLastSeenMiddleware',
-
-
 ]
 
 ROOT_URLCONF = 'config.urls'

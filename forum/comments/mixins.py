@@ -10,8 +10,8 @@ from forum.threads.models import Thread
 def comment_adder(function):
     @thread_adder
     def wrap(request, *args, **kwargs):
-        # all the views using comment_adder do not have a kwarg parma
-        # for thread
+        # all the views using comment_adder do not have a kwarg 
+        # parameter for thread
         del kwargs["thread"]
         comment = get_object_or_404(Comment, pk=kwargs.get("pk"))
         kwargs['comment'] = can_see_post_or_404(request, comment)

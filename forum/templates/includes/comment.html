@@ -85,13 +85,13 @@
           
         {% if request.user.is_authenticated and request.user.is_moderator %}
           {% if comment.is_starting_comment %}
-            {% if can_hide_thread %}{# can_hide_thread is already initialised  at the top #}           
+            {% if can_hide_thread %}{# can_hide_thread is already initialised at the top #}           
               <a href="#" data-toggle="modal" data-target="#deleteModal_{{ comment.pk }}" class="dropdown-item py-2">
                 <span class="position-absolute" style="margin-left: 2.1rem;">Hide thread</span><i class="fas fa-eye-slash"></i>
               </a>
             {% endif %} 
           {% else %}
-            {% if can_hide_comment %}{# can_hide_comment is already initialised  at the top #}               
+            {% if can_hide_comment %}{# can_hide_comment is already initialised at the top #}               
               <a href="#" data-toggle="modal" data-target="#deleteModal_{{ comment.pk }}" class="dropdown-item py-2">
                 <span class="position-absolute mr-4" style="margin-left: 2.1rem;">Hide comment</span><i class="fas fa-eye-slash"></i>
               </a>
