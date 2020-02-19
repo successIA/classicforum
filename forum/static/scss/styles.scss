@@ -211,7 +211,7 @@ body {
 }
 .more-option {
   top: 0.3rem;
-  right: 0.24rem;
+  right: 0.2rem;
   padding: 0.2rem 0.3rem;
 
   a {
@@ -226,45 +226,29 @@ body {
   margin-right: 14px;
 }
 
-.control-btn {
-  text-decoration: none !important;
-  text-transform: uppercase;
-}
-.control-btn:hover {
-  background-color: #eeeeee;
-}
-.control-btn:focus {
-  background-color: #eeeeee;
-}
 #comment-control-wrapper {
-  margin-left: -0.57rem;
-  margin-right: -0.57rem;
+  margin: auto -.585rem -.3rem -.575em;
+  .control-btn {
+    text-decoration: none !important;
+    .active {
+      color: $primary !important;
+      font-weight: 500;
+    }
+    .nav-link {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+      font-size: 0.875rem;
+      color: #6c757d;
+    }
+  }
 }
 
-/*--- END OF COMMENT ---*/
-
-/*--- PROFILE PAGE ---*/
-.profile-bio {
-  font-size: 0.95rem !important;
+.control-btn:hover {
+  background-color: #F0F4F5;
 }
 
-.nav-scroller {
-  position: relative;
-  z-index: 2;
-  height: 2.75rem;
-  overflow-y: hidden;
-
-  .active {
-    color: $primary !important;
-    font-weight: 500;
-  }
-
-  .nav-link {
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    font-size: 0.875rem;
-    color: #6c757d;
-  }
+.control-btn-like:hover {
+  color: $primary !important;
 }
 
 .nav-scroller .nav {

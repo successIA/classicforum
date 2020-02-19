@@ -110,10 +110,10 @@
       {{ comment.marked_message|safe }}
     </div>
 
-    <div id="comment-control-wrapper" class="media-footer d-flex justify-content-between justify-content-md-start">
+    <div id="comment-control-wrapper" class="media-footer d-flex justify-content-between">
       <div>
-        <a href="{% url_with_page_num comment.get_reply_url comments.number %}" class="btn btn-link btn-sm control-btn mr-3 text-muted">
-          <i class="fas fa-reply mr-1"></i> Reply
+        <a href="{% url_with_page_num comment.get_reply_url comments.number %}" class="btn btn-link btn-sm control-btn text-muted">
+          <i class="fas fa-reply mr-1"></i>Reply
         </a>
       </div>
       
@@ -122,14 +122,14 @@
           {% csrf_token %}
           <button 
             type="submit" 
-            class="btn btn-link btn-sm control-btn mr-3 
+            class="btn btn-link btn-sm control-btn control-btn-like
               {% if request.user in comment.likers.all %}
                 text-primary
               {% else %}
                 text-muted
               {% endif %}"
           >
-              <i class="far fa-thumbs-up"></i><span class="d-none d-sm-inline-block">Like</span>
+              <i class="far fa-thumbs-up mr-1"></i>
               {{ comment.likers.count }}
           </button>  
         </form>
