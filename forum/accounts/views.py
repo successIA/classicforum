@@ -112,9 +112,10 @@ def user_profile_edit(request, username):
 
 def user_comment_list(request, username):
     user = get_object_or_404(User, username=username)
-    comment_qs = Comment.objects.filter(user=user).exclude(
-        is_starting_comment=True
-    ).get_related().order_by('id')
+    # comment_qs = Comment.objects.filter(user=user).exclude(
+    #     is_starting_comment=True
+    # ).get_related().order_by('-id')
+    comment_qs = Comment.objects.get_pure_and_thread_active_for_user(user)
     comments = get_paginated_queryset(comment_qs, 10, request.GET.get('page'))
     url = reverse('accounts:user_comments', kwargs={'username':  username})
     base_url = [f'{url}?page=', '']

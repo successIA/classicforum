@@ -63,8 +63,11 @@ class CommentQuerySet(models.query.QuerySet):
         if comment_qs:
             return comment_qs[0]
 
-    def pure(self):
-        return self.filter(is_starting_comment=False)
+    def get_pure_and_thread_active_for_user(self, user):
+        return self.filter(
+            user=user,
+            thread__visible=True,
+        ).pure_and_active().get_related().order_by('-id')
 
     def pure_and_active(self):
         return self.active().pure()
@@ -82,6 +85,9 @@ class CommentQuerySet(models.query.QuerySet):
             is_starting_comment=False, 
             pk=pk
         )
+
+    def pure(self):
+        return self.filter(is_starting_comment=False)
     
     def active(self, *args, **kwargs):
         return self.filter(visible=True)

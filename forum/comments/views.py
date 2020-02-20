@@ -23,6 +23,7 @@ from forum.threads.models import Thread
 from forum.threads.views import thread_detail
 from forum.threads.mixins import thread_adder
 
+
 @login_required
 @thread_adder
 def create_comment(request, thread_slug, thread=None):

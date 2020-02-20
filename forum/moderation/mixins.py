@@ -61,14 +61,6 @@ def _set_post_moderation_kwargs(request, kwargs):
     return post_key
 
 
-def _set_thread_moderation_kwargs(request, kwargs):
-    kwargs["thread"] = get_object_or_404(Thread, slug=kwargs.get("slug"))
-
-
-def _set_comment_moderation_kwargs(request, kwargs):
-    kwargs["comment"] = get_object_or_404(Comment, pk=kwargs.get("comment_pk"))
-
-
 def post_moderator_required(f):
     @moderator_required
     def wrap(request, *args, **kwargs):
@@ -105,6 +97,14 @@ def unhide_post_permission_required(f):
     wrap.__doc__ = f.__doc__
     wrap.__name__ = f.__name__
     return wrap
+
+
+def _set_thread_moderation_kwargs(request, kwargs):
+    kwargs["thread"] = get_object_or_404(Thread, slug=kwargs.get("slug"))
+
+
+def _set_comment_moderation_kwargs(request, kwargs):
+    kwargs["comment"] = get_object_or_404(Comment, pk=kwargs.get("comment_pk"))
 
 # def view_post_permission_required(f):
 #     def wrap(request, *args, **kwargs):

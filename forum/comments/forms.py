@@ -11,6 +11,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['message', ]
 
+    @staticmethod
     def get_for_reply(message, extra=None):
         return CommentForm(instance=Comment(message=message), extra=extra)
 
