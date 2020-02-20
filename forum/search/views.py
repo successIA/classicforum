@@ -14,7 +14,9 @@ def search(request, page=1):
     ctx = {}
     thread_paginator = None
     if query:        
-        thread_qs = Thread.objects.active().filter(title__icontains=query)
+        thread_qs = Thread.objects.active().filter(
+            title__icontains=query
+        ).order_by('-final_comment_time').distinct()
         thread_paginator = get_paginated_queryset(
             thread_qs, THREAD_PER_PAGE, page)
         base_url = ['/search/', f'/?q={query}']
