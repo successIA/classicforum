@@ -119,7 +119,7 @@ class ThreadQuerySet(models.query.QuerySet):
         if days:
             dt = timezone.now() - timedelta(days=days)
             queryset = queryset.filter(created__gte=dt)
-        return queryset.get_for_user(user).order_by('comment_count')
+        return queryset.get_for_user(user).order_by('-comment_count')
 
     def get_by_category(self, category=None):
         if not category:
