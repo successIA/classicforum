@@ -40,16 +40,8 @@
                 {% include "includes/thread.html" with thread=thread %}
               </li> 
             {% empty %}
-              <div class="card">
-                <div class="text-center text-secondary mt-3 mb-3">
-                  <div style="font-size: 2rem"><i class="fas fa-book"></i></div>
-                  <div>
-                    <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">
-                      {% empty_thread_description dropdown_active_text %}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              {% empty_thread_description dropdown_active_text as description %}
+              {% include "includes/_empty_state_card.html" with icon="fas fa-book" text=description %}       
             {% endfor %}
           </ul>
         </div>
