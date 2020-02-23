@@ -24,25 +24,10 @@
               </li>               
             {% empty %}
               {% if dropdown_active_text == 'recent' %}            
-                <div class="card">
-                  <div class="text-center text-secondary mt-3 mb-3">
-                    <div style="font-size: 2rem"><i class="fas fa-book"></i></div>
-                    <div>
-                      <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">
-                        No Available threads at this moment. Start a new thread or check back later.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                {% include "includes/_empty_state_card.html" with icon="fas fa-book" text="No Available threads at this moment. Start a new thread or check back later." %}
               {% else %}
-                <div class="card">
-                  <div class="text-center text-secondary mt-3 mb-3">
-                    <div style="font-size: 2rem"><i class="fas fa-book"></i></div>
-                    <div>
-                      <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">{% empty_thread_description dropdown_active_text %}</p>
-                    </div>
-                  </div>
-                </div>           
+                {% empty_thread_description dropdown_active_text as description %}
+                {% include "includes/_empty_state_card.html" with icon="fas fa-book" text=description %}       
               {% endif %}
             {% endfor %}
           </ul>

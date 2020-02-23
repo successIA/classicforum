@@ -19,14 +19,7 @@
                 {% include "includes/comment.html" with comment=comment %}
               </li>
             {% empty %}
-              <div class="card">
-                <div class="text-center text-secondary mt-2">
-                  <div style="font-size: 2rem"><i class="far fa-comments"></i></div>
-                  <div>
-                      <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No comments yet</p>
-                  </div>
-                </div>
-              </div>
+              {% include "includes/_empty_state_card.html" with icon="far fa-comments" text="No comments yet" %}
             {% endfor %}
           </ul>
         </div>

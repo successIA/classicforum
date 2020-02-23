@@ -44,14 +44,7 @@
           </div>
         {% empty %}
           <div class="col-12 col-lg-8">
-            <div class="card">
-              <div class="text-center text-secondary mt-2">
-                <div style="font-size: 2rem"><i class="fas fa-user-friends"></i></div>
-                <div>
-                  <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">Yet to follow any user</p>
-                </div>
-              </div>
-            </div>
+            {% include "includes/_empty_state_card.html" with icon="fas fa-user-friends" text="Yet to follow any user" %}
           </div>
         {% endfor %}
       </div><!-- Navigation Scroller Item Detail -->

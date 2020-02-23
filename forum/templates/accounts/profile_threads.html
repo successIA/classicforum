@@ -14,25 +14,16 @@
           </h5>
         </div>
         <div class="col-12 col-lg-8">
-          <!-- Thread Section -->
           <ul class="list-group mb-4">
             {% for thread in threads %}
               <li class="list-group-item">
                 {% include "includes/thread.html" with thread=thread %}
               </li>
             {% empty %}
-              <div class="card">
-                <div class="text-center text-secondary mt-2">
-                  <div style="font-size: 2rem"><i class="fas fa-book"></i></div>
-                  <div>
-                    <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">
-                      {% empty_thread_description dropdown_active_text2 %}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              {% empty_thread_description dropdown_active_text2 as description %}
+              {% include "includes/_empty_state_card.html" with icon="fas fa-book" text=description %}
             {% endfor %}
-          </ul><!-- Thread Section -->
+          </ul>
         </div>
       </div>
       <div class="row mt-3">
