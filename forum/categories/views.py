@@ -34,7 +34,7 @@ def category_detail(request, slug, filter_str=None, page=1, form=None):
     ctx = {
         'category': category,
         'form': form,
-        'dropdown_active_text': thread_data[0],
+        'current_thread_filter': thread_data[0],
         'threads': thread_paginator,
         'base_url': base_url,
         'show_floating_btn': True,

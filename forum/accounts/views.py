@@ -37,7 +37,7 @@ def user_profile_stats(request, username):
     )
     ctx = {
         'userprofile': user,
-        'dropdown_active_text2': 'stats',
+        'current_profile_page': 'stats',
         'thread_count': user.thread_set.count(),
         'thread_following': user.thread_following.count(),
         'comment_count': comment_count,
@@ -70,7 +70,7 @@ def user_notification_list(request, username):
     base_url = [f'/accounts/{request.user.username}/notifications/?page=', '']
     ctx = {
         'userprofile': request.user,
-        'dropdown_active_text2': 'user_notifs',
+        'current_profile_page': 'user_notifs',
         'notifications': notifs,
         'base_url': base_url
     }
@@ -104,7 +104,7 @@ def user_profile_edit(request, username):
 
     ctx = {
         'userprofile': request.user,
-        'dropdown_active_text2': 'settings',
+        'current_profile_page': 'settings',
         'form': form
     }
     return render(request, 'accounts/profile_edit.html', ctx)
@@ -122,7 +122,7 @@ def user_comment_list(request, username):
     ctx = {
         'comments': comments,
         'base_url': base_url,
-        'dropdown_active_text2': 'replies',
+        'current_profile_page': 'replies',
         'userprofile': user
     }
     add_pagination_context(base_url, ctx, comments)
@@ -145,7 +145,7 @@ def user_thread_list(request, username, filter_str, page):
         'userprofile': user,
         'threads': thread_paginator,
         'base_url': base_url,
-        'dropdown_active_text2': thread_data[0]
+        'current_profile_page': thread_data[0]
     }
     add_pagination_context(base_url, ctx, thread_paginator)
     return render(request, 'accounts/profile_threads.html', ctx)
@@ -202,7 +202,7 @@ def user_following(request, username):
     ctx = {
         'userprofile': user,
         'user_following': user_following,
-        'dropdown_active_text2': 'user_following',
+        'current_profile_page': 'user_following',
     }
     return render(request, 'accounts/profile_user_following.html', ctx)
 
@@ -213,7 +213,7 @@ def user_followers(request, username):
     ctx = {
         'userprofile': user,
         'user_followers': user_followers,
-        'dropdown_active_text2': 'user_followers',
+        'current_profile_page': 'user_followers',
     }
     return render(request, 'accounts/profile_user_followers.html', ctx)
 

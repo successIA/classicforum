@@ -48,18 +48,18 @@ def get_category_list(category=None):
 
 @register.inclusion_tag('includes/profile_sidebar.html')
 def get_profile_sidebar_list(
-    request, user, dropdown_active_text2=None, is_scroller=False):
+    request, user, current_profile_page=None, is_scroller=False):
     return {
         'request': request,
         'userprofile': user,
-        'dropdown_active_text2': dropdown_active_text2,
+        'current_profile_page': current_profile_page,
         'is_scroller': is_scroller
     }
 
 
 @register.inclusion_tag('includes/thread_filter_dropdown.html')
 def get_thread_filter_dropdown(
-    dropdown_active_text, is_auth=False, category=None
+    current_thread_filter, is_auth=False, category=None
 ):
     filter_list = None
     if is_auth:
@@ -77,7 +77,7 @@ def get_thread_filter_dropdown(
     context = {
         'filter_dropdown_list': filter_list,
         'filter_dropdown_list_item_keys': [k for k, v in filter_list],
-        'dropdown_active_text': dropdown_active_text,
+        'current_thread_filter': current_thread_filter,
         'filter_text': "Personalise" if is_auth else "Filter"
     }
     if category:
@@ -127,8 +127,8 @@ def empty_thread_description(filter_str):
 
 
 @register.simple_tag
-def active_category_class(dropdown_active_text2, filter_str):
-    if dropdown_active_text2 == filter_str:
+def active_category_class(current_profile_page, filter_str):
+    if current_profile_page == filter_str:
         return 'sidebar-item--active'
     else:
         return ''
