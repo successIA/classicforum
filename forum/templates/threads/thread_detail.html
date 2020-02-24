@@ -54,9 +54,12 @@
                 {{ thread.views }} view{{ thread.views|pluralize }}
               </small>
 
-              <a href="{{ thread.get_thread_follow_url}}" class="btn btn-light text-muted btn-sm thread-follow-btn">
+              <a href="{{ thread.get_thread_follow_url}}" class="btn btn-light btn-sm thread-follow-btn text-muted">
                 <span class="toggle">
-                  <i class="fas fa-rss mr-1"></i>{% if is_thread_follower %}Following{% else %}Follow{% endif %}
+                  <i class="fas fa-rss mr-1"></i>
+                  <span class="js-thread-follow-btn-text">
+                    {% if is_thread_follower %}Following{% else %}Follow{% endif %}
+                  </span>
                 </span>
                 <span class="count">{{ thread_followers_count }}</span>
               </a>
