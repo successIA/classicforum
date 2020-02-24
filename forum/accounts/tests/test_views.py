@@ -45,7 +45,7 @@ class UserProfileStatsViewTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['userprofile'], user)
-        self.assertEqual(response.context['dropdown_active_text2'], 'stats')
+        self.assertEqual(response.context['current_profile_page'], 'stats')
         self.assertIn('comment_count', response.context)
         self.assertIn('followers', response.context)
         self.assertIn('following', response.context)
@@ -91,7 +91,7 @@ class UserNotificationList(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['userprofile'], self.user)
         self.assertEqual(
-            response.context['dropdown_active_text2'], 'user_notifs')
+            response.context['current_profile_page'], 'user_notifs')
         self.assertIsInstance(response.context['notifications'], Page)
 
 
@@ -167,7 +167,7 @@ class UserProfileEditTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['userprofile'], self.user)
         self.assertEqual(
-            response.context['dropdown_active_text2'], 'settings')
+            response.context['current_profile_page'], 'settings')
         self.assertIsInstance(response.context['form'], UserProfileForm)
 
     def test_large_image(self):
@@ -222,7 +222,7 @@ class UserCommentListTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['userprofile'], user)
-        self.assertEqual(response.context['dropdown_active_text2'], 'replies')
+        self.assertEqual(response.context['current_profile_page'], 'replies')
         self.assertIsInstance(response.context['comments'], Page)
 
 
@@ -242,7 +242,7 @@ class UserThreadListTest(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.context['userprofile'], user)
             self.assertEqual(
-                response.context['dropdown_active_text2'], filter_str)
+                response.context['current_profile_page'], filter_str)
             self.assertEqual(response.context['base_url'][0], url)
             self.assertIsInstance(response.context['threads'], Page)
 
@@ -365,7 +365,7 @@ class UserFollowingTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['userprofile'], user)
         self.assertEqual(
-            response.context['dropdown_active_text2'], 'user_following'
+            response.context['current_profile_page'], 'user_following'
         )
         self.assertIn('user_following', response.context)
 
@@ -381,7 +381,7 @@ class UserFollowersTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['userprofile'], user)
         self.assertEqual(
-            response.context['dropdown_active_text2'], 'user_followers'
+            response.context['current_profile_page'], 'user_followers'
         )
         self.assertIn('user_followers', response.context)
 

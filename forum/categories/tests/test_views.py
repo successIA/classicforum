@@ -43,7 +43,7 @@ class CategoryDetailView(CategoryViewTest):
         self.assertEquals(
             response.context['form'].initial['category'], self.category
         )
-        self.assertEquals(response.context['dropdown_active_text'], 'recent')
+        self.assertEquals(response.context['current_thread_filter'], 'recent')
         self.assertIsInstance(response.context['threads'], Page)
         self.assertEquals(response.context['threads'].number, 1)
         self.assertEquals(
@@ -88,7 +88,7 @@ class CategoryDetailView(CategoryViewTest):
             response = self.client.get(filter_str_url)
             self.assertEquals(response.status_code, 200)
             self.assertEquals(
-                response.context['dropdown_active_text'], filter_str
+                response.context['current_thread_filter'], filter_str
             )
             self.assertEquals(
                 response.context['base_url'],
@@ -120,7 +120,7 @@ class CategoryDetailView(CategoryViewTest):
             response = self.client.get(filter_str_url)
             self.assertEquals(response.status_code, 200)
             self.assertEquals(
-                response.context['dropdown_active_text'], filter_str
+                response.context['current_thread_filter'], filter_str
             )
             self.assertEquals(
                 response.context['base_url'],

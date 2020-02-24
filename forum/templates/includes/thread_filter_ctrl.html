@@ -1,23 +1,23 @@
 {% load forum_template_tags %}
 
 <div class="col col-md-2 col-lg-2 col-xl-1 ml-xl-3 position-relative py-2 text-center">
-  <a class="{% if not dropdown_active_text or dropdown_active_text == 'recent' %} text-primary {% else %} text-dark {% endif %} filter" 
+  <a class="{% if not current_thread_filter or current_thread_filter == 'recent' %} text-primary {% else %} text-dark {% endif %} filter" 
     href="{% if category %}/categories/{{ category.slug }}/recent/{% else %}/threads/recent/{% endif %}">
     Recent
   </a>
-  <span class="{% if dropdown_active_text == 'recent' %}thread-active{% endif %}"></span>
+  <span class="{% if current_thread_filter == 'recent' %}thread-active{% endif %}"></span>
 </div>
 
 {% if request.user.is_authenticated %}
   <div class="col col-md-2 col-lg-2 position-relative py-2 text-center" style="max-width: 8rem;">
     <div class="btn-group">
-      {% get_thread_filter_dropdown dropdown_active_text True category %}
+      {% get_thread_filter_dropdown current_thread_filter True category %}
     </div>
   </div>
 {% endif %}
 
 <div class="col col-md-2 col-lg-2 col-xl-1 position-relative py-2 text-center">
   <div class="btn-group">
-    {% get_thread_filter_dropdown dropdown_active_text False category %}
+    {% get_thread_filter_dropdown current_thread_filter False category %}
   </div>
 </div>

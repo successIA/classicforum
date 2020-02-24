@@ -56,7 +56,7 @@ def thread_list(request, filter_str=None, page=1, form=None):
         'scroll_or_login': get_post_login_redirect_url(home_url),
         'form': ThreadForm if not form else form,
         'form_action': form_action + '#post-form',
-        'dropdown_active_text': thread_data[0]
+        'current_thread_filter': thread_data[0]
     }
     add_pagination_context(base_url, ctx, thread_paginator)
     return render(request, 'home.html', ctx)
@@ -83,7 +83,6 @@ def create_thread(request, slug=None, filter_str=None, page=None):
                 perform_comment_save(comment)
                 thread.set_starting_comment(comment)
                 perform_thread_post_create_actions(thread)
-            print(thread.get_absolute_url())
             return redirect(thread.get_absolute_url())
 
     category_list = list(Category.objects.filter(slug=slug))

@@ -1,17 +1,17 @@
 <a class="filter dropdown-toggle text-dark" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
   <span 
-    class="{% if dropdown_active_text in filter_dropdown_list_item_keys %}
+    class="{% if current_thread_filter in filter_dropdown_list_item_keys %}
             {% for key, value in filter_dropdown_list %}
-              {% if key == dropdown_active_text %}
+              {% if key == current_thread_filter %}
                 text-primary font-weight-bold
               {% endif %}
             {% endfor %}
           {% else %}
             text-dark
           {% endif %}">
-    {% if dropdown_active_text in filter_dropdown_list_item_keys %}
+    {% if current_thread_filter in filter_dropdown_list_item_keys %}
         {% for key, value in filter_dropdown_list %}
-          {% if key == dropdown_active_text %}
+          {% if key == current_thread_filter %}
             {{ value }}
           {% endif %}
         {% endfor %}
@@ -22,14 +22,14 @@
 </a>
 <div class="dropdown-menu dropdown-menu-right shadow-sm">
   {% for key, value in filter_dropdown_list %}
-    <a class="dropdown-item {% if dropdown_active_text == key %}bg-primary text-white{% endif %}"
+    <a class="dropdown-item {% if current_thread_filter == key %}bg-primary text-white{% endif %}"
       href="{% if category %}/categories/{{ category.slug }}/{{ key }}/{% else %}/threads/{{ key }}/{% endif %}">
       {{ value }}
     </a>
   {% endfor %}
 </div>
 <span class="thick-baseline 
-        {% for key, value in filter_dropdown_list %}{% if key == dropdown_active_text %}thread-active{% endif %}{% endfor %}
+        {% for key, value in filter_dropdown_list %}{% if key == current_thread_filter %}thread-active{% endif %}{% endfor %}
       "
 >
 </span>

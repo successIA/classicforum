@@ -10,7 +10,7 @@
       <div class="row offset-lg-1">
         <div class="col-12">
           <h5 class="mb-3">
-            {% profile_threads_text dropdown_active_text2 %}
+            {% profile_threads_text current_profile_page %}
           </h5>
         </div>
         <div class="col-12 col-lg-8">
@@ -20,7 +20,7 @@
                 {% include "includes/_thread_list_item.html" with thread=thread %}
               </li>
             {% empty %}
-              {% empty_thread_description dropdown_active_text2 as description %}
+              {% empty_thread_description current_profile_page as description %}
               {% include "includes/_empty_state_card.html" with icon="fas fa-book" text=description %}
             {% endfor %}
           </ul>

@@ -8,7 +8,7 @@
 {% block content %}
   <div class="nav-container container-fluid bg-white">
     <div class="row align-items-center">
-      {% include 'includes/thread_filter_ctrl.html' with dropdown_active_text=dropdown_active_text %}
+      {% include 'includes/thread_filter_ctrl.html' with current_thread_filter=current_thread_filter %}
       {% include 'includes/thread_add_partial.html' %}
     </div>
   </div>
@@ -23,10 +23,10 @@
                 {% include "includes/_thread_list_item.html" with thread=thread %}
               </li>               
             {% empty %}
-              {% if dropdown_active_text == 'recent' %}            
+              {% if current_thread_filter == 'recent' %}            
                 {% include "includes/_empty_state_card.html" with icon="fas fa-book" text="No Available threads at this moment. Start a new thread or check back later." %}
               {% else %}
-                {% empty_thread_description dropdown_active_text as description %}
+                {% empty_thread_description current_thread_filter as description %}
                 {% include "includes/_empty_state_card.html" with icon="fas fa-book" text=description %}       
               {% endif %}
             {% endfor %}
