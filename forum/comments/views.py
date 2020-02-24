@@ -28,9 +28,9 @@ from forum.threads.mixins import thread_adder
 @thread_adder
 def create_comment(request, thread_slug, thread=None):
     # thread = get_object_or_404(Thread, slug=thread_slug)
-    form = CommentForm(extra='edit-message')
+    form = CommentForm
     if request.method == 'POST':
-        form = CommentForm(request.POST, extra='edit-message')
+        form = CommentForm(request.POST)
         if form.is_valid():
             with transaction.atomic():
                 form.instance.user = request.user
@@ -48,13 +48,11 @@ def create_comment(request, thread_slug, thread=None):
 @comment_adder
 @comment_owner_required
 def update_comment(request, thread_slug, pk, comment=None):
-    form = CommentForm(instance=comment, extra='edit-message')
+    form = CommentForm(instance=comment)
     if request.method == 'POST':
         # message must be backed up here
         prev_msg = comment.message
-        form = CommentForm(
-            request.POST, instance=comment, extra='edit-message'
-        )
+        form = CommentForm(request.POST, instance=comment)
         if form.is_valid():            
             with transaction.atomic():
                 form.instance.pk = comment.pk
@@ -84,7 +82,7 @@ def reply_comment(request, thread_slug, pk, comment=None):
     parent_comment = comment
     form = get_comment_reply_form(parent_comment)
     if request.method == 'POST':
-        form = CommentForm(request.POST, extra='edit-message')
+        form = CommentForm(request.POST)
         if form.is_valid():
             with transaction.atomic():
                 thread = parent_comment.thread

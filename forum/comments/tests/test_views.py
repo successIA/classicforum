@@ -56,7 +56,7 @@ class CommentCreateViewTest(CommentViewsTest):
         login(self, self.user, 'password')
         response = self.client.get(self.create_url)
         self.assertEquals(response.status_code, 200)
-        self.assertIsInstance(response.context['form'], CommentForm)
+        self.assertEqual(response.context['form'], CommentForm)
 
     def test_view_submit_success_for_authenticated_user(self):
         current_count = Comment.objects.count()

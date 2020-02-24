@@ -153,7 +153,7 @@ $(document).ready(function() {
 
     bindEvent: function() {
       $(".js-main-nav__notif-link").on("click", function(e) {
-        e.preventDefault();
+        // e.preventDefault();
         var self = $(this);
         window.setTimeout(function() {
           self.css("background-color", current_bg_color);
@@ -192,7 +192,7 @@ $(document).ready(function() {
   var FloatingActionBtnToggler = {
     init: function() {
       // If there is no comment-form, it means that the user is a
-      // guest
+      // guest or we are in a page that displays comment
       if (!$("#comment-form")[0]) return;
 
       // To prevent flashing button when the browser is refreshed

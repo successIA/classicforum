@@ -1,18 +1,18 @@
 {% load forum_template_tags %}
 
 <div class="sidebar-item">
-  <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'stats' %} tab-control" 
+  <a class="icon-row text-muted nav-link mr-lg-0 {% if is_scroller %}px-3{% endif %} {% active_category_class dropdown_active_text2 'stats' %}" 
     href="{% url 'accounts:user_stats' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
-  <i class="far fa-id-badge icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+  <i class="far fa-id-badge icon-row__icon icon-row__icon--mr-1 {% if is_scroller %}icon-row__icon--mr-sm-1{% endif %}"></i>
     <span>Information</span>
   </a>
 </div>
 
 {% if request.user.is_authenticated and request.user == userprofile %}
   <div class="sidebar-item">
-    <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'user_notifs' %}"
+    <a class="icon-row text-muted nav-link mr-lg-0 {% if is_scroller %}px-3{% endif %} {% active_category_class dropdown_active_text2 'user_notifs' %}"
         href="{{ request.user.notif_url }}" data-target="{{ dropdown_active_text2 }}">
-    <i class="far fa-bell icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+    <i class="far fa-bell icon-row__icon icon-row__icon--mr-1 {% if is_scroller %}icon-row__icon--mr-sm-1{% endif %}"></i>
       <span>Notifications</span>
       {% if request.user.notif_count %}
         <span class="badge badge-pill bg-info text-white align-text-bottom ml-2">
@@ -23,57 +23,57 @@
   </div>
 
   <div class="sidebar-item">
-    <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'settings' %} tab-control" 
+    <a class="icon-row text-muted nav-link mr-lg-0 {% if is_scroller %}px-3{% endif %} {% active_category_class dropdown_active_text2 'settings' %}" 
       href="{% url 'accounts:user_edit' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
-      <i class="fas fa-user-cog icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+      <i class="fas fa-user-cog icon-row__icon icon-row__icon--mr-1 {% if is_scroller %}icon-row__icon--mr-sm-1{% endif %}"></i>
       <span>Settings</span>
     </a>
   </div>
 {% endif %}
 
 <div class="sidebar-item">
-  <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'replies' %}" 
+  <a class="icon-row text-muted nav-link mr-lg-0 {% if is_scroller %}px-3{% endif %} {% active_category_class dropdown_active_text2 'replies' %}" 
     href="{% url 'accounts:user_comments' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
-    <i class="far fa-comments icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+    <i class="far fa-comments icon-row__icon icon-row__icon--mr-1 {% if is_scroller %}icon-row__icon--mr-sm-1{% endif %}"></i>
     <span>Replies</span>
   </a>
 </div>
 
 {% if request.user.is_authenticated and request.user == userprofile %}
   <div class="sidebar-item">
-    <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'new' %}" 
+    <a class="icon-row text-muted nav-link mr-lg-0 {% if is_scroller %}px-3{% endif %} {% active_category_class dropdown_active_text2 'new' %}" 
       href="{% url 'accounts:thread_new' userprofile.username 'new' %}" data-target="{{ dropdown_active_text2 }}">
-      <i class="fas fa-info-circle icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+      <i class="fas fa-info-circle icon-row__icon icon-row__icon--mr-1 {% if is_scroller %}icon-row__icon--mr-sm-1{% endif %}"></i>
       <span>New</span>
     </a>
   </div>
   <div class="sidebar-item">
-    <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'following' %}" 
+    <a class="icon-row text-muted nav-link mr-lg-0 {% if is_scroller %}px-3{% endif %} {% active_category_class dropdown_active_text2 'following' %}" 
       href="{% url 'accounts:thread_following' userprofile.username 'following' %}" data-target="{{ dropdown_active_text2 }}">
-      <i class="fas fa-rss icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+      <i class="fas fa-rss icon-row__icon icon-row__icon--mr-1 {% if is_scroller %}icon-row__icon--mr-sm-1{% endif %}"></i>
       <span>Following</span>
     </a>       
   </div>
 {% endif %}
 
 <div class="sidebar-item">
-  <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'me' %}" 
+  <a class="icon-row text-muted nav-link mr-lg-0 {% if is_scroller %}px-3{% endif %} {% active_category_class dropdown_active_text2 'me' %}" 
     href="{% url 'accounts:thread_user' userprofile.username 'me' %}" data-target="{{ dropdown_active_text2 }}">
-    <i class="fas fa-book icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+    <i class="fas fa-book icon-row__icon icon-row__icon--mr-1 {% if is_scroller %}icon-row__icon--mr-sm-1{% endif %}"></i>
     <span>Threads</span>
   </a>
 </div>
 <div class="sidebar-item">
-  <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'user_following' %}" 
+  <a class="icon-row text-muted nav-link mr-lg-0 {% if is_scroller %}px-3{% endif %} {% active_category_class dropdown_active_text2 'user_following' %}" 
     href="{% url 'accounts:user_following' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
-    <i class="fas fa-user-friends icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1" ></i>
+    <i class="fas fa-user-friends icon-row__icon icon-row__icon--mr-1 {% if is_scroller %}icon-row__icon--mr-sm-1{% endif %}" ></i>
     <span>User Following</span>
   </a>
 </div>
 <div class="sidebar-item">
-  <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'user_followers' %}" 
+  <a class="icon-row text-muted nav-link mr-lg-0 {% if is_scroller %}px-3{% endif %} {% active_category_class dropdown_active_text2 'user_followers' %}" 
     href="{% url 'accounts:user_followers' userprofile.username %}#232" data-target="{{ dropdown_active_text2 }}">
-    <i class="fas fa-users icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+    <i class="fas fa-users icon-row__icon icon-row__icon--mr-1 {% if is_scroller %}icon-row__icon--mr-sm-1{% endif %}"></i>
     <span>Followers</span>
   </a>
 </div>

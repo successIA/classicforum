@@ -78,7 +78,7 @@
             <div class="position-relative d-flex align-items-center">
               <i class="fas fa-search search-abs"></i>
               <input class="form-control mr-3 md-mr-0 search-pl" type="search" name="q" value="{{ query }}" placeholder="Search" aria-label="Search" />
-              <span class="d-inline-block d-md-none"><i class="fas fa-times-circle" id="close-search-bar"></i></span>
+              <span class="d-inline-block d-md-none"><i class="fas fa-times-circle text-white" id="close-search-bar"></i></span>
             </div>
           </form>
 
@@ -112,7 +112,7 @@
                       <i class="icon-row__icon far fa-user-circle mr-2"></i><span class="icon-row--text">My Account</span>
                     </a>
                     <a class="dropdown-item icon-row px-2" href="{% url 'accounts:user_edit' request.user.username %}">
-                      <i class="icon-row__icon far fa-edit mr-2"></i><span class="icon-row--text">Update Profile</span>
+                      <i class="icon-row__icon fas fa-user-cog mr-2"></i><span class="icon-row--text">Update Profile</span>
                     </a>
                     <a class="dropdown-item icon-row px-2" href="{% url 'accounts:password_change' %}">
                       <i class="icon-row__icon fas fa-key mr-2"></i><span class="icon-row--text">Change Password</span>
