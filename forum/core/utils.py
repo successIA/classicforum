@@ -70,7 +70,7 @@ def strip_leading_slash(text):
 
 
 def get_post_login_redirect_url(url):
-    return f'{settings.LOGIN_URL}?next={url}/#comment-form'
+    return f'{settings.LOGIN_URL}?next={url}/#post-form'
 
 
 def append_querystring(url, querystring):

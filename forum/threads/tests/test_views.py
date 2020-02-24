@@ -48,7 +48,7 @@ class ThreadListViewTest(ThreadsViewsTest):
         self.assertEquals(
             response.context['base_url'], [f"/threads/recent/", "/"]
         )
-        form_action = '%s#comment-form' % reverse(
+        form_action = '%s#post-form' % reverse(
             'threads:thread_create',
             kwargs={'filter_str': 'recent', 'page': 1}
         )

@@ -174,7 +174,7 @@ class Comment(TimeStampedModel):
     
     def get_reply_form_action(self):
         page_num = ceil(self.position / COMMENT_PER_PAGE)
-        return '%s?page=%s#comment-form' % (
+        return '%s?page=%s#post-form' % (
             reverse(
                 'comments:comment_reply',
                 kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}
@@ -184,7 +184,7 @@ class Comment(TimeStampedModel):
 
     def get_update_form_action(self):
         page_num = ceil(self.position / COMMENT_PER_PAGE)
-        return '%s?page=%s#comment-form' % (
+        return '%s?page=%s#post-form' % (
             reverse(
                 'comments:comment_update',
                 kwargs={'thread_slug': self.thread.slug, 'pk': self.pk}

@@ -166,10 +166,10 @@ $(document).ready(function() {
   NotificationIconBackgroundSwitcher.init();
 
   var ShowPostFormScroll = {
-    $commentForm: $("#comment-form"),
+    $commentForm: $("#post-form"),
 
     init: function() {
-      // If there is no comment-form, it means that the user is a
+      // If there is no post-form, it means that the user is a
       // guest
       if (!this.$commentForm[0]) return;
       this.bindAddThreadBtnClick();
@@ -191,9 +191,9 @@ $(document).ready(function() {
 
   var FloatingActionBtnToggler = {
     init: function() {
-      // If there is no comment-form, it means that the user is a
-      // guest or we are in a page that displays comment
-      if (!$("#comment-form")[0]) return;
+      // If there is no post-form, it means that the user is a
+      // guest or we are in a page that does'nt displays post
+      if (!$("#post-form")[0]) return;
 
       // To prevent flashing button when the browser is refreshed
       // at a point the button is meant to be invisible

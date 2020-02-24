@@ -79,9 +79,10 @@ class Thread(TimeStampedModel):
         return self.user == user
 
     def get_absolute_url(self):
-        return reverse(
+        url = reverse(
             'thread_detail', kwargs={'thread_slug': self.slug}
         )
+        return f'{url}#'
 
     @staticmethod
     def get_precise_url(filter_str, page):
@@ -97,7 +98,7 @@ class Thread(TimeStampedModel):
         return self.get_update_url()
 
     def get_comment_create_form_action(self, page_num):
-        return '%s?page=%s' % (
+        return '%s?page=%s#post-form' % (
             reverse(
                 'comments:comment_create',
                 kwargs={'thread_slug': self.slug}
