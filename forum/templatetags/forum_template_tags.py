@@ -87,14 +87,14 @@ def get_thread_filter_dropdown(
 
 @register.simple_tag
 def url_with_page_num(url, page_number):
-    return '%s?page=%s#comment-form' % (
+    return '%s?page=%s#post-form' % (
         url, page_number
     )
     
 
 @register.simple_tag
 def precise_post_update_url(post, page_num):
-    return f'{post.get_update_url()}?page={page_num}#comment-form'
+    return f'{post.get_update_url()}?page={page_num}#post-form'
 
 
 @register.simple_tag

@@ -50,7 +50,7 @@ class CategoryDetailView(CategoryViewTest):
             response.context['base_url'],  
             [f'/categories/progromming-group/recent/', '/']
         )
-        form_action = '%s#comment-form' % reverse(
+        form_action = '%s#post-form' % reverse(
             'categories:category_thread_create',
             kwargs={'slug': self.category.slug,
                     'filter_str': 'recent', 'page': 1}

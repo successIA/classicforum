@@ -61,7 +61,7 @@ class Category(TimeStampedModel):
         return reverse('thread_create', kwargs={'slug': self.slug})
 
     def get_thread_form_action(self, filter_str, page):
-        return '%s#comment-form' % reverse(
+        return '%s#post-form' % reverse(
             'categories:category_thread_create',
             kwargs={'slug': self.slug, 'filter_str': filter_str, 'page': page}
         )
