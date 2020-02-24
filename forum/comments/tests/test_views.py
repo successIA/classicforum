@@ -463,12 +463,6 @@ class CommentLikeTest(CommentViewsTest):
         response = self.client.post(self.like_url)
         self.assertRedirects(response, redirect_url)
 
-    def test_view_should_reject_owner(self):
-        """An owner cannot like his/her comment"""
-        login(self, self.user, 'password')
-        response = self.client.post(self.like_url)
-        self.assertEquals(response.status_code, 403)
-
     def test_using_valid_user(self):
         second_user = self.make_user('second_user')
         login(self, second_user, 'password')

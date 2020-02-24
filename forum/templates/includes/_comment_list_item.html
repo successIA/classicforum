@@ -123,7 +123,8 @@
           {% csrf_token %}
           <button 
             type="submit" 
-            class="btn btn-link btn-sm btn-like
+            data-action="{{ comment.get_like_url }}"
+            class="btn btn-link btn-sm btn-like js-btn-like
               {% if request.user in comment.likers.all %}
                 text-primary
               {% else %}
@@ -131,7 +132,7 @@
               {% endif %}"
           >
               <i class="far fa-thumbs-up mr-1"></i>
-              {{ comment.likers.count }}
+              <span class="js-btn-like-text">{{ comment.likers.count }}</span>
           </button>  
         </form>
       </div>

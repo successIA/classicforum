@@ -126,18 +126,22 @@ class Comment(TimeStampedModel):
  
     @transaction.atomic
     def toggle_like(self, user):
+        is_liker = False
         if user in self.likers.all():
             self.likers.remove(user)
+            is_liker = False
             Notification.objects.filter(
                 sender=user, receiver=self.user,
                 comment=self, notif_type=Notification.COMMENT_LIKED
             ).delete()
         else:
             self.likers.add(user)
+            is_liker = True
             Notification.objects.create(
                 sender=user, receiver=self.user,
                 comment=self, notif_type=Notification.COMMENT_LIKED
             )
+        return self.likers.count(), is_liker
 
     def is_owner(self, user):
         return self.user == user

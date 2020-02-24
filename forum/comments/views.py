@@ -2,15 +2,14 @@ import re
 
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 
 from forum.comments.forms import CommentForm
 from forum.comments.mixins import (
     comment_owner_required, 
-    like_perm_required,
-    comment_adder
+    comment_adder,
 )
 from forum.comments.models import Comment, CommentRevision
 from forum.comments.utils import (
@@ -112,10 +111,16 @@ def reply_comment(request, thread_slug, pk, comment=None):
 
 @login_required
 @comment_adder
-@like_perm_required
 def like_comment(request, thread_slug=None, pk=None, comment=None):
     if request.method == 'POST':
-        comment.toggle_like(request.user)
+        likers_count, is_liker = comment.toggle_like(request.user)
+        if request.is_ajax():
+            return JsonResponse(
+                {
+                    'likers_count': likers_count,
+                    'is_liker': is_liker               
+                }
+            )
         return HttpResponseRedirect(comment.get_precise_url())
 
 

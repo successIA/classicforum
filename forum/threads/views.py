@@ -155,7 +155,7 @@ def update_thread(request, thread_slug, thread=None):
                 comment.message = form.cleaned_data.get('message')
                 perform_comment_save(comment, prev_msg) 
                 perform_thread_post_update_actions(thread)           
-            return HttpResponseRedirect(thread.get_absolute_url())
+            return HttpResponseRedirect(f'{thread.get_absolute_url()}#')
 
     form_action = thread.get_thread_update_form_action()
     return thread_detail(
@@ -171,5 +171,5 @@ def follow_thread(request, thread_slug, thread=None):
     ThreadFollowership.objects.toggle(request.user, thread)
     followers_count = thread.followers.count()
     if request.is_ajax():
-        return JsonResponse({'followers_count':followers_count})
+        return JsonResponse({'followers_count': followers_count})
     return redirect(thread.get_absolute_url())
