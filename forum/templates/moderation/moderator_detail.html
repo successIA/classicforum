@@ -62,7 +62,7 @@
                         <li class="list-group-item">
                           <form method="post" action="{% url 'moderation:thread_unhide' thread.slug %}">
                             {% csrf_token %}                          
-                            {% include "includes/thread.html" with thread=thread %}
+                            {% include "includes/_thread_list_item.html" with thread=thread %}
                             <button type="submit" class="btn btn-secondary btn-sm mt-3 float-right">
                               <i class="fas fa-eye mr-1"></i>Make visible
                             </button>                          

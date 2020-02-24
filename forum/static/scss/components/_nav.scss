@@ -1,0 +1,54 @@
+.search-icon {
+  font-size: 1.1rem;
+}
+
+.search-abs {
+  position: absolute;
+  left: .7rem;
+  color: gray;
+}
+
+.search-pl {
+  padding-left: 2.3rem;
+}
+
+#close-search-bar {
+  display: inline-block;
+  font-size: 1.4rem;
+  color: gray;
+  cursor: pointer;
+}
+
+.search-bar-hide{
+  display: none !important;
+}
+
+.search-bar-show {
+  display: block !important;
+}
+
+
+.nav-profile-img::after {
+  content: none;
+}
+
+.main-nav__notif-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  position: absolute;
+  bottom: 18px;
+  left: 12px;
+  padding: 0.5px 5px;
+
+  span {
+    display: inline-block;
+  }
+}
+.js-main-nav__notif-link {
+  &:active {
+    background-color: blue;
+  }
+  &__icon {
+    font-size: 1.5rem;
+  }
+}

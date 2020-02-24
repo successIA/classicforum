@@ -1,0 +1,15 @@
+.empty-state {
+  padding: 1rem;
+  &__icon {
+      font-size: 2rem;
+  }
+  &__title {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+  &__subtitle {
+    font-size: .9rem;
+    color: gray;
+  }
+}
+

@@ -86,35 +86,16 @@
             <div class="d-flex justify-content-end align-items-center">
               {% if request.user.is_authenticated %}
                 <span class="d-inline-block d-md-none mr-4 text-dark">
-                  <i class="fas fa-search search-icon text-white" style="font-size: 1.1rem;"></i>
+                  <i class="fas fa-search search-icon text-white"></i>
                 </span>
               {% endif %}
 
               {% if request.user.is_authenticated %}
                 <span class="mr-4 position-relative d-flex justify-content-center align-items-center">
-                  <a class="notif-icon text-decoration-none text-white" href="{{ request.user.notif_url }}">
-                    <i style="font-size: 1.5rem;" class="notif-icon far fa-bell"></i>
+                  <a class="js-main-nav__notif-link text-decoration-none text-white" href="{{ request.user.notif_url }}">
+                    <i class="js-main-nav__notif-link__icon far fa-bell"></i>
                     {% if request.user.notif_count %}
-                      {% comment %} <span style="font-size: 0.7rem; position: absolute; top: -.67rem; right: -.63rem; min-width: 1em; 
-                                        padding: .25em .4em; text-align: center;"
-                        class="bg-primary text-center rounded-circle text-white"> {% endcomment %}                  
-                      <style scoped>
-                        .notif-badge {
-                          font-size: 0.8rem;
-                          font-weight: 600;
-                          position: absolute;
-                          bottom: 18px;
-                          left: 12px;
-                          padding: 0.5px 5px;
-                        }
-                        .notif-badge span {
-                          display: inline-block;
-                        }
-                        .notif-icon:active {
-                          background-color: blue;
-                        }
-                      </style>
-                      <div class="notif-badge bg-info text-center rounded-circle text-white">
+                      <div class="main-nav__notif-badge bg-info text-center rounded-circle text-white">
                         <span>{{ request.user.notif_count }}</span>
                       </div>
                     {% endif %}
@@ -126,31 +107,31 @@
                     aria-expanded="false" href="#">
                     <img src="{{ request.user.get_avatar_url }}" height="38" width="38" class="avatar mr-1 mr-md-2 avatar" alt="..." />
                   </a>
-                  <div style="min-width: 13rem; font-size: .875rem;" class="dropdown-menu dropdown-menu-right w-50 shadow-sm user-account-dropdown">
-                    <a class="dropdown-item" href="{{ user.get_absolute_url }}">
-                      <span class="position-absolute" style="margin-left: 1.8rem">My Account</span><i class="far fa-user-circle mr-2"></i>
+                  <div style="min-width: 11.5rem;" class="dropdown-menu dropdown-menu-right shadow-sm user-account-dropdown"> 
+                    <a class="dropdown-item icon-row px-2" href="{{ user.get_absolute_url }}">
+                      <i class="icon-row__icon far fa-user-circle mr-2"></i><span class="icon-row--text">My Account</span>
                     </a>
-                    <a class="dropdown-item" href="{% url 'accounts:user_edit' request.user.username %}">
-                      <span class="position-absolute" style="margin-left: 1.8rem">Update Profile</span><i class="far fa-edit mr-2"></i>
+                    <a class="dropdown-item icon-row px-2" href="{% url 'accounts:user_edit' request.user.username %}">
+                      <i class="icon-row__icon far fa-edit mr-2"></i><span class="icon-row--text">Update Profile</span>
                     </a>
-                    <a class="dropdown-item" href="{% url 'accounts:password_change' %}">
-                      <span class="position-absolute" style="margin-left: 1.8rem">Change Password</span><i class="fas fa-key mr-2"></i>
+                    <a class="dropdown-item icon-row px-2" href="{% url 'accounts:password_change' %}">
+                      <i class="icon-row__icon fas fa-key mr-2"></i><span class="icon-row--text">Change Password</span>
                     </a>
-                    <div class="dropdown-divider"></div>
                     {% if request.user.is_authenticated and request.user.is_superuser %}
-                      <a href="{% url 'moderation:moderator_list' %}" class="dropdown-item">
-                        <span class="position-absolute" style="margin-left: 1.8rem">Manage Moderators</span><i class="fas fa-users-cog mr-2"></i>
+                      <div class="dropdown-divider"></div>
+                      <a href="{% url 'moderation:moderator_list' %}" class="dropdown-item icon-row px-2">
+                        <i class="icon-row__icon fas fa-users-cog mr-2"></i><span class="icon-row--text">Manage Moderators</span>
                       </a>
                     {% endif %}
 
                     {% if request.user.is_authenticated and request.user.is_moderator %}
-                      <a href="{% url 'moderation:moderator_detail' request.user.username %}" class="dropdown-item">
-                        <span class="position-absolute" style="margin-left: 1.8rem">Moderation Account</span><i class="fas fa-user-circle mr-2"></i>
+                      <a href="{% url 'moderation:moderator_detail' request.user.username %}" class="dropdown-item icon-row px-2">
+                        <i class="icon-row__icon fas fa-user-circle mr-2"></i><span class="icon-row--text">Moderation Account</span>
                       </a>
                     {% endif %}
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'accounts:logout' %}">
-                      <span class="position-absolute" style="margin-left: 1.8rem">Logout</span><i class="fas fa-sign-out-alt mr-2"></i>
+                    <a class="dropdown-item icon-row px-2" href="{% url 'accounts:logout' %}">
+                      <i class="icon-row__icon fas fa-sign-out-alt mr-2"></i><span class="icon-row--text">Logout</span>
                     </a>
                   </div>
                 </div>
@@ -158,10 +139,10 @@
                 <div class="d-md-flex justify-content-end align-items-center">
                   {# Search icon small screen #}
                   <span class="d-inline-block d-lg-none mr-3 text-white"><i class="fas fa-search search-icon"></i></span>
-                  <a href="{% url 'accounts:signup' %}" style="" class="btn btn-info btn mr-2">
+                  <a href="{% url 'accounts:signup' %}" class="btn btn-outline-warning btn mr-2">
                     Register
                   </a>
-                  <a href="{% url 'accounts:login' %}" class="btn btn-outline-info text-white">
+                  <a href="{% url 'accounts:login' %}" class="btn btn-link text-white">
                     Login
                   </a>
                 </div>
@@ -172,17 +153,6 @@
         {% block content %}{% endblock content %}        
       </div>
     </div>
-
-    <style scoped>
-      .floating-action-btn {
-        width: 50px;
-        height: 50px;
-        position: fixed; 
-        right: 1.5rem;
-        bottom: 1.5rem;
-        z-index: 2;
-      }
-    </style>
 
     {% if show_floating_btn %}
       <a href="{{scroll_or_login}}" style="display: flex; text-decoration: none;" 

@@ -152,8 +152,8 @@ $(document).ready(function() {
     },
 
     bindEvent: function() {
-      $(".notif-icon").on("click", function(e) {
-        // e.preventDefault();
+      $(".js-main-nav__notif-link").on("click", function(e) {
+        e.preventDefault();
         var self = $(this);
         window.setTimeout(function() {
           self.css("background-color", current_bg_color);

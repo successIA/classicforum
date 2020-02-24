@@ -1,106 +1,79 @@
 {% load forum_template_tags %}
 
-<style scoped>
-  .sidebar-item {
-    display: flex;
-    align-items: center;
-  }
-  .sidebar-item.category-active {
-    color: #9c27b0 !important;
-    font-weight: 600;
-  }
-
-  a.sidebar-item.nav-link:hover {
-    color: #9c27b0 !important;
-  }
-
-  .sidebar-item .sidebar-item-icon {
-    display: inline-block;
-    width: 1.3rem;
-    text-align: center;
-    margin-right: 1rem;
-  }
-
-  @media (max-width: 992px) {
-    .sidebar-item .sidebar-item-icon {
-      margin-right: .6rem;
-    }
-  }
-</style>
-
-<a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'stats' %} tab-control" 
-  href="{% url 'accounts:user_stats' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
-  <span class="sidebar-item-icon">
-    <i class="far fa-id-badge"></i>
-  </span>
-  <span>Information</span>
-</a>
+<div class="sidebar-item">
+  <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'stats' %} tab-control" 
+    href="{% url 'accounts:user_stats' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
+  <i class="far fa-id-badge icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+    <span>Information</span>
+  </a>
+</div>
 
 {% if request.user.is_authenticated and request.user == userprofile %}
-  <a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'user_notifs' %}"
-      href="{{ request.user.notif_url }}" data-target="{{ dropdown_active_text2 }}">
-    <span class="sidebar-item-icon">
-      <i class="far fa-bell"></i>
-    </span>
-    <span>Notifications</span>
-    {% if request.user.notif_count %}
-      <span class="badge badge-pill bg-info text-white align-text-bottom ml-2">
-          {{ request.user.notif_count }}
-      </span>
-    {% endif %}
-  </a>
-  <a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'settings' %} tab-control" 
-    href="{% url 'accounts:user_edit' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
-    <span class="sidebar-item-icon">
-      <i class="fas fa-user-cog"></i>
-    </span>
-    <span>Settings</span>
-  </a>
+  <div class="sidebar-item">
+    <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'user_notifs' %}"
+        href="{{ request.user.notif_url }}" data-target="{{ dropdown_active_text2 }}">
+    <i class="far fa-bell icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+      <span>Notifications</span>
+      {% if request.user.notif_count %}
+        <span class="badge badge-pill bg-info text-white align-text-bottom ml-2">
+            {{ request.user.notif_count }}
+        </span>
+      {% endif %}
+    </a>
+  </div>
+
+  <div class="sidebar-item">
+    <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'settings' %} tab-control" 
+      href="{% url 'accounts:user_edit' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
+      <i class="fas fa-user-cog icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+      <span>Settings</span>
+    </a>
+  </div>
 {% endif %}
 
-<a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'replies' %}" 
-  href="{% url 'accounts:user_comments' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
-  <span class="sidebar-item-icon">
-    <i class="far fa-comments"></i>
-  </span>
-  <span>Replies</span>
-</a>
+<div class="sidebar-item">
+  <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'replies' %}" 
+    href="{% url 'accounts:user_comments' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
+    <i class="far fa-comments icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+    <span>Replies</span>
+  </a>
+</div>
 
 {% if request.user.is_authenticated and request.user == userprofile %}
-  <a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'new' %}" 
-    href="{% url 'accounts:thread_new' userprofile.username 'new' %}" data-target="{{ dropdown_active_text2 }}">
-    <span class="sidebar-item-icon">
-      <i class="fas fa-info-circle"></i>
-    </span>
-    <span>New</span>
-  </a>
-  <a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'following' %}" 
-    href="{% url 'accounts:thread_following' userprofile.username 'following' %}" data-target="{{ dropdown_active_text2 }}">
-    <span class="sidebar-item-icon">
-      <i class="fas fa-rss"></i>
-    </span>
-    <span>Following</span>
-  </a>       
+  <div class="sidebar-item">
+    <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'new' %}" 
+      href="{% url 'accounts:thread_new' userprofile.username 'new' %}" data-target="{{ dropdown_active_text2 }}">
+      <i class="fas fa-info-circle icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+      <span>New</span>
+    </a>
+  </div>
+  <div class="sidebar-item">
+    <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'following' %}" 
+      href="{% url 'accounts:thread_following' userprofile.username 'following' %}" data-target="{{ dropdown_active_text2 }}">
+      <i class="fas fa-rss icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+      <span>Following</span>
+    </a>       
+  </div>
 {% endif %}
 
-<a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'me' %}" 
-  href="{% url 'accounts:thread_user' userprofile.username 'me' %}" data-target="{{ dropdown_active_text2 }}">
-  <span class="sidebar-item-icon">
-    <i class="fas fa-book"></i>
-  </span>
-  <span>Threads</span>
-</a>
-<a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'user_following' %}" 
-  href="{% url 'accounts:user_following' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
-  <span class="sidebar-item-icon">
-    <i class="fas fa-user-friends" ></i>
-  </span>
-  <span>User Following</span>
-</a>
-<a class="sidebar-item text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'user_followers' %}" 
-  href="{% url 'accounts:user_followers' userprofile.username %}#232" data-target="{{ dropdown_active_text2 }}">
-  <span class="sidebar-item-icon">
-    <i class="fas fa-users"></i>
-  </span>
-  <span>Followers</span>
-</a>
+<div class="sidebar-item">
+  <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'me' %}" 
+    href="{% url 'accounts:thread_user' userprofile.username 'me' %}" data-target="{{ dropdown_active_text2 }}">
+    <i class="fas fa-book icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+    <span>Threads</span>
+  </a>
+</div>
+<div class="sidebar-item">
+  <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'user_following' %}" 
+    href="{% url 'accounts:user_following' userprofile.username %}" data-target="{{ dropdown_active_text2 }}">
+    <i class="fas fa-user-friends icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1" ></i>
+    <span>User Following</span>
+  </a>
+</div>
+<div class="sidebar-item">
+  <a class="icon-row text-muted nav-link mr-lg-0 {% active_category_class dropdown_active_text2 'user_followers' %}" 
+    href="{% url 'accounts:user_followers' userprofile.username %}#232" data-target="{{ dropdown_active_text2 }}">
+    <i class="fas fa-users icon-row__icon icon-row__icon--mr-1 icon-row__icon--mr-sm-1"></i>
+    <span>Followers</span>
+  </a>
+</div>

@@ -1,0 +1,71 @@
+// NAV SCROLLER
+.nav-scroller .nav {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  margin-top: -1px;
+  overflow-x: auto;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: left;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+
+// NOTIFICATION
+.notification {
+  font-size: 0.95rem;
+  
+  strong {
+    font-weight: 500;
+  }
+
+  .list-group-item {
+    padding: 0.75rem 0.97rem;
+  }
+}
+
+
+// PROFILE HOME RECENT POST
+.profile-home__nav-tabs {
+  .nav-link {
+    font-weight: 600;
+    color: #6c757d;
+  }
+
+  .nav-link.active {
+    color: #212529;
+ }
+} 
+
+
+// LOGIN
+.login__forgot-password > a:hover {
+  text-decoration: underline;
+  color: #6c757d !important;
+}
+
+
+// NOTIFICATIONS
+.profile__notif-list {
+  .media-body img {
+    display: none;
+    border-radius: 4px;
+    max-width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .media-body a img {
+    display: block;
+  }
+}
+
+
+// FOLLOWER/FOLLOWING CARD
+.follow-card {
+  border-top: 5px solid $primary;
+  width: 8.8rem; 
+  background-color: #ECEFF1;
+}

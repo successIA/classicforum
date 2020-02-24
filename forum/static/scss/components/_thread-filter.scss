@@ -1,0 +1,21 @@
+.thread-active {
+  display: inline-block;
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  padding: 0;
+  width: 100%;
+  height: 3px;
+  border-top-left-radius: 1.5px;
+  border-top-right-radius: 2px;
+  background-color: #9c27b0;
+}
+
+.filter {
+  text-decoration: none !important;
+}
+
+.thick-baseline {
+  top: 1.8rem; 
+  position: absolute;
+}

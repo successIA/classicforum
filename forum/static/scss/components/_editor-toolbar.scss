@@ -1,0 +1,20 @@
+/* EDITOR TOOLBAR STYLING */
+.editor-toolbar.fullscreen {
+  z-index: 1000;
+  button {
+    color: gray;
+  }
+}
+
+.editor-toolbar {
+  button {
+    color: gray;
+  }
+}
+
+@media (min-width: 768px) {
+  .CodeMirror {
+    z-index: 1000;
+  }
+}
+/* END OF EDITOR TOOLBAR STYLING */

@@ -10,8 +10,8 @@
     <div class="row mt-4">
       <div class="col-12 offset-0 col-sm-10 offset-sm 1 col-md-8 offset-md-2 col-lg-4 offset-lg-4">
         <div class="card">
-          <div class="card-header">
-            <h5 class="mb-0">Log in</h5>
+          <div class="card-header bg-white">
+            <h5 class="mb-0 text-dark">Log in</h5>
           </div>
           <div class="card-body">
             <form method="post" novalidate>
@@ -23,13 +23,7 @@
               <div>
                 New to Forum? <a href="{% url 'accounts:signup' %}" class="text-primary">Sign up</a>
               </div>
-              <div>
-                <style scoped>
-                  a:hover {
-                    text-decoration: underline;
-                    color: #6c757d !important;
-                  }
-                </style>
+              <div class="login__forgot-password">
                 <a href="{% url 'accounts:password_reset' %}">
                   <small class="text-muted">Forgot your password?</small>
                 </a>
