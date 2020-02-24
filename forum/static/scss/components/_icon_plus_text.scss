@@ -1,0 +1,32 @@
+.icon-row {
+  display: flex;
+  align-items: center;
+
+  @mixin icon-row__icon {
+    display: inline-block;
+    width: 1.3rem;
+    text-align: center;
+  }
+
+  &__icon {
+    @include icon-row__icon;
+  }
+
+  &__icon--mr-1 {
+    @include icon-row__icon;
+    margin-right: 1rem;
+  }
+
+  @media (max-width: 992px) {
+    &__icon--mr-sm-1 {
+      @include icon-row__icon;
+      margin-right: 0.4rem !important;
+    }
+  }
+
+  &--text {
+    font-size: 0.875rem;
+  }
+
+  
+}

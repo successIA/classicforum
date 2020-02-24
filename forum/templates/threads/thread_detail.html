@@ -41,8 +41,8 @@
               <a href="{{ thread.get_absolute_url }}" class="text-dark">{{ thread.title }}</a>
             </h4>
             
-            <div class="dull-color mb-2 d-flex mt-2 align-items-end">
-              <small class="d-inline-block mr-4 dull-color"><i class="far fa-comments"></i>
+            <div class="dark-gray-1 mb-2 d-flex mt-2 align-items-end">
+              <small class="d-inline-block mr-4 dark-gray-1"><i class="far fa-comments"></i>
                 {% if thread.comment_count %}
                   {{ thread.comment_count }} repl{{ thread.comment_count|pluralize:"y,ies" }}
                 {% else %}
@@ -50,7 +50,7 @@
                 {% endif %}
               </small>
 
-              <small class="d-inline-block mr-auto dull-color"><i class="far fa-eye"></i>
+              <small class="d-inline-block mr-auto dark-gray-1"><i class="far fa-eye"></i>
                 {{ thread.views }} view{{ thread.views|pluralize }}
               </small>
 
@@ -67,8 +67,8 @@
             <!-- Thread Starting Comment -->
             <ul class="list-group mb-4 comment-list-group">
               {% if starting_comment %}
-                <li class="list-group-item" {% comment %} style="border: 2px solid #9b27b062;" {% endcomment %}>
-                  {% include "includes/comment.html" with comment=starting_comment %}
+                <li class="list-group-item">
+                  {% include "includes/_comment_list_item.html" with comment=starting_comment %}
                 </li>
               {% else %}
                 <div class="card">
@@ -90,16 +90,10 @@
           <ul class="list-group mb-2 comment-list-group">
             {% for comment in comments %}
               <li class="list-group-item">
-                {% include "includes/comment.html" with comment=comment %}
+                {% include "includes/_comment_list_item.html" with comment=comment %}
               </li>              
             {% empty %}
-              <div class="text-center text-secondary mt-2">
-                <div style="font-size: 2rem"><i class="far fa-comments"></i></div>
-                <div>
-                  <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No replies yet</p>
-                  <p style="font-size: 0.9rem">Be the first to comment</p>
-                </div>
-              </div>
+              {% include "includes/_empty_reply_state.html" %}
             {% endfor %}
           </ul><!-- Comment Section -->          
         </div>

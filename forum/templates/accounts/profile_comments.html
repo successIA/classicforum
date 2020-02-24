@@ -13,10 +13,10 @@
         </div>
 
         <div class="col-12 col-lg-8">
-          <ul class="list-group mb-4">
+          <ul class="list-group mb-4 comment-list-group">
             {% for comment in comments %}
               <li class="list-group-item">
-                {% include "includes/comment.html" with comment=comment %}
+                {% include "includes/_comment_list_item.html" with comment=comment %}
               </li>
             {% empty %}
               {% include "includes/_empty_state_card.html" with icon="far fa-comments" text="No comments yet" %}

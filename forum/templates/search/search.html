@@ -30,16 +30,10 @@
             </div>
           {% endif %}
           
-          <style scoped>
-            .thread-result-item img {
-                display: block;                
-            }
-          </style>
-          
-          <div class="col-12 col-lg-8">
+          <div class="col-12 col-lg-8 search-result-box">
             <ul class="list-group mb-4">
               {% for thread in results %}
-                <li class="thread-result-item list-group-item" style="max-height: 13rem; overflow: hidden;">
+                <li class="list-group-item" style="max-height: 13rem; overflow: hidden;">
                   <h5>
                     <a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a>
                   </h5>
@@ -50,16 +44,7 @@
           </div>
         {% else %}
           <div class="col-12 col-lg-8 mt-4">
-            <div class="card">
-              <div class="text-center text-secondary mt-2">
-                <div style="font-size: 2rem"><i class="fas fa-info-circle"></i></div>
-                <div>
-                  <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">
-                    Please enter a query in the search box.
-                  </p>
-                </div>
-              </div>
-            </div>
+            {% include "includes/_empty_state_card.html" with icon="fas fa-info-circle" text="Please enter a query in the search box." font_size="small" %}       
           </div>
         {% endif %}  
       </div>

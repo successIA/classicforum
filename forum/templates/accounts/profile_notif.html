@@ -12,21 +12,8 @@
         <div class="notification col-12 col-lg-9">
           <h5 class="mb-3">Notifications</h5>
           <ul class="list-group mb-4 notification-list-group">
-            <style scoped>
-              .notif-list .media-body img {
-                display: none;
-                border-radius: 4px;
-                max-width: 100%;
-                margin-top: 1rem;
-                margin-bottom: 1rem;
-              }
-
-              .notif-list .media-body a img {
-                display: block;
-              }
-            </style>
             {% for notif in notifications %}
-              <li class="notif-list list-group-item {% if notif.unread %}bg-light{% endif %}">
+              <li class="profile__notif-list list-group-item {% if notif.unread %}bg-light{% endif %}">
                 {{ notif.get_description }}
               </li>
             {% empty %}

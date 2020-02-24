@@ -28,6 +28,8 @@
     </a>
   {% endfor %}
 </div>
-<span style="top: 1.8rem; position: absolute;"
-  class="{% for key, value in filter_dropdown_list %}{% if key == dropdown_active_text %}thread-active{% endif %}{% endfor %}">
+<span class="thick-baseline 
+        {% for key, value in filter_dropdown_list %}{% if key == dropdown_active_text %}thread-active{% endif %}{% endfor %}
+      "
+>
 </span>

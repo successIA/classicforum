@@ -1,14 +1,6 @@
-<style scoped>
-  .nav-tabs .nav-link {
-    font-weight: 600;
-    color: #6c757d;
-  }
-  .nav-tabs .nav-link.active {
-    color: #212529;
-  }    
-</style>
+{% load forum_template_tags %}
 
-<ul class="nav nav-tabs border-bottom-0" id="myTab" role="tablist">
+<ul class="nav nav-tabs profile-home__nav-tabs border-bottom-0" id="myTab" role="tablist">
   <li class="nav-item">
     <a class="font-weight-bold nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
       Comments
@@ -29,17 +21,10 @@
     <ul class="list-group mb-4 comment-list-group">
       {% for comment in recent_comments %}
         <li class="list-group-item rounded-0">
-          {% include "includes/comment.html" with comment=comment %}
+          {% include "includes/_comment_list_item.html" with comment=comment %}
         </li>
       {% empty %}
-        <div class="card">
-          <div class="text-center text-secondary mt-3 mb-3">
-            <div style="font-size: 2rem"><i class="far fa-comments"></i></div>
-            <div>
-              <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No comments yet</p>
-            </div>
-          </div>
-        </div>
+        {% include "includes/_empty_state_card.html" with icon="far fa-comments" text="No comments yet" %}       
       {% endfor %}                
     </ul><!-- Comment Section -->
   </div>
@@ -49,17 +34,11 @@
     <ul class="list-group mb-4 thread-list-group">
       {% for thread in recent_threads %}
         <li class="list-group-item">
-          {% include "includes/thread.html" with thread=thread %}
+          {% include "includes/_thread_list_item.html" with thread=thread %}
         </li>
       {% empty %}
-        <div class="card">
-          <div class="text-center text-secondary mt-3 mb-3">
-            <div style="font-size: 2rem"><i class="fas fa-book"></i></div>
-            <div>
-              <p style="font-size: 1.4rem; margin-bottom: 0.5rem;">No threads yet</p>
-            </div>
-          </div>
-        </div>
+        {% empty_thread_description "me" as description %}
+        {% include "includes/_empty_state_card.html" with icon="fas fa-book" text=description %}       
       {% endfor %}
     </ul><!-- Thread Section -->
   </div>

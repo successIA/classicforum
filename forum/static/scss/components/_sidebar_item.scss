@@ -1,0 +1,12 @@
+.sidebar-item {
+  &--active {
+    color: #9c27b0 !important;
+    font-weight: 600;
+  }
+
+  & a:hover, 
+  & a:focus
+  {
+    color: #9c27b0 !important;
+  }
+}

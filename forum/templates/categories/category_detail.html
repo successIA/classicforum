@@ -37,7 +37,7 @@
           <ul class="list-group mb-4 thread-list-group">
             {% for thread in threads %}
               <li class="list-group-item">
-                {% include "includes/thread.html" with thread=thread %}
+                {% include "includes/_thread_list_item.html" with thread=thread %}
               </li> 
             {% empty %}
               {% empty_thread_description dropdown_active_text as description %}

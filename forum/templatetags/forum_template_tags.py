@@ -129,7 +129,7 @@ def empty_thread_description(filter_str):
 @register.simple_tag
 def active_category_class(dropdown_active_text2, filter_str):
     if dropdown_active_text2 == filter_str:
-        return 'category-active'
+        return 'sidebar-item--active'
     else:
         return ''
 

@@ -1,8 +1,8 @@
-<div class="card empty-state-card">
+<div class="card empty-state">
   <div class="text-center text-secondary mt-2">
-    <div class="empty-state-card__icon"><i class="{{ icon }}"></i></div>
+    <div class="empty-state__icon"><i class="{{ icon }}"></i></div>
     <div>
-      <p>{{ text }}</p>
+      <p {% if font_size %}style="font-size: 1.2rem"{% endif %} class="empty-state__title">{{ text }}</p>
     </div>
   </div>
 </div>   
