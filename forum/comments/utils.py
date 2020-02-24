@@ -37,7 +37,7 @@ def get_bbcode_message_quote(parent_comment):
 
 def get_comment_reply_form(comment):
     message = get_bbcode_message_quote(comment)
-    return CommentForm.get_for_reply(message, extra='edit-message')
+    return CommentForm.get_for_reply(message)
 
 
 def find_parent_info_in_comment(message):
