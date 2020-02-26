@@ -13,6 +13,8 @@ var easyMDE = new EasyMDE({
   });
   
   var ConfirmEditor = {
+    hasChanged: false,
+
     init: function() {
       this.bindConfirmPageEvent();
     },
@@ -22,11 +24,22 @@ var easyMDE = new EasyMDE({
     },
   
     bindConfirmPageEvent: function() {
-      // window.onbeforeunload = function() {
-      //   if (easyMDE.value()) {
-      //     return "Are you sure you want to leave?";
-      //   }
-      // };
+      var self = ConfirmEditor
+      
+      easyMDE.codemirror.on("change", function(){
+        self.hasChanged = true;
+      });
+
+      $("#id_category,#id_title").change(function() {
+        self.hasChanged = true;
+      })
+
+      window.onbeforeunload = function(e) {
+        console.log(e)
+        if (self.hasChanged) {
+          return "Are you sure you want to leave?";
+        }
+      };
     }
   };
   
