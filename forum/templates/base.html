@@ -167,7 +167,7 @@
     <script src="{% static 'js/popper.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
-    {% if request.user.is_authenticated and threads or thread %}
+    {% if request.user.is_authenticated and show_floating_btn %}
       <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
       <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
       <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
