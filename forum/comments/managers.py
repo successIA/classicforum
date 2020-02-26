@@ -4,14 +4,6 @@ from django.shortcuts import get_object_or_404
 
 
 class CommentQuerySet(models.query.QuerySet):
-    def get_new_for_user(self, user, thread, time):
-        if not user.is_authenticated:
-            return
-        if not time:
-            return
-        queryset = self.filter(thread=thread, created__gt=time)
-        return queryset.exclude(user=user)
-
     def get_for_thread(self, thread):
         queryset = self.active().get_related().filter(
             thread=thread
