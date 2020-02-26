@@ -14,17 +14,22 @@ var easyMDE = new EasyMDE({
   
   var ConfirmEditor = {
     hasChanged: false,
+    isFormSubmitting: false,
 
     init: function() {
+      this.bindSubmitFormEvent();
       this.bindConfirmPageEvent();
     },
-  
-    confirm: function() {
-      return "Are you sure you want to leave?";
+
+    bindSubmitFormEvent: function() {
+      var self = ConfirmEditor;
+      $('.js-post-submit-btn').on('click', function(e) {
+        self.isFormSubmitting = true;
+      });
     },
   
     bindConfirmPageEvent: function() {
-      var self = ConfirmEditor
+      var self = ConfirmEditor;
       
       easyMDE.codemirror.on("change", function(){
         self.hasChanged = true;
@@ -35,8 +40,13 @@ var easyMDE = new EasyMDE({
       })
 
       window.onbeforeunload = function(e) {
-        console.log(e)
-        if (self.hasChanged) {
+        var $categorySelect = $("#id_category");
+        var $titleInput = $("#id_title");
+        var category = !!($categorySelect.length) && $categorySelect.val();
+        var title=  !!($titleInput.length) && $titleInput.val();
+        var message =  easyMDE.value()
+        var isFormEmpty = !!(category || title || message)
+        if (self.hasChanged && isFormEmpty && !self.isFormSubmitting) {
           return "Are you sure you want to leave?";
         }
       };
