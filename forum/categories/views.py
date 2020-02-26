@@ -18,12 +18,6 @@ from forum.core.utils import (
 
 def category_detail(request, slug, filter_str=None, page=1, form=None):    
     category = get_object_or_404(Category, slug=slug)
-    if not form:
-        form = ThreadForm(initial={'category': category})
-    ctx = {
-        'category': category,
-        'form': form,
-    }
     thread_qs = Thread.objects.active().get_by_category(category=category)
     thread_data = get_filtered_threads(request, filter_str, thread_qs)
     thread_paginator = get_paginated_queryset(
@@ -33,7 +27,8 @@ def category_detail(request, slug, filter_str=None, page=1, form=None):
     base_url = [f'/categories/{category.slug}/{thread_data[0]}/', '/']
     ctx = {
         'category': category,
-        'form': form,
+        'form': form if form else ThreadForm(initial={'category': category}),
+        'is_post_update': True if form else False,
         'current_thread_filter': thread_data[0],
         'threads': thread_paginator,
         'base_url': base_url,
