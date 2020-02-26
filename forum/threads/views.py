@@ -83,7 +83,7 @@ def create_thread(request, slug=None, filter_str=None, page=None):
                 perform_comment_save(comment)
                 thread.set_starting_comment(comment)
                 perform_thread_post_create_actions(thread)
-            return redirect(thread.get_absolute_url())
+            return redirect(f'{thread.get_absolute_url()}#')
 
     category_list = list(Category.objects.filter(slug=slug))
     if category_list:
