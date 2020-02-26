@@ -103,6 +103,7 @@ def thread_detail(
         'thread': thread,
         'starting_comment': thread.starting_comment,
         'form': form if form else CommentForm,
+        'is_post_update': True if form else False
     }
 
     ctx.update(get_additional_thread_detail_ctx(request, thread, form_action))

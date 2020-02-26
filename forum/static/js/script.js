@@ -173,7 +173,6 @@ $(document).ready(function() {
       // If there is no post-form, it means that the user is a
       // guest
       if (!this.$commentFormWrapper[0]) return;
-      this.$commentForm.hide();
 
       this.bindAddThreadBtnClick();
     },
