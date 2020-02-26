@@ -1,7 +1,8 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from django.db import models
 from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.text import slugify
 
@@ -32,25 +33,39 @@ class ThreadQuerySet(models.query.QuerySet):
 
     def get_for_user(self, user):
         queryset = self
+        # https://gist.github.com/yosemitebandit/ec3adc02d927375f13d0
+        # https://stackoverflow.com/questions/5235209/django-order-by-position-ignoring-null
+        the_past = datetime.now() - timedelta(days=10*365)
+
         if not user.is_authenticated:
-            return queryset.get_related()
+            return queryset.get_related().annotate(
+                new_last_active=Coalesce('final_comment_time', Value(the_past))
+            )
+
         queryset1 = queryset.get_related().filter(
             followers=user
         ).annotate(
             new_c_id=F('threadfollowership__first_new_comment'),
             new_c_num=F('threadfollowership__new_comment_count')
+        ).annotate(
+           new_last_active=Coalesce('final_comment_time', Value(the_past))
         )
+
         queryset2 = queryset.get_related().exclude(
             followers=user
         ).annotate(
             new_c_id=Value('0', output_field=CharField()),
             new_c_num=Value('0', output_field=CharField())
+        ).annotate(
+           new_last_active=Coalesce('final_comment_time', Value(the_past))
         )
         return queryset1.union(queryset2)
 
     def get_recent(self, user):
-        return self.get_for_user(user).order_by('-final_comment_time')
-
+        return self.get_for_user(
+            user
+        ).order_by('-new_last_active')
+        
     def get_new_for_user(self, user):
         queryset = self
         if not user.is_authenticated:
