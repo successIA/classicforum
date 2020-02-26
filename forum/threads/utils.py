@@ -20,13 +20,13 @@ def get_filtered_threads(request, filter_str=None, thread_qs=None):
     if filter_str in auth_filter_list and not request.user.is_authenticated:
         raise Http404
     threads_dict = {
-        RECENT: thread_qs.get_recent(request.user),
-        'trending': thread_qs.get_by_days_from_now(request.user, days=7),
-        'popular': thread_qs.get_by_days_from_now(request.user, days=None),
+        RECENT: thread_qs.get_recent(request),
+        'trending': thread_qs.get_by_days_from_now(request, days=7),
+        'popular': thread_qs.get_by_days_from_now(request, days=None),
         'fresh': thread_qs.get_with_no_reply(),
-        'new': thread_qs.get_new_for_user(request.user),
-        'following': thread_qs.get_following_for_user(request.user),
-        'me': thread_qs.get_only_for_user(request.user),
+        'new': thread_qs.get_new_for_user(request),
+        'following': thread_qs.get_following_for_user(request),
+        'me': thread_qs.get_only_for_user(request),
     }
     all_filter_list = auth_filter_list + ['trending', 'popular', 'fresh']
     # Recent threads are returned for invalid filters as default.

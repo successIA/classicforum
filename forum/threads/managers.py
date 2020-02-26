@@ -31,70 +31,71 @@ class ThreadQuerySet(models.query.QuerySet):
                 return qs, qs.first().category
         return self, False
 
-    def get_for_user(self, user):
+    def get_for_user(self, request):
         queryset = self
 
-        if not user.is_authenticated:
+        if not request.user.is_authenticated:
             return queryset.get_related()
             
         queryset1 = queryset.get_related().filter(
-            followers=user
+            followers=request.user
         ).annotate(
             new_c_id=F('threadfollowership__first_new_comment'),
             new_c_num=F('threadfollowership__new_comment_count')
         )
     
         queryset2 = queryset.get_related().exclude(
-            followers=user
+            followers=request.user
         ).annotate(
             new_c_id=Value('0', output_field=CharField()),
             new_c_num=Value('0', output_field=CharField())
         )
         return queryset1.union(queryset2)
 
-    def get_recent(self, user):
+    def get_recent(self, request):
         return self.get_for_user(
-            user
+            request
         ).order_by('-final_comment_time')
         
-    def get_new_for_user(self, user):
+    def get_new_for_user(self, request):
         queryset = self
-        if not user.is_authenticated:
+        if not request.user.is_authenticated:
             return queryset.get_related()
         queryset = queryset.get_related().filter(
-            followers=user, threadfollowership__new_comment_count__gt=0
+            followers=request.user, 
+            threadfollowership__new_comment_count__gt=0
         ).annotate(
             new_c_id=F('threadfollowership__first_new_comment'),
             new_c_num=F('threadfollowership__new_comment_count')
         ).order_by('threadfollowership__first_new_comment__created')
         return queryset
 
-    def get_following_for_user(self, user):
+    def get_following_for_user(self, request):
         queryset = self
-        if not user.is_authenticated:
+        if not request.user.is_authenticated:
             return queryset.get_related()
         queryset = queryset.get_related().filter(
-            followers=user
+            followers=request.user
         ).annotate(
             new_c_id=F('threadfollowership__first_new_comment'),
             new_c_num=F('threadfollowership__new_comment_count')
         )
         return queryset.order_by('-comment_count')
 
-    def get_only_for_user(self, user):
+    def get_only_for_user(self, request):
         queryset = self
-        if not user.is_authenticated:
+        if not request.user.is_authenticated:
             return queryset.get_related()
         queryset1 = queryset.get_related().filter(
-            user=user, threadfollowership__user=user
+            user=request.user, threadfollowership__user=request.user
         ).annotate(
             new_c_id=F('threadfollowership__first_new_comment'),
             new_c_num=F('threadfollowership__new_comment_count')
         )
         queryset2 = queryset.get_related().filter(
-            user=user
+            user=request.user
         ).exclude(
-            threadfollowership__user=user
+            threadfollowership__user=request.user
         ).annotate(
             new_c_id=Value('0', output_field=CharField()),
             new_c_num=Value('0', output_field=CharField())
@@ -106,7 +107,7 @@ class ThreadQuerySet(models.query.QuerySet):
         is_auth = request.user.is_authenticated
         if is_auth and request.user.is_owner(user):
             return self.get_only_for_user(
-                user
+                request
             ).order_by('-final_comment_time')[:count]
         return self.get_related().filter(
             user=user
@@ -120,12 +121,12 @@ class ThreadQuerySet(models.query.QuerySet):
         queryset = queryset.filter(category=category).order_by('-created')
         return queryset
 
-    def get_by_days_from_now(self, user, days=None):
+    def get_by_days_from_now(self, request, days=None):
         queryset = self
         if days:
             dt = timezone.now() - timedelta(days=days)
             queryset = queryset.filter(created__gte=dt)
-        return queryset.get_for_user(user).order_by('-comment_count')
+        return queryset.get_for_user(request).order_by('-comment_count')
 
     def get_by_category(self, category=None):
         if not category:
