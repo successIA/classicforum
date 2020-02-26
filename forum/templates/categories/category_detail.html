@@ -55,8 +55,8 @@
 
       {% if request.user.is_authenticated %}
         <div class="row">
-          <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
-            {% include "includes/comment_form.html" with form=form form_action=form_action %}
+          <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1 js-post-form-wrapper">
+            {% include "includes/comment_form.html" with form=form form_action=form_action title="Create Thread" %}
           </div>
         </div>
       {% endif %}        
