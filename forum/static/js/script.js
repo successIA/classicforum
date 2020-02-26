@@ -167,11 +167,14 @@ $(document).ready(function() {
 
   var ShowPostFormScroll = {
     $commentForm: $("#post-form"),
+    $commentFormWrapper: $('.js-post-form-wrapper'),
 
     init: function() {
       // If there is no post-form, it means that the user is a
       // guest
-      if (!this.$commentForm[0]) return;
+      if (!this.$commentFormWrapper[0]) return;
+      this.$commentForm.hide();
+
       this.bindAddThreadBtnClick();
     },
 
@@ -180,6 +183,7 @@ $(document).ready(function() {
       $(".add-thread-btn").on("click", function(e) {
         e.preventDefault();
         self.$commentForm.show();
+        FloatingActionBtnToggler.init();
         $("html,body").animate(
           { scrollTop: self.$commentForm.offset().top },
           "slow"
@@ -191,10 +195,6 @@ $(document).ready(function() {
 
   var FloatingActionBtnToggler = {
     init: function() {
-      // If there is no post-form, it means that the user is a
-      // guest or we are in a page that does'nt displays post
-      if (!$("#post-form")[0]) return;
-
       // To prevent flashing button when the browser is refreshed
       // at a point the button is meant to be invisible
       setTimeout(this.toggle, 200);
@@ -220,5 +220,4 @@ $(document).ready(function() {
         : $actionBtn.css("opacity", 1);
     }
   };
-  FloatingActionBtnToggler.init();
 });

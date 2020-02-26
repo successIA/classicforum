@@ -1,7 +1,7 @@
 {% load forum_template_tags %}
 
 <div class="col col-md-2 col-lg-2 col-xl-1 ml-xl-3 position-relative py-2 text-center">
-  <a class="{% if not current_thread_filter or current_thread_filter == 'recent' %} text-primary {% else %} text-dark {% endif %} filter" 
+  <a class="{% if not current_thread_filter or current_thread_filter == 'recent' %} text-primary {% else %} text-secondary {% endif %} filter" 
     href="{% if category %}/categories/{{ category.slug }}/recent/{% else %}/threads/recent/{% endif %}">
     Recent
   </a>
