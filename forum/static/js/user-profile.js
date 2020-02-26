@@ -44,6 +44,7 @@ $(document).ready(function() {
 
     bindConfirmPageEvent: function() {
       var self = ConfirmProfileSettings
+
       $(
         "#id_image,#id_gender,#id_signature,#id_location,#id_website"
       ).change(function() {
@@ -51,13 +52,12 @@ $(document).ready(function() {
       });
       
       window.onbeforeunload = function() {
-        var self = ConfirmProfileSettings
         var image = $("#id_image").val();
         var gender = $("#id_gender").val();
         var signature = $("#id_signature").val();
         var location = $("#id_location").val();
         var website = $("#id_website").val();
-        isNonEmpty = !!(image || gender || signature || location || website);
+        var isNonEmpty = !!(image || gender || signature || location || website);
         if (self.hasChanged && isNonEmpty) {
           return "Are you sure you want to leave?";
         }
