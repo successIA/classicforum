@@ -34,7 +34,7 @@
   
   <main>
     <div class="container">
-      <div class="row mt-5">
+      <div class="row mt-4">
         <div class="col-sm-12 col-md-10 offset-md-1 col-lg-9 col-xl-8 offset-lg-1">
           {% include "includes/messages.html" with messages=messages%}
           <ul class="list-group mb-4 thread-list-group">
@@ -44,13 +44,13 @@
               </li> 
             {% empty %}
               {% empty_thread_description current_thread_filter as description %}
-              cludes/_empty_state_card.html" with icon="fas fa-book" text=description %}       
+              {% include "includes/_empty_state_card.html" with icon="fas fa-book" text=description %}       
             {% endfor %}
           </ul>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row my-4">
         <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
           {% include "includes/pagination.html" with page_obj=threads base_url=base_url prev_url=prev_url next_url=next_url %}
         </div>

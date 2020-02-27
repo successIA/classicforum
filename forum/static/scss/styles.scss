@@ -17,6 +17,9 @@ $primary: #9c27b0;
 @import "./components/username-suggest";
 @import "./components/editor-toolbar";
 @import "./components/message-preview";
+@import "./components/pagination";
+
+
 @import "./layouts/main.scss";
 @import "./layouts/user-profile";
 @import "./layouts/moderation";
