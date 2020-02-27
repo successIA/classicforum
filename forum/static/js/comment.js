@@ -62,4 +62,43 @@ $(document).ready(function() {
     }
   }
   CommentPermaLinkCopy.init();
+
+  var UserFollowLink = {
+    init: function() {
+      $('.js-follow-dropdown-item').show();
+      this.bindEvent();
+    },
+
+    bindEvent: function() {
+      $('.js-user-follow-link').on('click', function(e){
+        e.preventDefault();
+        $followLink = $(this);
+        $followLink.attr('disabled', true).css('cursor', 'not-allowed')
+      
+        $.ajax({
+          method: 'POST',
+          url: $followLink.data('action'),
+          data: {'csrfmiddlewaretoken': csrftoken},
+
+          success: function(data) {
+            $followLinkText = $followLink.find('.js-user-follow-link-text');
+            if (data.is_follower) {
+              $followLinkText.text('Unfollow')
+              alert("Following " + $followLink.data('user'))
+            } else {
+              $followLinkText.text('Follow')
+              alert("Unfollowed " + $followLink.data('user'))
+            }
+            $followLink.attr('disabled', false).css('cursor', 'pointer');
+          },
+          
+          error: function(data) {
+            alert("Something went wrong")
+            $followLink.attr('disabled', false).css('cursor', 'pointer')
+          }
+        });
+      });  
+    }
+  }
+  UserFollowLink.init();
 })

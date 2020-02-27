@@ -311,16 +311,16 @@ class FollowUserTest(TestCase):
         redirect_url = '%s?next=%s' % (
             reverse('accounts:login'), self.url1)
 
-        get_response = self.client.get(self.url1)
-        self.assertRedirects(get_response, redirect_url)
-
-        data = {'message': 'hello word'}
-        post_response = self.client.post(self.url1, data)
+        post_response = self.client.post(self.url1)
         self.assertRedirects(post_response, redirect_url)
+
+        # data = {'message': 'hello word'}
+        # post_response = self.client.post(self.url1, data)
+        # self.assertRedirects(post_response, redirect_url)
 
     def test_follow(self):
         login(self, self.user2.username, 'password')
-        response = self.client.get(self.url1)
+        response = self.client.post(self.url1)
         self.assertEqual(response.status_code, 302)
         self.assertIn(self.user2, self.user1.followers.all())
         self.assertIn(self.user1, self.user2.following.all())
@@ -328,29 +328,29 @@ class FollowUserTest(TestCase):
 
     def test_unfollow(self):
         login(self, self.user2.username, 'password')
-        response = self.client.get(self.url1)
+        response = self.client.post(self.url1)
         self.assertEqual(response.status_code, 302)
         self.assertIn(self.user2, self.user1.followers.all())
 
-        response = self.client.get(self.url1)
+        response = self.client.post(self.url1)
         self.assertEqual(response.status_code, 302)
         self.assertNotIn(self.user2, self.user1.followers.all())
 
     def test_follow_each_other(self):
         login(self, self.user2.username, 'password')
-        response = self.client.get(self.url1)
+        response = self.client.post(self.url1)
         self.assertEqual(response.status_code, 302)
         self.assertIn(self.user2, self.user1.followers.all())
         self.client.logout()
 
         login(self, self.user1.username, 'password')
-        response = self.client.get(self.url2)
+        response = self.client.post(self.url2)
         self.assertEqual(response.status_code, 302)
         self.assertIn(self.user1, self.user2.followers.all())
 
     def test_cannot_follow_self(self):
         login(self, self.user2.username, 'password')
-        response = self.client.get(self.url2)
+        response = self.client.post(self.url2)
         self.assertEqual(response.status_code, 404)
 
 

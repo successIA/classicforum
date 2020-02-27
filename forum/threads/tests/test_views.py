@@ -498,13 +498,13 @@ class FollowThreadViewTest(ThreadsViewsTest):
         redirect_url = '%s?next=%s' % (
             reverse('accounts:login'), self.follow_url)
 
-        response = self.client.get(self.follow_url)
+        response = self.client.post(self.follow_url)
         self.assertRedirects(response, redirect_url)
 
     def test_submit_success_for_authenticated_user(self):
         current_count = self.thread.followers.count()
         second_user = self.make_user('second_user')
         login(self, second_user, 'password')
-        response = self.client.get(self.follow_url)
+        response = self.client.post(self.follow_url)
         self.assertEquals(response.status_code, 302)
         self.assertEquals(self.thread.followers.count(), current_count + 1)
