@@ -1,0 +1,36 @@
+.pagination {
+  list-style: none;
+  display: block;
+  text-align: center;
+
+  .page-item {
+    display: inline-block;
+    font-size: 0.9rem;
+
+    .page-link {
+      color: $primary;
+      padding: 1rem / 2 1rem;
+      border: none;
+
+      &:hover {
+        text-decoration: none;
+        background-color: $gray-200;
+      }
+    }
+
+    &.active {
+      span {
+        background-color: $primary;
+        color: #fff;
+        &:hover {
+          background-color: $primary;
+        }
+      }
+    }
+
+    &.disabled .page-link {
+      color: $secondary !important;
+    }
+  }
+}
+  
