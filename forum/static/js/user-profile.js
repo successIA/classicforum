@@ -31,6 +31,52 @@ $(document).ready(function() {
   };
   HorizontalScrollNavigation.init();
 
+  var UserFollow = {
+    init: function() {
+      this.bindEvent();
+    },
+
+    bindEvent: function() {
+      $('.js-user-follow-btn').on('click', function(e){
+        e.preventDefault();
+        $followBtn = $(this);
+        $followBtn.attr('disabled', true).css('cursor', 'not-allowed')
+      
+        $.ajax({
+          method: 'POST',
+          url: $followBtn.data('action'),
+          data: {'csrfmiddlewaretoken': csrftoken},
+
+          success: function(data) {
+            $followBtnText = $followBtn.find('.js-user-follow-btn-text');
+            $followBtnIcon = $followBtn.find('.js-user-follow-check-icon');
+
+            if (data.is_follower) {
+              $followBtn
+                .removeClass('btn-primary')
+                .addClass('btn-outline-primary');
+              $followBtnIcon.show()
+              $followBtnText.text('Following')
+            } else {
+              $followBtn
+                .removeClass('btn-outline-primary')
+                .addClass('btn-primary');
+              $followBtnIcon.hide()
+              $followBtnText.text('Follow')
+            }
+            $followBtn.attr('disabled', false).css('cursor', 'pointer');
+          },
+          
+          error: function(data) {
+            alert("Something went wrong")
+            $followBtn.attr('disabled', false).css('cursor', 'pointer')
+          }
+        });
+      });  
+    }
+  }
+  UserFollow.init();
+
   var ConfirmProfileSettings = {
     hasChanged: false, 
 

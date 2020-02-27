@@ -188,11 +188,14 @@ def account_activation_sent(request):
 
 @login_required
 def follow_user(request, username):
-    follower = request.user  # john
-    user = get_object_or_404(User, username=username)  # aia99
-    if user == follower:
-        raise Http404
-    user.toggle_followers(follower)
+    user = get_object_or_404(User, username=username)
+    if request.method == 'POST':        
+        follower = request.user 
+        if user == follower:
+            raise Http404
+        is_follower = user.toggle_followers(follower)
+        if request.is_ajax():
+            return JsonResponse({'is_follower': is_follower})
     return redirect(user.get_absolute_url())
 
 

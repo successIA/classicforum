@@ -5,87 +5,42 @@ $(document).ready(function() {
     },
 
     bindEvent: function() {
-      $('.thread-follow-btn').on('click', function(e){
-          e.preventDefault();
-          $followBtn = $(this);
-          $followBtn.attr('disabled', true).css('cursor', 'not-allowed')
-          $toggle = $followBtn.find('.toggle');
-          var switchTextTo = $toggle.text().trim() === 'Follow' ? 
-            'Following' : 
-            $toggle.text().trim() === 'Following' ? 
-            'Follow' : 
-            'Following';                    
-          $.ajax({
-            method: 'POST',
-            url: $followBtn.attr('href'),
-            data: {'csrfmiddlewaretoken': csrftoken},
-            success: function(data) {
-              $toggle.find('.js-thread-follow-btn-text').text(switchTextTo)
-              $followBtn.find('.count').text(data['followers_count'])
-              $followBtn.attr('disabled', false).css('cursor', 'pointer')
-            }
-        });
-      });  
-    }
-  }
-  ThreadFollow.init();
-
-  var CommentLike = {
-    init: function() {
-        this.bindEvent();
-    },
-
-    bindEvent: function() {
-      $('.js-btn-like').on('click', function(e){
+      $('.js-thread-follow-btn').on('click', function(e){
         e.preventDefault();
-        $likeBtn = $(this);
-        $likeBtn.attr('disabled', true).css('cursor', 'not-allowed')
-                          
+        $followBtn = $(this);
+        $followBtn.attr('disabled', true).css('cursor', 'not-allowed')
+        $toggle = $followBtn.find('.toggle');
+
+        var switchTextTo = $toggle.text().trim() === 'Follow' ? 
+          'Following' : 
+          $toggle.text().trim() === 'Following' ? 
+          'Follow' : 
+          'Following';           
+
         $.ajax({
           method: 'POST',
-          url: $likeBtn.data('action'),
+          url: $followBtn.attr('href'),
           data: {'csrfmiddlewaretoken': csrftoken},
-          success: function(data) {
-            $likeBtn
-              .find('.js-btn-like-text')
-              .text(data.likers_count);
-            if (data.is_liker) 
-              $likeBtn.removeClass('text-muted').addClass('text-primary');
-            else
-              $likeBtn.removeClass('text-primary').addClass('text-muted');
 
-            $likeBtn.attr('disabled', false).css('cursor', 'pointer')
+          success: function(data) {
+            var followersCount = parseInt(data.followers_count)
+            if (isNaN(followersCount)) {
+              alert('Something went wrong');              
+            } else {              
+              $toggle.find('.js-thread-follow-btn-text').text(switchTextTo)
+              var count = followersCount === 0 ? '' : followersCount;
+              $followBtn.find('.count').text(count);              
+            }
+            $followBtn.attr('disabled', false).css('cursor', 'pointer');
           },
+
           error: function(data) {
             alert("Something went wrong")
-            $likeBtn.attr('disabled', false).css('cursor', 'pointer')
+            $followBtn.attr('disabled', false).css('cursor', 'pointer')
           }
         });
       });  
     }
   }
-  CommentLike.init();
-
-  var CommentPermaLinkCopy = {
-    $permalink: $('.js-permalink'),
-
-    init: function() {
-      this.bindLinkClickEvent();
-    },
-
-    bindLinkClickEvent: function() {
-      this.$permalink.on('click', function(e) {
-        e.preventDefault();
-        var permalink = $(this).attr('href').trim()
-        var $tempInput = $("<input>");
-        $("body").append($tempInput);
-        $tempInput.val(permalink).select();
-        document.execCommand("copy");
-        $tempInput.remove();
-        alert("You copied " + permalink)
-      })
-    }
-
-  }
-  CommentPermaLinkCopy.init();
+  ThreadFollow.init();
 });

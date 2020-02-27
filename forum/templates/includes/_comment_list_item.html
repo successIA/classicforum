@@ -138,15 +138,15 @@
           <button 
             type="submit" 
             data-action="{{ comment.get_like_url }}"
-            class="btn btn-link btn-sm btn-like js-btn-like
+            class="btn btn-link btn-sm btn-like {% if request.user.is_authenticated %}js-btn-like{% endif %} 
               {% if request.user in comment.likers.all %}
                 text-primary
               {% else %}
                 text-muted
               {% endif %}"
           >
-              <i class="far fa-thumbs-up mr-1"></i>
-              <span class="js-btn-like-text">{{ comment.likers.count }}</span>
+            <i class="far fa-thumbs-up mr-1"></i>
+            <span class="js-btn-like-text">{% if comment.likers.count %}{{ comment.likers.count }}{% endif %}</span>
           </button>  
         </form>
       </div>

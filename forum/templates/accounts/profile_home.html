@@ -29,17 +29,33 @@
               Edit profile
             </a>
           {% endif %}
-
+              
           {% if request.user.is_authenticated and request.user != userprofile %}
-            {% if request.user in userprofile.followers.all %}
-              <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-outline-primary mt-2 font-weight-bold">
-                  <i class="fas fa-check mr-1"></i>Following
-              </a>
-            {% else %}
-              <a href="{{ userprofile.get_user_follow_url }}" class="btn btn-primary text-bold mt-2 font-weight-bold">
-                Follow
-              </a>
-            {% endif %}
+            <form method="post" action="{{ userprofile.get_user_follow_url }}">
+              {% csrf_token %}              
+              <button
+                type="submit"
+                data-action="{{ userprofile.get_user_follow_url }}" 
+                class="mt-2 font-weight-bold btn js-user-follow-btn
+                {% if request.user in userprofile.followers.all %}
+                  btn-outline-primary 
+                {% else %}
+                  btn-primary
+                {% endif %}"
+              >
+                {% if request.user in userprofile.followers.all %}
+                  <span class="js-user-follow-check-icon">
+                    <i class="fas fa-check mr-1"></i>
+                  </span>
+                  <span class="js-user-follow-btn-text">Following</span>
+                {% else %}
+                  <span class="js-user-follow-check-icon" style="display: none;">
+                    <i class="fas fa-check mr-1"></i>
+                  </span>
+                  <span class="js-user-follow-btn-text">Follow</span>
+                {% endif %}
+              </button>
+            </form>
           {% endif %}
         </div>
       </div><!-- Profile Info -->
