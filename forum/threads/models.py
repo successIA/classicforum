@@ -1,9 +1,12 @@
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import CharField, Count, F, Max, Min, Prefetch, Value
 from django.utils.html import mark_safe
 from django.utils.text import slugify
+
+from hitcount.models import HitCount, HitCountMixin
 
 from forum.categories.models import Category
 from forum.core.bbcode_quote import bbcode_quote
@@ -14,7 +17,7 @@ from forum.notifications.models import Notification
 from forum.accounts.utils import get_user_list_without_creator
 
 
-class Thread(TimeStampedModel):
+class Thread(TimeStampedModel, HitCountMixin):
     title = models.CharField(max_length=150)
     slug = models.SlugField(blank=True, max_length=255)
     body = models.TextField(max_length=4000)
@@ -25,7 +28,11 @@ class Thread(TimeStampedModel):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
     likes = models.PositiveIntegerField(default=0)
-    views = models.PositiveIntegerField(default=0)
+    hit_counts  =  GenericRelation(
+        HitCount, 
+        object_id_field='object_pk',
+        related_query_name='threads'
+    )
     visible = models.BooleanField(default=True)
     followers = models.ManyToManyField(
         settings.AUTH_USER_MODEL,

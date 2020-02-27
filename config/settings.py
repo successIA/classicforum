@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'background_task',
     'sorl.thumbnail',
     'django_extensions',
+    'hitcount',
 
     # MY APPS
     'forum.categories',

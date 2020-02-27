@@ -2,6 +2,7 @@ import datetime
 import re
 
 from django.core.exceptions import PermissionDenied
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
@@ -9,7 +10,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db import connection, transaction
 from django.conf import settings
 
-from forum.core.utils import get_paginated_queryset
+from forum.core.utils import (
+    create_hit_count,
+    get_paginated_queryset,
+)
 from forum.threads.models import (
     Thread, ThreadFollowership
 )
@@ -100,6 +104,7 @@ def create_thread(request, slug=None, filter_str=None, page=None):
 def thread_detail(
     request, thread_slug, thread=None, form=None, form_action=None
 ):
+    create_hit_count(request, thread)
     ctx = {
         'thread': thread,
         'starting_comment': thread.starting_comment,

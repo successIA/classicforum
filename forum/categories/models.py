@@ -25,7 +25,6 @@ class Category(TimeStampedModel):
     title = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(blank=True)
     description = models.TextField(max_length=300)
-    views = models.PositiveIntegerField(default=0)
     icon = models.CharField(max_length=32, blank=True)
     objects = CategoryQuerySet.as_manager()
 
