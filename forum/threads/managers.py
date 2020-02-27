@@ -136,13 +136,9 @@ class ThreadQuerySet(models.query.QuerySet):
     def get_related(self):
         return self.select_related(
             'user', 'category', 'final_comment_user', 'starting_comment'
+        ).prefetch_related(
+            'hit_counts'
         )
-        # .prefetch_related(
-        #     'user__userprofile',
-        #     'final_comment_user__userprofile',
-        #     # 'user__userprofile__attachment_set',
-        #     # 'userprofile__attachment_set'
-        # )
 
     def active(self, visible=True):
         return self.filter(visible=True)

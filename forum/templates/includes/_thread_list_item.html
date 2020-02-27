@@ -58,7 +58,12 @@
       </small>
 
       <small class="mr-4">
-        <i class="far fa-eye mr-1"></i>{{ thread.views }}
+        <i class="far fa-eye mr-1"></i>
+        {% if thread.hit_counts.first.hits %}
+          {{ thread.hit_counts.first.hits }}
+        {% else %}
+          0
+        {% endif %}
       </small>
     </div>
   </div>

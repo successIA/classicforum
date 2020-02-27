@@ -51,7 +51,11 @@
               </small>
 
               <small class="d-inline-block mr-auto dark-gray-1"><i class="far fa-eye"></i>
-                {{ thread.views }} view{{ thread.views|pluralize }}
+                {% if thread.hit_counts.first.hits %}
+                  {{ thread.hit_counts.first.hits }} view{{ thread.hit_counts.first.hits|pluralize }}
+                {% else %}
+                  0 views
+                {% endif %}
               </small>
 
               <a href="{{ thread.get_thread_follow_url}}" class="btn btn-light btn-sm thread-follow-btn text-muted">

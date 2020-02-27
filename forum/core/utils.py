@@ -8,6 +8,8 @@ from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 
+from hitcount.models import HitCount
+from hitcount.views import HitCountMixin
 from markdown import markdown
 
 
@@ -39,6 +41,11 @@ def convert_mention_to_link(message, user_value_list):
 def find_mentioned_usernames(message):
     patt = r'@(?P<username>[\w]+)'
     return set(re.findall(patt, message))
+
+
+def create_hit_count(request, instance):
+    hit_count = HitCount.objects.get_for_object(instance)
+    hit_count_response = HitCountMixin.hit_count(request, hit_count)
 
 
 def get_paginated_queryset(queryset, PER_PAGE, page_num):
