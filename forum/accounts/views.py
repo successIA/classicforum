@@ -138,7 +138,9 @@ def user_thread_list(request, username, filter_str, page):
     if not user.is_required_filter_owner(request.user, filter_str):
         raise Http404
     thread_qs = Thread.objects.active()
-    thread_data = get_filtered_threads(request, filter_str, thread_qs)
+    thread_data = get_filtered_threads(
+        request, filter_str, thread_qs, user=user
+    )
     thread_paginator = get_paginated_queryset(thread_data[1], 10, page)
     base_url = [f'/accounts/{username}/{thread_data[0]}/', '/']
     ctx = {

@@ -102,7 +102,7 @@ class ThreadQuerySet(models.query.QuerySet):
         )
         queryset = queryset1.union(queryset2)
         return queryset.order_by('-comment_count')
-
+    
     def get_recent_for_user(self, request, user, count=5):
         is_auth = request.user.is_authenticated
         if is_auth and request.user.is_owner(user):
