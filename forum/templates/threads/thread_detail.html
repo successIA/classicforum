@@ -12,20 +12,31 @@
 
 {% block content %}
   <!-- Breadcrumb -->
-  <nav aria-label="breadcrumb" class="nav-container d-none d-md-block shadow-sm">
-    <ol class="breadcrumb bg-white border-bottom justify-content-end rounded-0 py-2">
+  <nav aria-label="breadcrumb" class="nav-container d-none d-md-block shadow-sm nav-breadcrumb">
+    <ol class="breadcrumb bg-white border-bottom rounded-0 py-2">
       <li class="breadcrumb-item">
-        <a href="{{ category.get_absolute_url }}">
-          <small class="font-weight-bold text-muted">{{ category }}</small>
-        </a>
+        <span class="nav-breadcrumb__text-light text-muted">
+          <a href="/" class="text-decoration-none" class="text-secondary">
+            Home
+          </a>
+        </span>
       </li>
       <li class="breadcrumb-item">
-        <a href="{{ thread.get_absolute_url }}">
-          <small class="font-weight-bold text-secondary">{{ thread.title }}</small>
-        </a>
+        <span class="nav-breadcrumb__text-light text-muted">
+          <a href="{{ category.get_absolute_url }}" class="text-decoration-none">
+            {{ category.title }}
+          </a>
+        </span>
+      </li>
+      <li class="breadcrumb-item">
+        <span class="nav-breadcrumb__text-bold text-secondary">
+          <a href="{{ thread.get_absolute_url }}" class="text-decoration-none">
+            {{ thread.title }}
+          </a>
+        </span>
       </li>
       <li class="breadcrumb-item active text-muted" aria-current="page">
-        <small class="font-weight-bold">{{ comments.number }}</small>
+        <span class="nav-breadcrumb__text-bold">{{ comments.number }}</span>
       </li>
     </ol>
   </nav><!-- Breadcrumb -->

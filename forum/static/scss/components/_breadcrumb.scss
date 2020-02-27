@@ -1,0 +1,17 @@
+.nav-breadcrumb {
+  font-size: 0.9rem;
+
+  &__text-light {
+    font-weight: 400;
+  }
+
+  &__text-bold {
+    font-weight: 600;
+  }
+  a {
+    color: $secondary;
+  }
+  & a:hover {
+    color: $dark;
+  }
+}

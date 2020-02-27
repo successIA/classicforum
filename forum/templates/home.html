@@ -9,7 +9,7 @@
   <div class="nav-container container-fluid bg-white">
     <div class="row align-items-center">
       {% include 'includes/thread_filter_ctrl.html' with current_thread_filter=current_thread_filter %}
-      {% if request.user.is_authenticated %}{% include 'includes/thread_add_partial.html' %}{% endif %} 
+      {% comment %} {% if request.user.is_authenticated %}{% include 'includes/thread_add_partial.html' %}{% endif %}  {% endcomment %}
     </div>
   </div>
 
