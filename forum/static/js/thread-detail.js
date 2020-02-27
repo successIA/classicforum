@@ -65,4 +65,27 @@ $(document).ready(function() {
     }
   }
   CommentLike.init();
+
+  var CommentPermaLinkCopy = {
+    $permalink: $('.js-permalink'),
+
+    init: function() {
+      this.bindLinkClickEvent();
+    },
+
+    bindLinkClickEvent: function() {
+      this.$permalink.on('click', function(e) {
+        e.preventDefault();
+        var permalink = $(this).attr('href').trim()
+        var $tempInput = $("<input>");
+        $("body").append($tempInput);
+        $tempInput.val(permalink).select();
+        document.execCommand("copy");
+        $tempInput.remove();
+        alert("You copied " + permalink)
+      })
+    }
+
+  }
+  CommentPermaLinkCopy.init();
 });
