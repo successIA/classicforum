@@ -66,20 +66,21 @@
           <span class="icon-row--text">Permalink</span>
         </a>
 
-        {% if request.user.is_authenticated and request.user != comment.user  %}
-          {% if request.user in comment.user.followers %}
-            <a class="dropdown-item py-2 pl-1 icon-row" href="{{ comment.user.get_user_follow_url }}">
-              <i class="icon-row__icon mx-2 text-secondary fas fa-user-friends"></i>
-              <span class="icon-row--text">Unfollow</span>
-            </a>
-          {% else %}
-            <a class="dropdown-item py-2 pl-1 icon-row" href="{{ comment.user.get_user_follow_url }}">
-              <i class="icon-row__icon mx-2 text-secondary fas fa-user-friends"></i>
-              <span class="icon-row--text">Follow</span>
-            </a>
-            </a>
+        <div class="js-follow-dropdown-item" style="display: none;">
+          {% if request.user.is_authenticated and request.user != comment.user  %}
+              <a 
+                class="dropdown-item py-2 pl-1 icon-row js-user-follow-link" 
+                data-action="{{ comment.user.get_user_follow_url }}" 
+                data-user="{{ comment.user.username }}"
+              >
+                <i class="icon-row__icon mx-2 text-secondary fas fa-user-friends"></i>
+                <span class="icon-row--text js-user-follow-link-text">
+                  {% if request.user in comment.user.followers %}Unfollow{% else %}Follow
+                </span>
+              </a>
+            {% endif %}
           {% endif %}
-        {% endif %}
+        </div>
 
         {% if request.user.is_authenticated and request.user == comment.user %}
           {% if comment.is_starting_comment %}
