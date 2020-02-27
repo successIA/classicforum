@@ -13,7 +13,9 @@ from forum.notifications.models import Notification
 from forum.threads.models import ThreadFollowership
 
 
-def get_filtered_threads(request, filter_str=None, thread_qs=None):
+def get_filtered_threads(
+    request, filter_str=None, thread_qs=None, user=None
+):
     RECENT = 'recent'
     # auth_filter_list = ['following', 'new', 'me']
     auth_filter_list = ['following', 'new']
@@ -26,7 +28,7 @@ def get_filtered_threads(request, filter_str=None, thread_qs=None):
         'fresh': thread_qs.get_with_no_reply(),
         'new': thread_qs.get_new_for_user(request),
         'following': thread_qs.get_following_for_user(request),
-        'me': thread_qs.get_only_for_user(request),
+        'me': thread_qs.get_recent_for_user(request, user, count=None),
     }
     all_filter_list = auth_filter_list + ['trending', 'popular', 'fresh']
     # Recent threads are returned for invalid filters as default.
