@@ -107,31 +107,31 @@
                     aria-expanded="false" href="#">
                     <img src="{{ request.user.get_avatar_url }}" height="38" width="38" class="avatar mr-1 mr-md-2 avatar" alt="..." />
                   </a>
-                  <div style="min-width: 11.5rem;" class="dropdown-menu dropdown-menu-right shadow-sm user-account-dropdown"> 
-                    <a class="dropdown-item icon-row px-2" href="{{ user.get_absolute_url }}">
-                      <i class="icon-row__icon far fa-user-circle mr-2"></i><span class="icon-row--text">My Account</span>
+                  <div style="min-width: 11.5rem;" class="dropdown-menu dropdown-menu-right py-0 px-0 shadow-sm dropdown-hover-fix"> 
+                    <a class="dropdown-item py-2 pl-1 icon-row" href="{{ user.get_absolute_url }}">
+                      <i class="icon-row__icon mx-2 text-secondary far fa-user-circle mr-2"></i><span class="icon-row--text">My Account</span>
                     </a>
-                    <a class="dropdown-item icon-row px-2" href="{% url 'accounts:user_edit' request.user.username %}">
-                      <i class="icon-row__icon fas fa-user-cog mr-2"></i><span class="icon-row--text">Update Profile</span>
+                    <a class="dropdown-item py-2 pl-1 icon-row" href="{% url 'accounts:user_edit' request.user.username %}">
+                      <i class="icon-row__icon mx-2 text-secondary fas fa-user-cog mr-2"></i><span class="icon-row--text">Update Profile</span>
                     </a>
-                    <a class="dropdown-item icon-row px-2" href="{% url 'accounts:password_change' %}">
-                      <i class="icon-row__icon fas fa-key mr-2"></i><span class="icon-row--text">Change Password</span>
+                    <a class="dropdown-item py-2 pl-1 icon-row" href="{% url 'accounts:password_change' %}">
+                      <i class="icon-row__icon mx-2 text-secondary fas fa-key mr-2"></i><span class="icon-row--text">Change Password</span>
                     </a>
                     {% if request.user.is_authenticated and request.user.is_superuser %}
-                      <div class="dropdown-divider"></div>
-                      <a href="{% url 'moderation:moderator_list' %}" class="dropdown-item icon-row px-2">
-                        <i class="icon-row__icon fas fa-users-cog mr-2"></i><span class="icon-row--text">Manage Moderators</span>
+                      <div class="dropdown-divider my-0"></div>
+                      <a href="{% url 'moderation:moderator_list' %}" class="dropdown-item py-2 pl-1 icon-row">
+                        <i class="icon-row__icon mx-2 text-secondary fas fa-users-cog mr-2"></i><span class="icon-row--text">Manage Moderators</span>
                       </a>
                     {% endif %}
 
                     {% if request.user.is_authenticated and request.user.is_moderator %}
-                      <a href="{% url 'moderation:moderator_detail' request.user.username %}" class="dropdown-item icon-row px-2">
-                        <i class="icon-row__icon fas fa-user-circle mr-2"></i><span class="icon-row--text">Moderation Account</span>
+                      <a href="{% url 'moderation:moderator_detail' request.user.username %}" class="dropdown-item py-2 pl-1 icon-row">
+                        <i class="icon-row__icon mx-2 text-secondary fas fa-user-circle mr-2"></i><span class="icon-row--text">Moderation Account</span>
                       </a>
                     {% endif %}
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item icon-row px-2" href="{% url 'accounts:logout' %}">
-                      <i class="icon-row__icon fas fa-sign-out-alt mr-2"></i><span class="icon-row--text">Logout</span>
+                    <div class="dropdown-divider my-0"></div>
+                    <a class="dropdown-item py-2 pl-1 icon-row" href="{% url 'accounts:logout' %}">
+                      <i class="icon-row__icon mx-2 text-secondary fas fa-sign-out-alt mr-2"></i><span class="icon-row--text">Logout</span>
                     </a>
                   </div>
                 </div>

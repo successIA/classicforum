@@ -54,19 +54,22 @@
         <i class="fas fa-ellipsis-h text-muted d-inline-block px-2 py-2"></i>
       </a>
 
-      <div class="dropdown-menu shadow dropdown-menu-right py-0" style="min-width: 8.7rem;">
-        <a class="dropdown-item py-2 px-2 icon-row" href="#">
-          <i class="icon-row__icon mr-1 far fa-flag"></i><span class="icon-row--text">Report</span>
+      <div class="dropdown-menu shadow dropdown-menu-right py-0 px-0 dropdown-hover-fix" style="min-width: 8.7rem;">
+        <a class="dropdown-item py-2 pl-1 icon-row" href="#">
+          <i class="icon-row__icon mx-2 text-secondary far fa-flag"></i>
+          <span class="icon-row--text">Report</span>
         </a>
 
         {% if request.user.is_authenticated and request.user != comment.user  %}
           {% if request.user in comment.user.followers %}
-            <a class="dropdown-item py-2 px-2 icon-row" href="{{ comment.user.get_user_follow_url }}">
-              <i class="icon-row__icon mr-1 fas fa-user-friends"></i><span class="icon-row--text">Unfollow</span>
+            <a class="dropdown-item py-2 pl-1 icon-row" href="{{ comment.user.get_user_follow_url }}">
+              <i class="icon-row__icon mx-2 text-secondary fas fa-user-friends"></i>
+              <span class="icon-row--text">Unfollow</span>
             </a>
           {% else %}
-            <a class="dropdown-item py-2 px-2 icon-row" href="{{ comment.user.get_user_follow_url }}">
-              <i class="icon-row__icon mr-1 fas fa-user-friends"></i><span class="icon-row--text">Follow</span>
+            <a class="dropdown-item py-2 pl-1 icon-row" href="{{ comment.user.get_user_follow_url }}">
+              <i class="icon-row__icon mx-2 text-secondary fas fa-user-friends"></i>
+              <span class="icon-row--text">Follow</span>
             </a>
             </a>
           {% endif %}
@@ -74,12 +77,14 @@
 
         {% if request.user.is_authenticated and request.user == comment.user %}
           {% if comment.is_starting_comment %}
-            <a class="dropdown-item py-2 px-2 icon-row" href="{% precise_post_update_url thread comments.number %}">
-              <i class="icon-row__icon mr-1 far fa-edit"></i><span class="icon-row--text">Edit</span>
+            <a class="dropdown-item py-2 pl-1 icon-row" href="{% precise_post_update_url thread comments.number %}">
+              <i class="icon-row__icon mx-2 text-secondary far fa-edit"></i>
+              <span class="icon-row--text">Edit</span>
             </a>
           {% else %}
-            <a class="dropdown-item py-2 px-2 icon-row" href="{% precise_post_update_url comment comments.number %}">
-              <i class="icon-row__icon mr-1 far fa-edit"></i><span class="icon-row--text">Edit</span>
+            <a class="dropdown-item py-2 pl-1 icon-row" href="{% precise_post_update_url comment comments.number %}">
+              <i class="icon-row__icon mx-2 text-secondary far fa-edit"></i>
+              <span class="icon-row--text">Edit</span>
             </a>
           {% endif %}
         {% endif %}
@@ -87,21 +92,24 @@
         {% if request.user.is_authenticated and request.user.is_moderator %}
           {% if comment.is_starting_comment %}
             {% if can_hide_thread %}{# can_hide_thread is already initialised at the top #}           
-              <a href="#" data-toggle="modal" data-target="#deleteModal_{{ comment.pk }}" class="dropdown-item py-2 px-2 icon-row">
-                <i class="icon-row__icon mr-1 fas fa-eye-slash"></i><span class="icon-row--text">Hide thread</span>
+              <a href="#" data-toggle="modal" data-target="#deleteModal_{{ comment.pk }}" class="dropdown-item py-2 pl-1 icon-row">
+                <i class="icon-row__icon mx-2 text-secondary fas fa-eye-slash"></i>
+                <span class="icon-row--text">Hide thread</span>
               </a>
             {% endif %} 
           {% else %}
             {% if can_hide_comment %}{# can_hide_comment is already initialised at the top #}               
-              <a href="#" data-toggle="modal" data-target="#deleteModal_{{ comment.pk }}" class="dropdown-item py-2 px-2 icon-row">
-                <i class="icon-row__icon mr-1 fas fa-eye-slash"></i><span class="icon-row--text">Hide comment</span>
+              <a href="#" data-toggle="modal" data-target="#deleteModal_{{ comment.pk }}" class="dropdown-item py-2 pl-1 icon-row">
+                <i class="icon-row__icon mx-2 text-secondary fas fa-eye-slash"></i>
+                <span class="icon-row--text">Hide comment</span>
               </a>
             {% endif %}
           {% endif %}            
         {% endif %}
           
-        <a class="dropdown-item py-2 px-2 icon-row" href="#" data-toggle="modal" data-target="#commentHistoryModal{{ comment.pk }}">
-          <i class="icon-row__icon mr-1 fas fa-history"></i><span class="icon-row--text">See edits</span>
+        <a class="dropdown-item py-2 pl-1 icon-row" href="#" data-toggle="modal" data-target="#commentHistoryModal{{ comment.pk }}">
+          <i class="icon-row__icon mx-2 text-secondary fas fa-history"></i>
+          <span class="icon-row--text">See edits</span>
         </a>
       </div>
     </div>
