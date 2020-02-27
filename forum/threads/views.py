@@ -174,9 +174,9 @@ def update_thread(request, thread_slug, thread=None):
 @login_required
 @thread_adder
 def follow_thread(request, thread_slug, thread=None):
-    # thread = get_object_or_404(Thread, slug=thread_slug)
-    ThreadFollowership.objects.toggle(request.user, thread)
-    followers_count = thread.followers.count()
-    if request.is_ajax():
-        return JsonResponse({'followers_count': followers_count})
+    if request.method == 'POST':
+        ThreadFollowership.objects.toggle(request.user, thread)
+        followers_count = thread.followers.count()
+        if request.is_ajax():
+            return JsonResponse({'followers_count': followers_count})
     return redirect(thread.get_absolute_url())

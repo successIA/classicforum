@@ -121,8 +121,8 @@ def like_comment(request, thread_slug=None, pk=None, comment=None):
                     'is_liker': is_liker               
                 }
             )
-        return HttpResponseRedirect(comment.get_precise_url())
-
+    return HttpResponseRedirect(comment.get_precise_url())
+    
 
 @login_required
 def report_comment(request, pk):

@@ -23,7 +23,7 @@
 
             {% if request.user.is_authenticated %}
               {% if request.user != person %}
-                {% if request.user in person.followers %}
+                {% if request.user in person.followers.all %}
                   <a href="{{ person.get_user_follow_url }}" class="btn btn-outline-primary btn-sm mt-2 font-weight-bold">
                     <i class="fas fa-check mr-1"></i>Following
                   </a>

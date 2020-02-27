@@ -62,10 +62,13 @@ class User(AbstractUser):
         request.user.notif_count = count
 
     def toggle_followers(self, follower):
+        is_follower = False
         if follower not in self.followers.all():
             self.followers.add(follower)
+            return True
         else:
             self.followers.remove(follower)
+        return is_follower
 
     def get_absolute_url(self):
         return reverse('accounts:user_stats', kwargs={'username': self.username})
