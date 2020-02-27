@@ -7,7 +7,7 @@
   <img src="{{ thread.user.get_avatar_url }}" height="60" width="60" class="avatar mr-3 mt-2 d-none d-md-block" alt="..." />
   <div class="media-body">
     <h5 class="mt-0 mb-0">
-      <a href="{% thread_url thread.get_absolute_url thread.comment_count thread.new_c_id thread.new_c_num %}" class="text-dark">
+      <a href="{% thread_url thread.get_absolute_url thread.comment_count thread.new_c_id thread.new_c_num %}" class="text-dark js-stretched-link">
         {{ thread.title }}
       </a>
     </h5>
@@ -35,14 +35,14 @@
       </small>
 
       {% if thread.final_comment_user %}
-        <a href="{{ thread.final_comment_user.get_absolute_url }}" class="text-muted">
+        <a href="{{ thread.final_comment_user.get_absolute_url }}" class="text-muted js-thread-item-username">
           <small class="mr-4">
             <i class="far fa-user text-muted mr-1"></i>{{ thread.final_comment_user.username|capfirst }}
           </small>
         </a>
       {% else %}
-        <a href="{{ thread.user.get_absolute_url }}">
-          <small class="mr-4 text-muted">
+        <a href="{{ thread.user.get_absolute_url }}" class="js-thread-item-username">
+          <small class="mr-4 text-muted js-stretched-link-cancel">
             <i class="far fa-user text-muted mr-1"></i>{{ thread.user.username|capfirst }}
           </small>
         </a>

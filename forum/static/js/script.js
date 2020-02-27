@@ -219,4 +219,28 @@ $(document).ready(function() {
         : $actionBtn.css("opacity", 1);
     }
   };
+
+  var StretchedLinkHandler = {
+    $listItemCardLink: $('.js-stretched-link-box'),
+    linkCancelCls: '.js-stretched-link-cancel',
+    linkCls: '.js-stretched-link',
+
+    init: function() {
+      if (!this.$listItemCardLink[0]) return;
+      this.bindClickEvent();  
+    },
+
+    bindClickEvent: function() {
+      var self = StretchedLinkHandler;
+
+      self.$listItemCardLink.on('click', function(e) {
+        if (!$(e.target).is(self.linkCancelCls)) {
+          window.location = $(this).find(self.linkCls).attr('href').trim()
+          return false;
+        }
+      })
+    }
+  }
+  StretchedLinkHandler.init()
+
 });

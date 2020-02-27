@@ -39,7 +39,7 @@
           {% include "includes/messages.html" with messages=messages%}
           <ul class="list-group mb-4 thread-list-group">
             {% for thread in threads %}
-              <li class="list-group-item">
+              <li class="list-group-item thread-list-item js-stretched-link-box">
                 {% include "includes/_thread_list_item.html" with thread=thread %}
               </li> 
             {% empty %}
