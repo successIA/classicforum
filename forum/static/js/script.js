@@ -166,25 +166,25 @@ $(document).ready(function() {
   NotificationIconBackgroundSwitcher.init();
 
   var ShowPostFormScroll = {
-    $commentForm: $("#post-form"),
-    $commentFormWrapper: $('.js-post-form-wrapper'),
+    $postForm: $("#post-form"),
+    $postFormWrapper: $('.js-post-form-wrapper'),
 
     init: function() {
       // If there is no post-form, it means that the user is a
       // guest
-      if (!this.$commentFormWrapper[0]) return;
+      if (!this.$postFormWrapper[0]) return;
 
-      this.bindAddThreadBtnClick();
+      this.bindPostFormShowBtnClick();
     },
 
-    bindAddThreadBtnClick() {
+    bindPostFormShowBtnClick() {
       var self = this;
       $(".add-thread-btn").on("click", function(e) {
         e.preventDefault();
-        self.$commentForm.show();
+        self.$postForm.show();
         FloatingActionBtnToggler.init();
         $("html,body").animate(
-          { scrollTop: self.$commentForm.offset().top },
+          { scrollTop: self.$postForm.offset().top },
           "slow"
         );
       });
