@@ -96,7 +96,7 @@ def user_profile_edit(request, username):
             if avatar_url:
                 user.avatar_url = avatar_url
             user.save()
-            messages.success(request, 'Profile updated successfully!')
+            messages.success(request, 'Profile has been updated')
             username = request.user.username
             return HttpResponseRedirect(
                 reverse('accounts:user_edit', kwargs={'username': username})

@@ -79,13 +79,18 @@ $(document).ready(function() {
 
   var ConfirmProfileSettings = {
     hasChanged: false, 
+    isFormSubmitting: false,
 
     init: function() {
       this.bindConfirmPageEvent();
+      this.bindProfileUpdateFormEvent();
     },
 
-    confirm: function() {
-      return "Are you sure you want to leave?";
+    bindProfileUpdateFormEvent: function() {
+      var self = ConfirmProfileSettings;
+      $('.js-profile-update-btn').on('click', function(e) {
+        self.isFormSubmitting = true;
+      });
     },
 
     bindConfirmPageEvent: function() {
@@ -96,15 +101,22 @@ $(document).ready(function() {
       ).change(function() {
         self.hasChanged = true;
       });
+
+      $(
+        "#id_gender,#id_signature,#id_location,#id_website"
+      ).keydown(function() {
+        self.hasChanged = true;
+      });
       
-      window.onbeforeunload = function() {
-        var image = $("#id_image").val();
-        var gender = $("#id_gender").val();
-        var signature = $("#id_signature").val();
-        var location = $("#id_location").val();
-        var website = $("#id_website").val();
-        var isNonEmpty = !!(image || gender || signature || location || website);
-        if (self.hasChanged && isNonEmpty) {
+      window.onbeforeunload = function(e) {
+        var image = !!($("#id_image").length) && $("#id_image").val();
+        var gender = !!($("#id_gender").length) && $("#id_gender").val();
+        var signature = !!($("#id_signature").length) && $("#id_signature").val();
+        var location = !!($("#id_location").length) && $("#id_location").val();
+        var website = !!($("#id_website").length) && $("#id_website").val();
+        var hasNonEmptyField = !!(image || gender || signature || location || website);
+        if (self.hasChanged && hasNonEmptyField && !self.isFormSubmitting) {
+          self.isFormSubmitting = false;
           return "Are you sure you want to leave?";
         }
       };
