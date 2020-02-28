@@ -39,14 +39,18 @@ var easyMDE = new EasyMDE({
         self.hasChanged = true;
       })
 
+      $("#id_title").keydown(function() {
+        self.hasChanged = true;
+      })
+
       window.onbeforeunload = function(e) {
         var $categorySelect = $("#id_category");
         var $titleInput = $("#id_title");
         var category = !!($categorySelect.length) && $categorySelect.val();
         var title=  !!($titleInput.length) && $titleInput.val();
         var message =  easyMDE.value()
-        var isFormEmpty = !!(category || title || message)
-        if (self.hasChanged && isFormEmpty && !self.isFormSubmitting) {
+        var hasNonEmptyField = !!(category || title || message)
+        if (self.hasChanged && hasNonEmptyField && !self.isFormSubmitting) {
           return "Are you sure you want to leave?";
         }
       };
