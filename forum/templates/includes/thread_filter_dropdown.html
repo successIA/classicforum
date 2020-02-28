@@ -20,7 +20,7 @@
     {% endif %}
   </span>
 </a>
-<div class="dropdown-menu dropdown-menu-right shadow-sm">
+<div class="dropdown-menu dropdown-menu-right shadow-sm small-font-size py-1">
   {% for key, value in filter_dropdown_list %}
     <a class="dropdown-item {% if current_thread_filter == key %}bg-primary text-white{% endif %}"
       href="{% if category %}/categories/{{ category.slug }}/{{ key }}/{% else %}/threads/{{ key }}/{% endif %}">

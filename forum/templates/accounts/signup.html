@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'auth_base.html' %}
 
 {% load crispy_forms_tags %}
 
@@ -6,23 +6,21 @@
 	New Account
 {% endblock title %}
 
-{% block content %}
+{% block auth_content %}
 	<div class="container mb-5">
 		<div class="row mt-4">
 			<div class="col-12 offset-0 col-sm-10 offset-sm 1 col-md-8 offset-md-2 col-lg-8 offset-lg-2 col-xl-6 offset-xl-3">
 				<div class="card">
-					<div class="card-header bg-white">
-						<h5 class="text-dark mb-0">Sign up</h5>
-					</div>
 					<div class="card-body">
-						<form method="post" novalidate>
+            <h3 class="card-title">Sign Up</h3>
+						<form method="post" novalidate class="auth-form">
 							{% csrf_token %}
 							{{ form | crispy }}
 							<button type="submit" class="btn btn-primary btn-block">Create an account</button>
 						</form>
 						<div class="text-center mt-3 text-muted">
 							<div>
-								Already have an account? <a href="{% url 'accounts:login' %}" class="text-primary">Login</a>
+								Already a member? <a href="{% url 'accounts:login' %}" class="text-primary">Login</a>
 							</div>
 						</div>
 					</div>
@@ -30,4 +28,4 @@
 			</div>
 		</div>
 	</div>
-{% endblock content %}
+{% endblock auth_content %}
