@@ -1,7 +1,7 @@
 {% extends 'auth_base.html' %}
 
 {% block title %}
-  Invalid Activation
+  Successful Activation
 {% endblock title %}
 
 {% block auth_content %}
@@ -10,10 +10,11 @@
       <div class="col-12 offset-0 col-sm-10 offset-sm 1 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
         <div class="card">
           <div class="card-body">
-            <h3 class="card-title text-danger">Invalid Activation Link</h3>
-            The confirmation link was invalid, possibly because it has already been used.
-            If you received an email from ClassicForum to confirm your registration, 
-            please either try the link provided there again or double check that this URL matches. 
+            <h3 class="card-title">Activation Success!</h3>              
+            <p>Your account has been activated.</p>
+            <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-block">
+              <i class="fas fa-sign-in-alt mr-1"></i>Return to login
+            </a>
           </div>
         </div>
       </div>

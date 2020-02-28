@@ -177,10 +177,9 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.email_confirmed = True
         user.save()
-        # authenticate the new user by setting his/her plain text password to a
-        # unique hash
-        auth_login(request, user)
-        return redirect('home')
+        return render(
+            request, 'accounts/account_activation_success.html'
+        )
     return render(request, 'accounts/account_activation_invalid.html')
 
 
