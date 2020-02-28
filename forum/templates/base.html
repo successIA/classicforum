@@ -20,18 +20,18 @@
   
   <title>
     {% block title %}
-      Forum
+      ClassicForum
     {% endblock %}
   </title>
 </head>
 
 <body>
   {% block absolute_content %}{% endblock absolute_content %}
-  <!-- Overlay -->
+  
   <div class="sidebar-overlay"></div>
+
   <div class="d-flex" id="wrapper">
     {% block sidebar %}
-      <!-- Sidebar -->
       <div class="bg-light" id="sidebar-wrapper">
         <div class="sidebar-heading font-weight-bold">
           <span class="d-inline-block d-md-none" id="close-sidebar">&times;</span>
@@ -47,16 +47,15 @@
             {% get_category_list %}
           {% endif %}
         </div>
-      </div><!-- Sidebar -->
+      </div>
     {% endblock sidebar %}
 
     {% block sidebar_fix %}
-    <!-- Sidebar Fix -->
     <div class="sidebar-wrapper-fix">
       <div class="list-group">
         <a class="list-group-item" href="#"></a>
       </div>
-    </div><!-- Sidebar Fix -->
+    </div>
     {% endblock sidebar_fix %}
 
     <div id="page-content-wrapper">

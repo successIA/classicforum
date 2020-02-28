@@ -20,26 +20,27 @@
 {% endif %}
 
 <div class="media flex-column flex-md-row comment" id="comment{{ comment.id }}">
-  <div class="d-flex mb-1">
+  <div class="d-flex mb-2">
     <a href="{{ comment.user.get_absolute_url }}">
       <img src="{{ comment.user.get_avatar_url }}" width="60" height="60" class="avatar mr-3" alt="..." />
     </a>
 
+    <!-- Mobile -->
     <div class="d-flex d-md-none align-items-center">
-      <strong>
+      <b>
         <a href="{{ comment.user.get_absolute_url }}" class="comment--username">
           {{ comment.user.username }}
         </a>
         <span class="comment__time text-muted"><span class="comment__time-circle"></span>
           <small class="d-inline-block font-weight-bold">{{ comment.created|naturaltime|splittime }}</small>
-          {% if comment.unread %}<span class="badge badge-info">New</span>{% endif %}
         </span>
-      </strong>
-    </div>
+      </b>
+    </div><!-- Mobile -->
   </div>
 
   <div class="media-body w-100">
-    <strong class="d-md-block d-none font-weight-bold">
+    <!-- Desktop -->
+    <b class="d-md-block d-none font-weight-bold">
       <a href="{{ comment.user.get_absolute_url }}" class="comment--username">
         {{ comment.user.username }}
       </a>
@@ -47,7 +48,7 @@
         <small class="d-inline-block font-weight-bold">{{ comment.created|naturaltime|splittime }}</small>
       </span>
       {% if comment.unread %}<span class="badge badge-info">New</span>{% endif %}
-    </strong>
+    </b><!-- Desktop -->
 
     <div class="btn-group position-absolute comment__more-icon">
       <a class="dropdown-toggle nav-profile-img text-dark" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
@@ -75,10 +76,9 @@
               >
                 <i class="icon-row__icon mx-2 text-secondary fas fa-user-friends"></i>
                 <span class="icon-row--text js-user-follow-link-text">
-                  {% if request.user in comment.user.followers %}Unfollow{% else %}Follow
+                  {% if request.user in comment.user.followers.all %}Unfollow{% else %}Follow{% endif %}
                 </span>
               </a>
-            {% endif %}
           {% endif %}
         </div>
 
@@ -122,7 +122,6 @@
     </div>
 
     <div class="mb-1 comment-message">
-      {% comment %} <h4>{{ comment.position }} {{ comment.offset }}</h4> {% endcomment %}
       {{ comment.marked_message|safe }}
     </div>
 

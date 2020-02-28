@@ -16,16 +16,16 @@
           {% if results %}
             <div class="col-12">
               <h4 class="mb-3">
-                Search results for <strong class="text-secondary">{{ query }}</strong>
+                Search results for <b class="text-secondary">{{ query }}</b>
               </h4>   
             </div>
           {% else %}
             <div class="col-12">
               <h4 class="d-none d-sm-block mb-3">
-                No search results for <strong class="text-secondary">{{ query|truncatechars:50 }}</strong>
+                No search results for <b class="text-secondary">{{ query|truncatechars:50 }}</b>
               </h4>
               <h4 class="d-md-none mb-3">
-                No search results for <strong class="text-secondary">{{ query|truncatechars:25 }}</strong>
+                No search results for <b class="text-secondary">{{ query|truncatechars:25 }}</b>
               </h4>
             </div>
           {% endif %}

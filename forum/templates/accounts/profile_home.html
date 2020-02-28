@@ -7,15 +7,14 @@
 {% block profile_content %}
   <main>
     <div class="container ">
-      <!-- Profile Info -->
       <div class="row offset-lg-1">
         <div class="col-7 col-lg-7 col-xl-8 mt-4">
           <!-- Mobile -->
-          <img src="{{ userprofile.get_avatar_url }}" height="90" width="90" class="mr-3 rounded-circle d-md-none avatar" alt="..." /><!-- Mobile -->
+          <img src="{{ userprofile.get_avatar_url }}" height="90" width="90" class="mr-3 d-md-none avatar" alt="..." /><!-- Mobile -->
 
           <!-- Desktop -->
           <div class="d-none d-md-table-cell">
-            <img src="{{ userprofile.get_avatar_url }}" height="150" width="150" class="mr-3 rounded-circle d-none d-sm-block avatar" alt="..." />
+            <img src="{{ userprofile.get_avatar_url }}" height="150" width="150" class="mr-3 d-none d-sm-block avatar" alt="..." />
           </div><!-- Desktop -->
 
           <div class="d-none d-md-table-cell align-top">
@@ -23,7 +22,7 @@
           </div>
         </div>
 
-        <div class="col-5 mt-4 d-flex align-items-start justify-content-end justify-content-lg-end justify-content-xl-end col-lg-3 col-xg-2">
+        <div class="col-5 col-lg-3 col-xg-2 mt-4 d-flex align-items-start justify-content-end">
           {% if request.user.is_authenticated and request.user == userprofile %}
             <a href="{% url 'accounts:user_edit' userprofile.username %}" class="btn btn-outline-primary float-right">
               Edit profile
@@ -67,27 +66,24 @@
         </div>
       </div><!-- Profile Info (responsive-fix)-->
 
-      <!-- Profile Activity -->
       <div class="row mt-3 offset-lg-1">
         <div class="col-sm-12">
           {% include 'accounts/includes/profile_home_activity.html' with userprofile=userprofile active_category=active_category %}
         </div>
-      </div><!-- Profile Activity -->
+      </div>
 
-      <!-- Profile Stats -->
       <div class="row mt-3 offset-lg-1 mb-4">
         <div class="col-sm-12">
           {% include 'accounts/includes/profile_home_stats.html' with userprofile=userprofile %}
         </div>
-      </div><!-- Profile Stats -->
+      </div>
 
       <div class="row offset-lg-1 mb-5">
-        <!-- Recent Posts Tab Panel -->
         <div class="col-12 col-lg-8">
           <h5>Recent Posts</h5>
           <hr>
           {% include 'accounts/includes/profile_home_recent_posts.html' with userprofile=userprofile recent_comments=recent_comments recent_threads=recent_threads %}         
-        </div><!-- Recent Posts Tab Panel -->
+        </div>
       </div>
   </main>
 {% endblock profile_content %}

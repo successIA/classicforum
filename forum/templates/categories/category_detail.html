@@ -1,68 +1,25 @@
-{% extends 'base.html' %}
-
-{% load forum_template_tags %}
-{% load moderation_template_tags %}
-{% load humanize %}
-{% load static %}
+{% extends 'home.html' %}
 
 {% block title %}
   {{ category.title }}
 {% endblock title %}
 
-{% block content %}
-  <div class="nav-container container-fluid bg-white">
-    <div class="row align-items-center">
-      {% include 'includes/thread_filter_ctrl.html' with current_thread_filter=current_thread_filter %}
-      <ol class="d-none d-md-flex ml-md-auto breadcrumb bg-white justify-content-end align-items-center 
-        rounded-0 py-0 pt-auto mb-0 nav-breadcrumb">
-        <li class="breadcrumb-item">
-          <span class="nav-breadcrumb__text-light text-muted">
-            <a href="/" class="text-decoration-none" class="text-secondary">
-              Home
-            </a>
-          </span>
-        </li>
-        <li class="breadcrumb-item">
-          <span class="nav-breadcrumb__text-bold text-muted">
-              {{ category.title }}
-          </span>
-        </li>
-      </ol>
-      {% comment %} {% include 'includes/thread_add_partial.html' %} {% endcomment %}
-    </div>
-  </div>
-  
-  <main>
-    <div class="container">
-      <div class="row mt-4">
-        <div class="col-sm-12 col-md-10 offset-md-1 col-lg-9 col-xl-8 offset-lg-1">
-          {% include "includes/messages.html" with messages=messages%}
-          <ul class="list-group mb-4 thread-list-group">
-            {% for thread in threads %}
-              <li class="list-group-item thread-list-item js-stretched-link-box">
-                {% include "includes/_thread_list_item.html" with thread=thread %}
-              </li> 
-            {% empty %}
-              {% empty_thread_description current_thread_filter as description %}
-              {% include "includes/_empty_state_card.html" with icon="fas fa-book" text=description %}       
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
+{% block breadcrumb %}
+  <ol class="d-none d-md-flex ml-md-auto breadcrumb bg-white justify-content-end align-items-center 
+    rounded-0 py-0 pt-auto mb-0 nav-breadcrumb">
+    <li class="breadcrumb-item">
+      <span class="nav-breadcrumb__text-light text-muted">
+        <a href="/" class="text-decoration-none" class="text-secondary">
+          Home
+        </a>
+      </span>
+    </li>
+    <li class="breadcrumb-item">
+      <span class="nav-breadcrumb__text-bold text-muted">
+        {{ category.title }}
+      </span>
+    </li>
+  </ol>
+{% endblock breadcrumb %}
 
-      <div class="row my-4">
-        <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1">
-          {% include "includes/pagination.html" with page_obj=threads base_url=base_url prev_url=prev_url next_url=next_url %}
-        </div>
-      </div>
-
-      {% if request.user.is_authenticated %}
-        <div class="row">
-          <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-1 js-post-form-wrapper">
-            {% include "includes/comment_form.html" with form=form form_action=form_action title="Create Thread" %}
-          </div>
-        </div>
-      {% endif %}        
-    </div>
-  </main>
-{% endblock content %}
+{% comment %} {% include 'includes/thread_add_partial.html' %} {% endcomment %}

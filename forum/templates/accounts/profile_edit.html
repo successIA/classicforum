@@ -8,7 +8,6 @@
 {% block  profile_content %}
   <main>
     <div class="container mt-lg-4">
-      <!-- Navigation Scroller Item Detail -->
       <div class="row offset-lg-1">
         <div class="col-12">
           <h5 class="mb-3">Edit Profile</h5>
@@ -19,14 +18,15 @@
               <div class="row">
                 <div class="col-12 text-center mb-0 mb-md-0 col-md-3 col-lg-4 col-xl-4 d-xl-flex justify-content-xl-end">
                   <!-- Mobile -->
-                  <img src="{{ userprofile.get_avatar_url }}" height="90" width="90"
-                    class="avatar mx-auto d-md-none" alt="..."
-                    style="cursor: pointer;"
-                    id="custom-image-chooser1" />
-                  <span class="text-muted font-weight-light mt-1 text-center d-block d-md-none">
-                    Tap image to change picture
-                  </span>
-                  <!-- Mobile -->
+                  <div>
+                    <img src="{{ userprofile.get_avatar_url }}" height="90" width="90"
+                      class="avatar mx-auto d-md-none" alt="..."
+                      style="cursor: pointer;"
+                      id="custom-image-chooser1" />
+                    <span class="text-muted font-weight-light mt-1 text-center d-block d-md-none">
+                      Tap image to change picture
+                    </span>
+                  </div><!-- Mobile -->
 
                   <!-- Desktop -->
                   <div class="d-none d-md-table-cell">
@@ -35,7 +35,7 @@
                       style="cursor: pointer;"
                       id="custom-image-chooser2" />									
                   </div><!-- Desktop -->
-                </div><!-- row col -->
+                </div>
 
                 <div class="col-12 col-md-9 col-lg-8 col-xl-8">
                   {% csrf_token %}
@@ -47,7 +47,6 @@
           </div>
         </div>
       </div>
-      <!-- Navigation Scroller Item Detail -->
     </div>
   </main>
 {% endblock profile_content %}

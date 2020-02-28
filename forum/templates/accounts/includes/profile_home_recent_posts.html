@@ -14,10 +14,8 @@
   </li>
 </ul>
 
-<!-- Tab Panel Content -->
 <div class="tab-content" id="myTabContent">
   <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-    <!-- Comment Section -->
     <ul class="list-group mb-4 comment-list-group">
       {% for comment in recent_comments %}
         <li class="list-group-item rounded-0">
@@ -26,11 +24,10 @@
       {% empty %}
         {% include "includes/_empty_state_card.html" with icon="far fa-comments" text="No comments yet" %}       
       {% endfor %}                
-    </ul><!-- Comment Section -->
+    </ul>
   </div>
 
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-    <!-- Thread Section -->
     <ul class="list-group mb-4 thread-list-group">
       {% for thread in recent_threads %}
         <li class="list-group-item">
@@ -40,6 +37,6 @@
         {% empty_thread_description "me" as description %}
         {% include "includes/_empty_state_card.html" with icon="fas fa-book" text=description %}       
       {% endfor %}
-    </ul><!-- Thread Section -->
+    </ul>
   </div>
-</div><!-- Tab Panel Content -->
+</div>

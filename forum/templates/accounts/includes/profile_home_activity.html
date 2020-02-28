@@ -2,29 +2,29 @@
 
 {% if userprofile.is_online %}
   <span class="d-inline-block mr-3 mt-2 mt-md-0">
-    <i class="far fa-clock mr-2 text-muted"></i><strong>Online</strong>
+    <i class="far fa-clock mr-2 text-muted"></i><b>Online</b>
   </span>
 {% else %}
   <span class="d-inline-block mr-3 mt-2 mt-md-0">
-    <i class="far fa-clock mr-2 text-muted"></i><strong>{{ userprofile.last_seen|timesince|splittime }} (offline)</strong>
+    <i class="far fa-clock mr-2 text-muted"></i><b>{{ userprofile.last_seen|timesince|splittime }} (offline)</b>
   </span>
 {% endif %}
 
 <span class="d-inline-block mr-3 mt-2 mt-md-0">
   <i class="far fa-comment mr-2 text-muted"></i>
   {% if last_posted %}
-    <strong>{{ last_posted|timesince|splittime }}</strong>
+    <b>{{ last_posted|timesince|splittime }}</b>
   {% else %}
-    <strong>No posts yet</strong>
+    <b>No posts yet</b>
   {% endif %}
 </span>
 
 <span class="d-inline-block mr-3 mt-2 mt-md-0">
-  <i class="far fa-eye mr-2 text-muted"></i><strong>139</strong>
+  <i class="far fa-eye mr-2 text-muted"></i><b>139</b>
 </span>
 
 {% if active_category %}
   <span class="d-inline-block mr-3 mt-2 mt-md-0">
-    <i class="fas fa-bolt mr-2 text-muted"></i><strong>{{ active_category }}</strong>
+    <i class="fas fa-bolt mr-2 text-muted"></i><b>{{ active_category }}</b>
   </span>
 {% endif %}
