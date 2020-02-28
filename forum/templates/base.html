@@ -11,6 +11,7 @@
   
   <link rel="stylesheet" href="{% static 'css/fontawesome/all.css' %}">
   <link rel="stylesheet" href="{% static 'css/easymde.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/snackbarlight.css' %}">
 
   {% compress css %}
     <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/styles.scss' %}" media="screen">
@@ -170,6 +171,7 @@
   <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
   <script src="{% static 'js/popper.min.js' %}"></script>
   <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/snackbarlight.js' %}"></script>
 
   {% if request.user.is_authenticated and show_floating_btn %}
     <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
