@@ -31,7 +31,7 @@ $(document).ready(function() {
             $likeBtn.attr('disabled', false).css('cursor', 'pointer')
           },
 
-          error: function(data) {
+          error: function() {
             alert("Something went wrong")
             $likeBtn.attr('disabled', false).css('cursor', 'pointer')
           }
@@ -57,7 +57,7 @@ $(document).ready(function() {
         $tempInput.val(permalink).select();
         document.execCommand("copy");
         $tempInput.remove();
-        alert("You copied " + permalink)
+        new Snackbar("Link copied to clipbaord!");
       })
     }
   }
@@ -84,17 +84,20 @@ $(document).ready(function() {
             $followLinkText = $followLink.find('.js-user-follow-link-text');
             if (data.is_follower) {
               $followLinkText.text('Unfollow')
-              alert("Following " + $followLink.data('user'))
+              new Snackbar(
+                "Following <b class='text-primary'>" + $followLink.data('user') + "</b>"
+              );
             } else {
               $followLinkText.text('Follow')
-              alert("Unfollowed " + $followLink.data('user'))
+              new Snackbar(
+                "Unfollowed <b class='text-primary'>" + $followLink.data('user') + "</b>"
+              );
             }
             $followLink.attr('disabled', false).css('cursor', 'pointer');
           },
           
-          error: function(data) {
-            alert("Something went wrong")
-            $followLink.attr('disabled', false).css('cursor', 'pointer')
+          error: function() {
+            alert("Something went wrong");
           }
         });
       });  

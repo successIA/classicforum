@@ -34,7 +34,7 @@ $(document).ready(function() {
             $followBtn.attr('disabled', false).css('cursor', 'pointer');
           },
 
-          error: function(data) {
+          error: function() {
             alert("Something went wrong")
             $followBtn.attr('disabled', false).css('cursor', 'pointer')
           }
