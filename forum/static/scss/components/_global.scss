@@ -12,3 +12,26 @@ blockquote {
   padding: 10px 10px !important;
 }
 
+.small-font-size {
+  font-size: .875rem;
+}
+
+.auth-form {
+  label {
+    color: $gray-700;
+    font-weight: bold;
+    font-size: .875rem;
+  }
+  
+  // Login form
+  .alert ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  // Password reset form 
+  #hint_id_new_password1 {
+    display: none;
+  }
+}

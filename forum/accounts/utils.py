@@ -14,7 +14,7 @@ def get_signup_email_confirm_form_entries(request, user):
         'token': account_activation_token.make_token(user)
     }
     return {
-        'subject': 'Activate Your Forum Account',
+        'subject': 'Activate Your ClassicForum Account',
         'message': render_to_string(
             'accounts/account_activation_email.html', ctx
         )

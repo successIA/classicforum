@@ -271,7 +271,7 @@ class SignupTest(TestCase):
         response = self.client.post(self.url, self.valid_data)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, 'Activate Your Forum Account')
+        self.assertEqual(mail.outbox[0].subject, 'Activate Your ClassicForum Account')
 
 
 class ActivateTest(TestCase):

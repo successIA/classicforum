@@ -1,7 +1,11 @@
 {% autoescape off %}
 Hi {{ user.username }},
 
-Please click on the link below to confirm your registration:
+You are receiving this email because you created an account at ClassicForum.com.
+
+Please click on the link below to verify your account:
 
 http://{{ domain }}{% url 'accounts:activate' uidb64=uid token=token %}
+
+Thanks
 {% endautoescape %}

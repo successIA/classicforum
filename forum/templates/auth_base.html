@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{% endblock title%}
+
+{% block sidebar %}
+{% endblock sidebar %}
+{% block sidebar_fix %}
+{% endblock sidebar_fix %}
+
+{% block navigation %}
+{% endblock navigation %}
+
+{% block content %}
+  <div class="text-center auth-page">
+    <h3 class="mt-5 mb-3">
+      <a href="/" class="text-decoration-none">ClassicForum</a>
+    </h3>
+  </div>
+
+  {% block auth_content %}{% endblock auth_content %}  
+{% endblock content %}
