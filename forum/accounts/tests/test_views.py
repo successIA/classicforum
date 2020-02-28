@@ -287,7 +287,7 @@ class ActivateTest(TestCase):
             'accounts:activate', kwargs={'uidb64': uid, 'token': token}
         )
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         user.refresh_from_db()
         self.assertTrue(user.email_confirmed)
         self.assertTrue(user.is_active)

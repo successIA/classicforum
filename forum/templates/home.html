@@ -28,8 +28,12 @@
                 {% include "includes/_thread_list_item.html" with thread=thread %}
               </li>               
             {% empty %}
-              {% if current_thread_filter == 'recent' %}            
-                {% include "includes/_empty_state_card.html" with icon="fas fa-book" text="No Available threads at this moment. Start a new thread or check back later." %}
+              {% if current_thread_filter == 'recent' %}    
+                {% if category is not None %}
+                  {% include "includes/_empty_state_card.html" with icon="fas fa-book" text="No threads yet" %}
+                {% else %}
+                  {% include "includes/_empty_state_card.html" with icon="fas fa-book" text="No Available threads at this moment. Start a new thread or check back later." %}
+                {% endif %}        
               {% else %}
                 {% empty_thread_description current_thread_filter as description %}
                 {% include "includes/_empty_state_card.html" with icon="fas fa-book" text=description %}       
