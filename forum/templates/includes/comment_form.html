@@ -1,6 +1,5 @@
 {% load crispy_forms_tags %}
 
-<!-- COMMENT FORM -->
 <div id="post-form" style="{% if is_post_update %} display: block {% else %} display: none {% endif %}">
   <h5 class="mb-3">{{ title }}</h5>
   <form style="margin-top: 0.2em;" action="{{ form_action }}"  method="post"

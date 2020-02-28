@@ -4,7 +4,7 @@
 {% load humanize %}
 
 <div class="media">  
-  <img src="{{ thread.user.get_avatar_url }}" height="60" width="60" class="avatar mr-3 mt-2 d-none d-md-block" alt="..." />
+  <img src="{{ thread.user.get_avatar_url }}" height="60" width="60" class="avatar mr-3 d-none d-md-block" alt="..." />
   <div class="media-body">
     <h5 class="mt-0 mb-0">
       <a href="{% thread_url thread.get_absolute_url thread.comment_count thread.new_c_id thread.new_c_num %}" class="text-dark js-stretched-link">

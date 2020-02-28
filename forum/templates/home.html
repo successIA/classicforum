@@ -5,11 +5,16 @@
 {% load moderation_template_tags %}
 {% load static %}
 
+{% block title %}
+  {{ block.super }} | Home
+{% endblock title %}
+
 {% block content %}
   <div class="nav-container container-fluid bg-white">
     <div class="row align-items-center">
       {% include 'includes/thread_filter_ctrl.html' with current_thread_filter=current_thread_filter %}
       {% comment %} {% if request.user.is_authenticated %}{% include 'includes/thread_add_partial.html' %}{% endif %}  {% endcomment %}
+      {% block breadcrumb %}{% endblock breadcrumb %}
     </div>
   </div>
 
