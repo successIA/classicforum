@@ -8,7 +8,6 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.conf import settings
 
 from PIL import Image
-from sorl.thumbnail import get_thumbnail
 
 from forum.attachments.models import Attachment
 
