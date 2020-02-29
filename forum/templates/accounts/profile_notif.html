@@ -12,7 +12,7 @@
           <h5 class="mb-3">Notifications</h5>
           <ul class="list-group mb-4 notification-list-group">
             {% for notif in notifications %}
-              <li class="profile__notif-list list-group-item {% if notif.unread %}bg-light{% endif %}">
+              <li class="profile__notif-list list-group-item link-list-item js-stretched-link-box {% if notif.unread %}bg-light{% endif %}" style="max-height: 5rem; overflow: hidden;">
                 {{ notif.get_description }}
               </li>
             {% empty %}

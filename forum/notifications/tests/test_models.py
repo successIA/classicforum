@@ -15,7 +15,7 @@ from forum.threads.models import ThreadFollowership
 
 from forum.comments.models import Comment, CommentRevision
 from forum.comments.tests.utils import make_comment
-from forum.threads.tests.utils import make_only_thread
+from forum.threads.tests.utils import make_only_thread, make_threads
 from forum.categories.tests.utils import make_category
 
 
@@ -24,7 +24,7 @@ class NotificationModelTest(TestCase):
         self.sender = self.make_user('ahmed')
         self.receiver = self.make_user('zainab')
         self.category = make_category()
-        self.thread = make_only_thread(self.sender, self.category)
+        self.thread = make_threads(user=self.sender, category=self.category)
         self.comment = make_comment(self.sender, self.thread)
 
     def test_save_using_thread_and_comment(self):

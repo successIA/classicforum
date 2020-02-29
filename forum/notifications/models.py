@@ -67,27 +67,26 @@ class NotificationQuerySet(models.query.QuerySet):
 class Notification(TimeStampedModel):
     THREAD_CREATED = 'th_crd'
     THREAD_UPDATED = 'th_upd'
-    COMMENT_CREATED = 'co_crd'
     COMMENT_LIKED = 'co_lik'
     COMMENT_REPLIED = 'co_rep'
     USER_MENTIONED = 'us_men'
     USER_FOLLOWED = 'us_fld'
 
     NOTIF_TYPES = (
-        (THREAD_CREATED, 'created'),
-        (THREAD_UPDATED, 'updated'),
-        (COMMENT_CREATED, 'commented'),
-        (COMMENT_LIKED, 'liked'),
-        (COMMENT_REPLIED, 'posted a reply'),
-        (USER_MENTIONED, 'mentioned'),
-        (USER_FOLLOWED, 'following')
+        (THREAD_CREATED, 'started a new thread:'),
+        (THREAD_UPDATED, 'updated a thread you are following:'),
+        (COMMENT_LIKED, 'liked your comment in'),
+        (COMMENT_REPLIED, 'replied to your comment in'),
+        (USER_MENTIONED, 'mentioned you in a comment in'),
+        (USER_FOLLOWED, 'is now following you')
     )
 
     NOTIF_THREAD_TYPES = [THREAD_CREATED, THREAD_UPDATED]
     NOTIF_COMMENT_TYPES = [
-        COMMENT_CREATED, COMMENT_LIKED, COMMENT_REPLIED, USER_MENTIONED
+        COMMENT_LIKED, COMMENT_REPLIED, USER_MENTIONED
     ]
     NOTIF_USER_TYPES = [USER_FOLLOWED]
+
 
     sender = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -115,10 +114,10 @@ class Notification(TimeStampedModel):
         )
 
     def save(self, *args, **kwargs):
-        self._validate_fields()        
+        self._validate_fields_or_error()        
         super(Notification, self).save(*args, **kwargs)
 
-    def _validate_fields(self):
+    def _validate_fields_or_error(self):
         error = None
         if self.thread and self.comment:
             raise FieldError(
@@ -142,17 +141,9 @@ class Notification(TimeStampedModel):
             raise FieldError('Invalid notification type')
     
     def get_description(self):
-        context = {'userprofile': self.sender, 'notif': self}
-        description_dict = {
-            Notification.THREAD_CREATED: 'notifications/thread_create.html',
-            Notification.THREAD_UPDATED: 'notifications/thread_update.html',
-            # Notification.COMMENT_CREATED: 'notifications/comment_create.html',
-            Notification.COMMENT_LIKED: 'notifications/comment_like.html',
-            Notification.COMMENT_REPLIED: 'notifications/comment_reply.html',
-            Notification.USER_MENTIONED: 'notifications/comment_mention.html',
-            # Notification.USER_FOLLOWED: 'notifications/thread_update.html',
-        }
-        return render_to_string(description_dict[self.notif_type], context)
+        return render_to_string(
+            'notifications/notification.html', {'notif': self}
+        )
 
     def get_precise_url(self, position):
         page_num = ceil(position / NOTIF_PER_PAGE)
@@ -163,3 +154,34 @@ class Notification(TimeStampedModel):
             ),
             page_num
         )
+
+    @property
+    def action_object_verb(self):
+        print(self.notif_type)
+        return dict(Notification.NOTIF_TYPES)[self.notif_type]
+    
+    @property
+    def action_object_title(self):
+        if self.notif_type in Notification.NOTIF_COMMENT_TYPES:
+            return self.comment.thread.title
+        elif self.notif_type in Notification.NOTIF_THREAD_TYPES:
+            return self.thread.title
+        return None
+
+    @property
+    def action_object_message(self):
+        if self.notif_type in Notification.NOTIF_COMMENT_TYPES:
+            return self.comment.marked_message
+        elif self.notif_type in Notification.NOTIF_THREAD_TYPES:
+            return self.thread.starting_comment.marked_message
+        return None
+    
+    @property
+    def action_object_url(self):
+        if self.notif_type in Notification.NOTIF_COMMENT_TYPES:
+            return self.comment.get_precise_url()
+        elif self.notif_type in Notification.NOTIF_THREAD_TYPES:
+            return self.thread.get_absolute_url()
+        elif self.notif_type in Notification.NOTIF_USER_TYPES:
+            return self.sender.get_absolute_url()
+    
