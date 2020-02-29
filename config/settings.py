@@ -39,20 +39,12 @@ INSTALLED_APPS = [
 
     # ACTIVATED
     'django.contrib.humanize',
-
-    # Used to point to
-    # 'django/forms/widgets/clearable_file_input.html'
-    # for userprofile clearable file input
     'django.forms',
 
     # THIRD PARTY APPS
     'crispy_forms',
-    'widget_tweaks',
     'debug_toolbar',
     'compressor',
-    'django_seed',
-    'background_task',
-    'sorl.thumbnail',
     'django_extensions',
     'hitcount',
 
