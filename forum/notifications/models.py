@@ -157,7 +157,6 @@ class Notification(TimeStampedModel):
 
     @property
     def action_object_verb(self):
-        print(self.notif_type)
         return dict(Notification.NOTIF_TYPES)[self.notif_type]
     
     @property
