@@ -1,0 +1,41 @@
+{% load humanize %}
+{% load forum_template_tags %}
+{% load static %}
+
+<div class="media">
+  <a href="{% url 'accounts:user_stats' notif.sender.username %}" class="text-dark js-stretched-link-cancel">
+    <img src="{{ notif.sender.get_avatar_url }}" class="mr-3 avatar" alt="..." width="50" height="50" />
+  </a>
+
+  <div class="media-body">
+    <div class="mb-2">
+      <b>
+        <a class="text-dark font-weight-bold js-stretched-link-cancel" href="{% url 'accounts:user_stats' notif.sender.username %}">
+          {{ notif.sender }}
+        </a>
+      </b>
+      <span class="text-muted font-weight-light">
+        {{ notif.action_object_verb }}
+      </span>
+
+      {% if notif.action_object_title %}
+        <span class="text-italic font-weight-bold">
+          <a class="text-dark js-stretched-link" href="{{ notif.action_object_url }}">
+            {{ notif.action_object_title|truncatechars:32 }}
+          </a>
+        </span>
+      {% endif %}
+      
+      <span class="text-muted font-weight-light">
+        {{ notif.created|naturaltime|splittime }}.
+      </span>
+    </div>
+
+    {% if notif.action_object_message %}
+      {{ notif.action_object_message|safe|truncatechars:200 }}    
+      {% if notif.get_object_message|length > 200 %}
+        <a class="text-primary" href="{{ notif.action_object_url }}">read more</a>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>

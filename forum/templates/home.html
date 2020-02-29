@@ -24,7 +24,7 @@
         <div class="col-sm-12 col-md-10 offset-md-1 col-lg-9 col-xl-8 offset-lg-1">
           <ul class="list-group mb-4 thread-list-group">
             {% for thread in threads %}
-              <li class="list-group-item thread-list-item js-stretched-link-box">
+              <li class="list-group-item link-list-item js-stretched-link-box">
                 {% include "includes/_thread_list_item.html" with thread=thread %}
               </li>               
             {% empty %}
