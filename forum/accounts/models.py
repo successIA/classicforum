@@ -10,6 +10,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 from forum.core.models import TimeStampedModel
+from forum.notifications.models import Notification
 
 
 class User(AbstractUser):
@@ -65,9 +66,19 @@ class User(AbstractUser):
         is_follower = False
         if follower not in self.followers.all():
             self.followers.add(follower)
+            Notification.objects.create(
+                sender=follower, 
+                receiver=self,
+                notif_type=Notification.USER_FOLLOWED
+            )
             return True
         else:
             self.followers.remove(follower)
+            Notification.objects.filter(
+                sender=follower, 
+                receiver=self,
+                notif_type=Notification.USER_FOLLOWED
+            ).delete()
         return is_follower
 
     def get_absolute_url(self):
