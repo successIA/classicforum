@@ -1,10 +1,11 @@
-from forum.threads.models import Thread
-from test_plus import TestCase
-from django.urls import reverse
 from django.core.paginator import Page
+from django.urls import reverse
 
-from forum.threads.forms import ThreadForm
+from test_plus import TestCase
+
 from forum.categories.models import Category
+from forum.threads.forms import ThreadForm
+from forum.threads.models import Thread
 from forum.threads.tests.utils import make_only_thread
 
 

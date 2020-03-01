@@ -1,14 +1,14 @@
+from datetime import datetime, timedelta
 from math import ceil
 
 from django import template
-from datetime import datetime, timedelta
 from django.utils.timesince import timesince
-from forum.core.constants import COMMENT_PER_PAGE
+
 from forum.categories.models import Category
 from forum.comments.models import Comment
-from forum.threads.models import Thread
-
+from forum.core.constants import COMMENT_PER_PAGE
 from forum.core.utils import append_querystring
+from forum.threads.models import Thread
 
 register = template.Library()
 

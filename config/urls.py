@@ -1,16 +1,16 @@
-from django.conf.urls import url, include
-from django.contrib import admin
 from django.conf import settings
+from django.conf.urls import include, url
 from django.conf.urls.static import static
-
-from forum.threads.views import (
-    thread_list,
-    thread_detail, 
-    update_thread,
-    follow_thread,
-)
+from django.contrib import admin
 
 import debug_toolbar
+
+from forum.threads.views import (
+    follow_thread,
+    thread_detail,
+    thread_list,
+    update_thread,
+)
 
 urlpatterns = [
     url('__debug__/', include(debug_toolbar.urls)),

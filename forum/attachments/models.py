@@ -1,18 +1,18 @@
 import os
 import uuid
 
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.utils.crypto import get_random_string
 from django.utils.text import slugify
-from django.core.files.storage import FileSystemStorage
-from django.conf import settings
 
-from forum.core.models import TimeStampedModel
 from forum.attachments.utils import (
     get_image_srcs_from_msg,
     get_unref_image_srcs_in_msg,
+    md5,
 )
-from forum.attachments.utils import md5
+from forum.core.models import TimeStampedModel
 
 
 class MediaFileSystemStorage(FileSystemStorage):

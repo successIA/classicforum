@@ -6,9 +6,8 @@ from test_plus import TestCase
 
 from forum.categories.models import Category
 from forum.comments.models import Comment
-from forum.threads.models import Thread
-
 from forum.comments.tests.utils import make_comment
+from forum.threads.models import Thread
 
 fake = Faker()
 
@@ -65,5 +64,3 @@ class CommentModelTest(TestCase):
         self.comment.likers.add(second_user)
         self.comment.toggle_like(second_user)
         self.assertNotIn(second_user, self.comment.likers.all())
-
-    

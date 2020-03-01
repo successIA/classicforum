@@ -1,6 +1,7 @@
 from ..categories.models import Category
 from .models import ModeratorEvent
 
+
 def create_moderator_added_event(user, categories):
     event = ModeratorEvent.objects.create(
         event_type=ModeratorEvent.MODERATOR_ADDED, user=user

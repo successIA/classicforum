@@ -2,11 +2,7 @@ from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 
 from forum.comments.models import Comment
-from forum.threads.models import (
-    Thread,
-    ThreadRevision,
-    ThreadFollowership
-)
+from forum.threads.models import Thread, ThreadFollowership, ThreadRevision
 
 
 class ThreadRevisionInline(admin.TabularInline):

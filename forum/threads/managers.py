@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.db import models
-from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch
+from django.db.models import CharField, Count, F, Max, Min, Prefetch, Value
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.text import slugify

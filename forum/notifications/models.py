@@ -1,14 +1,14 @@
 from math import ceil
 
-from django.db import models
 from django.conf import settings
-from django.template.loader import render_to_string
 from django.core.exceptions import FieldError
-from django.utils import timezone
 from django.core.urlresolvers import reverse
+from django.db import models
+from django.template.loader import render_to_string
+from django.utils import timezone
 
-from forum.core.models import TimeStampedModel
 from forum.core.constants import NOTIF_PER_PAGE
+from forum.core.models import TimeStampedModel
 
 
 class NotificationQuerySet(models.query.QuerySet):    
@@ -183,4 +183,3 @@ class Notification(TimeStampedModel):
             return self.thread.get_absolute_url()
         elif self.notif_type in Notification.NOTIF_USER_TYPES:
             return self.sender.get_absolute_url()
-    

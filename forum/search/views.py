@@ -1,11 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from forum.threads.models import Thread
 from forum.comments.models import Comment
-from forum.threads.utils import get_paginated_queryset
 from forum.core.constants import THREAD_PER_PAGE as PER_PAGE
 from forum.core.utils import add_pagination_context
+from forum.threads.models import Thread
+from forum.threads.utils import get_paginated_queryset
 
 
 def search(request, page=1):

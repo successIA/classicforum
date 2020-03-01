@@ -1,15 +1,15 @@
 import os
 import shutil
 
-from django.urls import reverse
-from django.test import override_settings
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings
+from django.urls import reverse
 
 from test_plus import TestCase
 
-from forum.attachments.models import Attachment
 from forum.accounts.tests.utils import login
+from forum.attachments.models import Attachment
 
 TEST_IMAGES_DIR = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'testimages'

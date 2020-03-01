@@ -5,10 +5,8 @@ from faker import Faker
 from test_plus import TestCase
 
 from forum.categories.models import Category, CategoryQuerySet
-from forum.threads.models import (
-    Thread, ThreadFollowership, ThreadRevision
-)
 from forum.comments.tests.utils import make_comment
+from forum.threads.models import Thread, ThreadFollowership, ThreadRevision
 
 fake = Faker()
 

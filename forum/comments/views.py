@@ -1,26 +1,23 @@
 import re
 
-from django.db import transaction
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 
 from forum.comments.forms import CommentForm
-from forum.comments.mixins import (
-    comment_owner_required, 
-    comment_adder,
-)
+from forum.comments.mixins import comment_adder, comment_owner_required
 from forum.comments.models import Comment, CommentRevision
 from forum.comments.utils import (
+    create_comment_revision,
     get_comment_reply_form,
     perform_comment_save,
-    create_comment_revision,
 )
 from forum.notifications.models import Notification
+from forum.threads.mixins import thread_adder
 from forum.threads.models import Thread
 from forum.threads.views import thread_detail
-from forum.threads.mixins import thread_adder
 
 
 @login_required

@@ -8,13 +8,13 @@ from django.utils.text import slugify
 
 from hitcount.models import HitCount, HitCountMixin
 
+from forum.accounts.utils import get_user_list_without_creator
 from forum.categories.models import Category
 from forum.core.bbcode_quote import bbcode_quote
-from forum.core.models import TimeStampedModel
 from forum.core.constants import COMMENT_PER_PAGE
-from forum.threads.managers import ThreadQuerySet
+from forum.core.models import TimeStampedModel
 from forum.notifications.models import Notification
-from forum.accounts.utils import get_user_list_without_creator
+from forum.threads.managers import ThreadQuerySet
 
 
 class Thread(TimeStampedModel, HitCountMixin):

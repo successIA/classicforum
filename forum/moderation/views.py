@@ -1,31 +1,30 @@
-from django.db import transaction
-from django.core.exceptions import PermissionDenied
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
-from django.shortcuts import render
 from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.shortcuts import (
-    get_object_or_404, 
     Http404,
     HttpResponseRedirect,
-    redirect, 
+    get_object_or_404,
+    redirect,
     render,
 )
 
+from ..comments.models import Comment
 from .events import (
+    create_category_changed_event,
     create_moderator_added_event,
     create_moderator_removed_event,
-    create_category_changed_event
 )
-from ..comments.models import Comment
+from .forms import ModeratorForm
 from .mixins import (
+    hide_post_permission_required,
     staff_member_required,
     supermoderator_or_moderator_owner_required,
-    hide_post_permission_required,
-    unhide_post_permission_required
+    unhide_post_permission_required,
 )
 from .models import Moderator, ModeratorEvent
-from .forms import ModeratorForm
 
 User = get_user_model()
 

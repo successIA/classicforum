@@ -2,32 +2,35 @@ import random
 import string
 from math import ceil
 
-from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch
-from django.shortcuts import get_object_or_404
-from django.db import models, transaction
-from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.db.models.signals import pre_save
-from django.utils.text import slugify
+from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.fields import GenericRelation
-from django.utils.html import mark_safe
+from django.core.urlresolvers import reverse
+from django.db import models, transaction
+from django.db.models import CharField, Count, F, Max, Min, Prefetch, Value
+from django.db.models.signals import pre_save
 from django.http import (
-    HttpResponse, HttpResponseRedirect, Http404, HttpResponseForbidden
+    Http404,
+    HttpResponse,
+    HttpResponseForbidden,
+    HttpResponseRedirect,
 )
+from django.shortcuts import get_object_or_404
+from django.utils.html import mark_safe
+from django.utils.text import slugify
 
-from markdown import markdown
 import bleach
-from bleach_whitelist import markdown_tags, markdown_attrs
+from bleach_whitelist import markdown_attrs, markdown_tags
+from markdown import markdown
 
-from forum.core.models import TimeStampedModel
-from forum.core.constants import COMMENT_PER_PAGE
-from forum.comments.managers import CommentQuerySet
-from forum.attachments.models import Attachment
-from forum.threads.models import ThreadFollowership
-from forum.notifications.models import Notification
 from forum.accounts.models import User
 from forum.accounts.utils import get_user_list_without_creator
+from forum.attachments.models import Attachment
+from forum.comments.managers import CommentQuerySet
+from forum.core.constants import COMMENT_PER_PAGE
+from forum.core.models import TimeStampedModel
+from forum.notifications.models import Notification
+from forum.threads.models import ThreadFollowership
 
 
 class Comment(TimeStampedModel):

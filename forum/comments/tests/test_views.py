@@ -7,16 +7,15 @@ from django.utils import timezone
 from faker import Faker
 from test_plus import TestCase
 
-from forum.categories.tests.utils import make_category
 from forum.accounts.tests.utils import login
+from forum.categories.tests.utils import make_category
 from forum.comments.forms import Comment, CommentForm
+from forum.comments.tests.utils import make_comment
 from forum.comments.utils import get_bbcode_message_quote
 from forum.moderation.tests.utils import make_moderator
 from forum.threads.forms import ThreadForm
 from forum.threads.models import Thread
-from forum.comments.tests.utils import make_comment
-from forum.threads.tests.utils import make_threads, make_only_thread
-
+from forum.threads.tests.utils import make_only_thread, make_threads
 
 fake = Faker()
 
@@ -478,5 +477,3 @@ class CommentLikeTest(CommentViewsTest):
         response = self.client.post(self.like_url)
         self.assertEquals(response.status_code, 302)
         self.assertEquals(self.comment.likers.count(), 0)
-
-
