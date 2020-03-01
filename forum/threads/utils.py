@@ -71,7 +71,6 @@ def perform_thread_post_create_actions(thread):
     ThreadFollowership.objects.get_or_create(
         user=thread.user, thread=thread
     )
-    # TODO A notification should not be sent if thread is invisible
     notif = Notification(
         sender=thread.user, 
         thread=thread, 
@@ -87,7 +86,6 @@ def perform_thread_post_update_actions(thread):
         thread.followers.all(), thread.user
     )
 
-    # TODO A notification should not be sent if thread is invisible
     notif = Notification(
         sender=thread.user, 
         thread=thread, 

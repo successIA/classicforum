@@ -17,14 +17,6 @@ class CommentInline(admin.TabularInline):
     model = Comment
 
 
-# class ThreadAdmin(admin.ModelAdmin):
-#     inlines = [
-#         ThreadFollowershipInline,
-#         # ThreadRevisionInline,
-#         # CommentInline
-#     ]
-    # raw_id_fields = ('user', 'category', 'final_comment_user')
-
 class ThreadAdmin(admin.ModelAdmin):
     inlines = [
         CommentInline

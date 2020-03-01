@@ -100,7 +100,5 @@ def _perform_comment_post_save_actions(comment, prev_msg, mentions):
         comment=comment,
         notif_type=Notification.USER_MENTIONED
     )
-    # TODO A notification should not be sent if comment or thread is
-    # is invisible
     Notification.objects.notify_users(notif, user_list)
 

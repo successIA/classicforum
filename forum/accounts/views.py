@@ -50,7 +50,6 @@ def user_profile_stats(request, username):
         'recent_comments': comment_qs.get_recent_for_user(user, 5),
         'recent_threads': Thread.objects.get_recent_for_user(request, user)
     }
-    # return render(request, 'accounts/profile_stats.html', ctx)
     return render(request, 'accounts/profile_home.html', ctx)
 
 
@@ -112,9 +111,6 @@ def user_profile_edit(request, username):
 
 def user_comment_list(request, username):
     user = get_object_or_404(User, username=username)
-    # comment_qs = Comment.objects.filter(user=user).exclude(
-    #     is_starting_comment=True
-    # ).get_related().order_by('-id')
     comment_qs = Comment.objects.get_pure_and_thread_active_for_user(user)
     comments = get_paginated_queryset(comment_qs, 10, request.GET.get('page'))
     url = reverse('accounts:user_comments', kwargs={'username':  username})
@@ -133,8 +129,6 @@ def user_thread_list(request, username, filter_str, page):
     user = get_object_or_404(
         User, username=username
     )
-    # The userprofile must belong to the current user to access
-    # the personalised filters.
     if not user.is_required_filter_owner(request.user, filter_str):
         raise Http404
     thread_qs = Thread.objects.active()

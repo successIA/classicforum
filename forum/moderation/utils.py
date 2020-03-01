@@ -16,7 +16,4 @@ def can_see_post_or_404(request, post):
             return post        
         else: 
             raise Http404
-    # else:
-    #     if isinstance(post, Comment):
-    #         can_see_post_or_404(request, post.thread)
     return post

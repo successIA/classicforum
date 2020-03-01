@@ -26,7 +26,6 @@ from forum.threads.mixins import thread_adder
 @login_required
 @thread_adder
 def create_comment(request, thread_slug, thread=None):
-    # thread = get_object_or_404(Thread, slug=thread_slug)
     form = CommentForm
     if request.method == 'POST':
         form = CommentForm(request.POST)
@@ -77,7 +76,6 @@ def update_comment(request, thread_slug, pk, comment=None):
 @login_required
 @comment_adder
 def reply_comment(request, thread_slug, pk, comment=None):
-    # parent_comment = get_object_or_404(Comment, pk=pk)
     parent_comment = comment
     form = get_comment_reply_form(parent_comment)
     if request.method == 'POST':

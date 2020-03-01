@@ -105,15 +105,3 @@ def _set_thread_moderation_kwargs(request, kwargs):
 
 def _set_comment_moderation_kwargs(request, kwargs):
     kwargs["comment"] = get_object_or_404(Comment, pk=kwargs.get("comment_pk"))
-
-# def view_post_permission_required(f):
-#     def wrap(request, *args, **kwargs):
-#         if kwargs.get("thread_slug") and kwargs.get("pk"):
-
-#         if not post.visible:
-#             if (
-#                 request.user.is_moderator and 
-#                 request.user.moderator.is_moderating(post)
-#             ):
-#                 return f(request, *args, **kwargs)
-#         raise Http404
