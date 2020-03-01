@@ -1,4 +1,4 @@
-{% extends 'profile_base.html' %}
+{% extends 'accounts/profile_base.html' %}
 
 {% load crispy_forms_tags %}
 {% load forum_template_tags %}
@@ -23,7 +23,7 @@
             <form method="post" enctype="multipart/form-data" novalidate>
               <div class="row">
                 <div class="col-12 text-center mb-0 mb-md-0 col-md-3 col-lg-4 col-xl-4 d-xl-flex justify-content-xl-end">
-                  <!-- Mobile -->
+                  {# Mobile #}
                   <div>
                     <img src="{{ userprofile.get_avatar_url }}" height="90" width="90"
                       class="avatar mx-auto d-md-none" alt="..."
@@ -32,15 +32,15 @@
                     <span class="text-muted font-weight-light mt-1 text-center d-block d-md-none">
                       Tap image to change picture
                     </span>
-                  </div><!-- Mobile -->
+                  </div>{# Mobile #}
 
-                  <!-- Desktop -->
+                  {# Destop #}
                   <div class="d-none d-md-table-cell">
                     <img src="{{ userprofile.get_avatar_url }}" height="150" width="150"
                       class="avatar mr-3 d-none d-sm-block" alt="..."
                       style="cursor: pointer;"
                       id="custom-image-chooser2" />									
-                  </div><!-- Desktop -->
+                  </div>{# Destop #}
                 </div>
 
                 <div class="col-12 col-md-9 col-lg-8 col-xl-8">

@@ -29,6 +29,17 @@
       </div>
     </div>
   </div>
+
+  {% if request.user != userprofile %}
+    <div class="container mt-lg-4">
+      <div class="row offset-lg-1 my-2">
+        <div class="col-12">
+          <h3>You are viewing {{ userprofile.username }}'s profile</h3>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
   {% block profile_content %}{% endblock profile_content %}
 {% endblock content %}
 

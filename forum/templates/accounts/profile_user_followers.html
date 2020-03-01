@@ -1,4 +1,4 @@
-{% extends 'profile_base.html' %}
+{% extends 'accounts/profile_base.html' %}
 
 {% load static %}
 
@@ -42,7 +42,7 @@
         </div>
       {% empty %}
         <div class="col-12 col-lg-8">
-          {% include "includes/_empty_state_card.html" with icon="fas fa-user-friends" text="No followers yet" %}          
+          {% include "includes/empty_state_card.html" with icon="fas fa-user-friends" text="No followers yet" %}          
         </div>
       {% endfor %}
     </div>

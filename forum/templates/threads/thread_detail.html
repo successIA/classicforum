@@ -87,7 +87,7 @@
             <ul class="list-group mb-4 comment-list-group">
               {% if starting_comment %}
                 <li class="list-group-item">
-                  {% include "includes/_comment_list_item.html" with comment=starting_comment %}
+                  {% include "includes/comment.html" with comment=starting_comment %}
                 </li>
               {% else %}
                 <div class="card">
@@ -108,10 +108,10 @@
           <ul class="list-group mb-2 comment-list-group">
             {% for comment in comments %}
               <li class="list-group-item">
-                {% include "includes/_comment_list_item.html" with comment=comment %}
+                {% include "includes/comment.html" with comment=comment %}
               </li>              
             {% empty %}
-              {% include "includes/_empty_reply_state.html" %}
+              {% include "includes/empty_reply_state.html" %}
             {% endfor %}
           </ul>        
         </div>

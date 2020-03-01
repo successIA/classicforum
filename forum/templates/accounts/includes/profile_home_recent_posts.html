@@ -19,10 +19,10 @@
     <ul class="list-group mb-4 comment-list-group">
       {% for comment in recent_comments %}
         <li class="list-group-item rounded-0">
-          {% include "includes/_comment_list_item.html" with comment=comment %}
+          {% include "includes/comment.html" with comment=comment %}
         </li>
       {% empty %}
-        {% include "includes/_empty_state_card.html" with icon="far fa-comments" text="No comments yet" %}       
+        {% include "includes/empty_state_card.html" with icon="far fa-comments" text="No comments yet" %}       
       {% endfor %}                
     </ul>
   </div>
@@ -31,11 +31,11 @@
     <ul class="list-group mb-4 thread-list-group">
       {% for thread in recent_threads %}
         <li class="list-group-item">
-          {% include "includes/_thread_list_item.html" with thread=thread %}
+          {% include "includes/thread.html" with thread=thread %}
         </li>
       {% empty %}
         {% empty_thread_description "me" as description %}
-        {% include "includes/_empty_state_card.html" with icon="fas fa-book" text=description %}       
+        {% include "includes/empty_state_card.html" with icon="fas fa-book" text=description %}       
       {% endfor %}
     </ul>
   </div>

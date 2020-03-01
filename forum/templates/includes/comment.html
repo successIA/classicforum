@@ -3,18 +3,18 @@
 {% load forum_template_tags %}
 {% load moderation_template_tags %}
 
-{% include "includes/comment_history.html" with comment=comment %}
+{% include "includes/comment_history_modal.html" with comment=comment %}
 
 {% if request.user.is_authenticated and request.user.is_moderator %}
   {% if comment.is_starting_comment %}
     {% can_hide_post comment.thread request.user as can_hide_thread %}
     {% if can_hide_thread %}
-      {% include "includes/modal.html" with comment=comment %}
+      {% include "includes/hide_post_modal.html" with comment=comment %}
     {% endif %} 
   {% else %}
     {% can_hide_post comment request.user as can_hide_comment %}
     {% if can_hide_comment %}
-      {% include "includes/modal.html" with comment=comment %}
+      {% include "includes/hide_post_modal.html" with comment=comment %}
     {% endif %} 
   {% endif %}
 {% endif %}
@@ -25,7 +25,7 @@
       <img src="{{ comment.user.get_avatar_url }}" width="60" height="60" class="avatar mr-3" alt="..." />
     </a>
 
-    <!-- Mobile -->
+    {# Mobile #}
     <div class="d-flex d-md-none align-items-center">
       <b>
         <a href="{{ comment.user.get_absolute_url }}" class="comment--username">
@@ -35,11 +35,11 @@
           <small class="d-inline-block font-weight-bold">{{ comment.created|naturaltime|splittime }}</small>
         </span>
       </b>
-    </div><!-- Mobile -->
+    </div>{# Mobile #}
   </div>
 
   <div class="media-body w-100">
-    <!-- Desktop -->
+    {# Desktop #}
     <b class="d-md-block d-none font-weight-bold">
       <a href="{{ comment.user.get_absolute_url }}" class="comment--username">
         {{ comment.user.username }}
@@ -48,7 +48,7 @@
         <small class="d-inline-block font-weight-bold">{{ comment.created|naturaltime|splittime }}</small>
       </span>
       {% if comment.unread %}<span class="badge badge-info">New</span>{% endif %}
-    </b><!-- Desktop -->
+    </b>{# Desktop #}
 
     <div class="btn-group position-absolute comment__more-icon">
       <a class="dropdown-toggle nav-profile-img text-dark" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
