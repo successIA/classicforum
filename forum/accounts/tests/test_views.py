@@ -38,7 +38,7 @@ TEST_AVATAR_LARGE = os.path.join(TEST_AVATARS_DIR, 'Chrysanthemum.jpg')
 
 class UserProfileStatsViewTest(TestCase):
     def test_stats(self):
-        user = self.make_user('john')
+        user = self.make_user('testuser1')
         url = reverse(
             'accounts:user_stats', kwargs={'username': user.username}
         )
@@ -63,7 +63,7 @@ class UserProfileStatsViewTest(TestCase):
 
 class UserNotificationList(TestCase):
     def setUp(self):
-        self.user = self.make_user('john')
+        self.user = self.make_user('testuser1')
         self.notif_url = reverse(
             'accounts:user_notifs', kwargs={'username': self.user.username}
         )
@@ -80,7 +80,7 @@ class UserNotificationList(TestCase):
         """
         Only comment owner can see the comment edit form and update comment
         """
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         login(self, second_user, 'password')
         response = self.client.get(self.notif_url)
         self.assertEqual(response.status_code, 403)
@@ -98,7 +98,7 @@ class UserNotificationList(TestCase):
 @override_settings(MEDIA_ROOT=settings.TEST_MEDIA_ROOT)
 class UserProfileEditTest(TestCase):
     def setUp(self):
-        self.user = self.make_user('john')
+        self.user = self.make_user('testuser1')
         self.user_edit_url = reverse(
             'accounts:user_edit', kwargs={'username': self.user.username}
         )
@@ -153,7 +153,7 @@ class UserProfileEditTest(TestCase):
         redirect_url = '%s?next=%s' % (
             reverse('accounts:login'), self.user_edit_url
         )
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         login(self, second_user.username, 'password')
         get_response = self.client.get(self.user_edit_url)
         self.assertEqual(get_response.status_code, 403)
@@ -196,7 +196,7 @@ class UserProfileEditTest(TestCase):
         response = self.client.post(self.user_edit_url, self.valid_data)
         self.assertEqual(response.status_code, 302)
 
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         client = Client()
         client.login(username=second_user.username, password='password')
         second_user_edit_url = reverse(
@@ -215,7 +215,7 @@ class UserProfileEditTest(TestCase):
 
 class UserCommentListTest(TestCase):
     def test_list(self):
-        user = self.make_user('john')
+        user = self.make_user('testuser1')
         url = reverse(
             'accounts:user_comments', kwargs={'username': user.username}
         )
@@ -228,7 +228,7 @@ class UserCommentListTest(TestCase):
 
 class UserThreadListTest(TestCase):
     def test_list(self):
-        user = self.make_user('john')
+        user = self.make_user('testuser1')
         login(self, user, 'password')
         for filter_str in ['new', 'following', 'me']:
             name_suffix = filter_str
@@ -251,9 +251,9 @@ class SignupTest(TestCase):
     def setUp(self):
         self.url = reverse('accounts:signup')
         self.valid_data = {
-            'username': 'john',
-            'email': 'john@example.com',
-            'email2': 'john@example.com',
+            'username': 'testuser1',
+            'email': 'testuser1@example.com',
+            'email2': 'testuser1@example.com',
             'password1': 'random-password',
             'password2': 'random-password'
         }
@@ -265,7 +265,7 @@ class SignupTest(TestCase):
     def test_valid_data_acceptance(self):
         response = self.client.post(self.url, self.valid_data)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(User.objects.filter(username='john').exists())
+        self.assertTrue(User.objects.filter(username='testuser1').exists())
 
     def test_email_sent(self):
         response = self.client.post(self.url, self.valid_data)
@@ -277,7 +277,7 @@ class SignupTest(TestCase):
 class ActivateTest(TestCase):
     def test_render(self):
         """User """
-        user = self.make_user('john')
+        user = self.make_user('testuser1')
         user.is_active = False
         user.save()
 
@@ -295,8 +295,8 @@ class ActivateTest(TestCase):
 
 class FollowUserTest(TestCase):
     def setUp(self):
-        self.user1 = self.make_user('john')
-        self.user2 = self.make_user('ahmed')
+        self.user1 = self.make_user('testuser1')
+        self.user2 = self.make_user('testuser2')
         self.url1 = reverse(
             'accounts:user_follow',
             kwargs={'username': self.user1.username}
@@ -356,7 +356,7 @@ class FollowUserTest(TestCase):
 
 class UserFollowingTest(TestCase):
     def test_render(self):
-        user = self.make_user('john')
+        user = self.make_user('testuser1')
         url = reverse(
             'accounts:user_following',
             kwargs={'username': user.username}
@@ -372,7 +372,7 @@ class UserFollowingTest(TestCase):
 
 class UserFollowersTest(TestCase):
     def test_render(self):
-        user = self.make_user('john')
+        user = self.make_user('testuser1')
         url = reverse(
             'accounts:user_followers',
             kwargs={'username': user.username}
@@ -388,19 +388,19 @@ class UserFollowersTest(TestCase):
 
 class UserMentionTest(TestCase):
     def test_render(self):
-        user1 = self.make_user('john')
-        user2 = self.make_user('joshua')
-        user3 = self.make_user('drogba')
-        start_with = 'jo'
+        user1 = self.make_user('testuser1')
+        user2 = self.make_user('testuser2')
+        user3 = self.make_user('odd_testuser3')
+        start_with = 'te'
         url = reverse('accounts:user_mention')
         response = self.client.get(url + '?username=' + start_with)
         expected_list = [
             {
-                'username': 'john', 'profile_url': '/accounts/john/',
+                'username': 'testuser1', 'profile_url': '/accounts/testuser1/',
                 'avatar_url': '/static/img/avatar.svg'
             },
             {
-                'username': 'joshua', 'profile_url': '/accounts/joshua/',
+                'username': 'testuser2', 'profile_url': '/accounts/testuser2/',
                 'avatar_url': '/static/img/avatar.svg'
             }
         ]
@@ -409,27 +409,27 @@ class UserMentionTest(TestCase):
 
 class UserMentionListTest(TestCase):
     def test_render(self):
-        user1 = self.make_user('john')
-        user2 = self.make_user('joshua')
-        user3 = self.make_user('drogba')
-        username_list = '[{"username": "john"}, {"username": "joshua"}, {"username": "drogba"}]'
+        user1 = self.make_user('testuser1')
+        user2 = self.make_user('testuser2')
+        user3 = self.make_user('testuser3')
+        username_list = '[{"username": "testuser1"}, {"username": "testuser2"}, {"username": "testuser3"}]'
         url = reverse('accounts:user_mention_list')
         response = self.client.get(url + '?username_list=' + username_list)
         self.assertEqual(response.status_code, 200)
         expected_list = [
             {
-                'username': 'john',
-                'profile_url': '/accounts/john/',
+                'username': 'testuser1',
+                'profile_url': '/accounts/testuser1/',
                 'avatar_url': '/static/img/avatar.svg'
             },
             {
-                'username': 'joshua',
-                'profile_url': '/accounts/joshua/',
+                'username': 'testuser2',
+                'profile_url': '/accounts/testuser2/',
                 'avatar_url': '/static/img/avatar.svg'
             },
             {
-                'username': 'drogba',
-                'profile_url': '/accounts/drogba/',
+                'username': 'testuser3',
+                'profile_url': '/accounts/testuser3/',
                 'avatar_url': '/static/img/avatar.svg'
             }
         ]

@@ -21,8 +21,8 @@ from forum.categories.tests.utils import make_category
 
 class NotificationModelTest(TestCase):
     def setUp(self):
-        self.sender = self.make_user('ahmed')
-        self.receiver = self.make_user('zainab')
+        self.sender = self.make_user('testuser1')
+        self.receiver = self.make_user('testuser2')
         self.category = make_category()
         self.thread = make_threads(user=self.sender, category=self.category)
         self.comment = make_comment(self.sender, self.thread)
@@ -158,9 +158,9 @@ class NotificationModelTest(TestCase):
 
 class NotificationQuerySetManagerTest(TestCase):
     def setUp(self):
-        self.sender = self.make_user('ahmed')
-        self.receiver = self.make_user('zainab')
-        self.receiver2 = self.make_user('bola')
+        self.sender = self.make_user('testuser1')
+        self.receiver = self.make_user('testuser2')
+        self.receiver2 = self.make_user('testuser3')
         self.receiver_list = [self.receiver, self.receiver2]
         self.category = make_category()
         self.thread = make_only_thread(self.sender, self.category)
@@ -194,7 +194,7 @@ class NotificationQuerySetManagerTest(TestCase):
         self.assertTrue(notif_qs.count(), 2)
 
     def test_notify_user_followers_for_thread_creation(self):
-        user = self.make_user('user')
+        user = self.make_user('testuser4')
         ThreadFollowership.objects.create(user=user, thread=self.thread)
         for receiver in self.receiver_list:
             self.sender.followers.add(receiver)
@@ -219,7 +219,7 @@ class NotificationQuerySetManagerTest(TestCase):
         self.assertTrue(notif_qs.count(), 2)
 
     def test_notify_thread_followers_for_modification(self):
-        user = self.make_user('user')
+        user = self.make_user('testuser4')
         self.sender.followers.add(user)
         for receiver in self.receiver_list:
             ThreadFollowership.objects.create(

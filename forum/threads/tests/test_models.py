@@ -15,14 +15,14 @@ fake = Faker()
 
 class ThreadModelTest(TestCase):
     def setUp(self):
-        self.user = self.make_user("john")
+        self.user = self.make_user('testuser1')
         self.category = Category.objects.create(
-            title="progromming group",
-            description="NA"
+            title='progromming group',
+            description='NA'
         )
         self.thread = Thread.objects.create(
-            title="python discussion",
-            body="NA",
+            title='python discussion',
+            body='NA',
             user=self.user,
             category=self.category,
             created=timezone.now(),
@@ -30,7 +30,7 @@ class ThreadModelTest(TestCase):
         )
 
     def test_save(self):
-        self.assertEquals(self.thread.slug, "python-discussion")
+        self.assertEquals(self.thread.slug, 'python-discussion')
 
     def test_synchronise_for_create(self):
         self.assertEquals(self.thread.comment_count, 0)
@@ -52,7 +52,7 @@ class ThreadModelTest(TestCase):
         self.assertEquals(self.thread.final_comment_time, comment3.created)
 
     def test_toggle_follower(self):
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         ThreadFollowership.objects.toggle(second_user, self.thread)
 
         self.assertIn(second_user, self.thread.followers.all())

@@ -14,7 +14,7 @@ from forum.accounts.tests.utils import login
 TEST_IMAGES_DIR = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'testimages'
 )
-TEST_IMAGE_1 = os.path.join(TEST_IMAGES_DIR, 'abu3.jpg')
+TEST_IMAGE_1 = os.path.join(TEST_IMAGES_DIR, 'testimage.jpg')
 TEST_IMAGE_2 = os.path.join(TEST_IMAGES_DIR, 'aprf1.jpg')
 TEST_IMAGE_3 = os.path.join(TEST_IMAGES_DIR, 'Chrysanthemum.jpg')
 
@@ -24,10 +24,10 @@ IMAGE_UPLOAD_DIR = os.path.join(settings.TEST_MEDIA_ROOT, 'uploads')
 @override_settings(MEDIA_ROOT=settings.TEST_MEDIA_ROOT)
 class ImageUploadViewTest(TestCase):
     def setUp(self):
-        self.user = self.make_user('john')
+        self.user = self.make_user('testuser1')
         self.upload_url = reverse('attachments:upload_img')
         self.test_image = SimpleUploadedFile(
-            name='abu3.jpg',
+            name='testimage.jpg',
             content=open(TEST_IMAGE_1, 'rb').read(),
             content_type='image/jpeg'
         )

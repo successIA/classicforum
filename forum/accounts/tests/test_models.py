@@ -28,7 +28,7 @@ AVATAR_UPLOAD_DIR = os.path.join(settings.TEST_MEDIA_ROOT, 'avatars')
 @override_settings(MEDIA_ROOT=settings.TEST_MEDIA_ROOT)
 class UserModelTest(TestCase):
     def setUp(self):
-        self.user = self.make_user('john')
+        self.user = self.make_user('test_user1')
         self.test_avatar = SimpleUploadedFile(
             name='aprf1.jpg',
             content=open(TEST_AVATAR_1, 'rb').read(),
@@ -55,22 +55,22 @@ class UserModelTest(TestCase):
         self.assertFalse(self.user.is_online())
 
     def test_is_owner(self):
-        user = User.objects.get(username='john')
+        user = User.objects.get(username='test_user1')
         self.assertTrue(self.user.is_owner(user))
 
     def test_not_owner(self):
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         self.assertFalse(self.user.is_owner(second_user))
 
     def test_is_required_filter_with_owner(self):
-        user = User.objects.get(username='john')
+        user = User.objects.get(username='test_user1')
         for filter_str in ['following', 'new']:
             self.assertTrue(
                 self.user.is_required_filter_owner(user, filter_str)
             )
 
     def test_is_required_filter_with_not_owner(self):
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         for filter_str in ['following', 'new']:
             self.assertFalse(
                 self.user.is_required_filter_owner(second_user, filter_str)
@@ -95,13 +95,13 @@ class UserModelTest(TestCase):
         self.assertEquals(request.user.notif_count, count)
 
     def test_toggle_followers_with_new_follower(self):
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         self.user.toggle_followers(second_user)
         self.assertIn(second_user, self.user.followers.all())
         self.assertNotIn(self.user, second_user.followers.all())
 
     def test_toggle_followers_with_existing_follower(self):
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         self.user.followers.add(second_user)
         self.user.toggle_followers(second_user)
         self.assertNotIn(second_user, self.user.followers.all())
