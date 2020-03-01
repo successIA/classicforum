@@ -1,4 +1,4 @@
-{% extends 'profile_base.html' %}
+{% extends 'accounts/profile_base.html' %}
 
 {% load forum_template_tags %}
 {% load humanize %}
@@ -17,11 +17,11 @@
           <ul class="list-group mb-4">
             {% for thread in threads %}
               <li class="list-group-item thread-list-item js-stretched-link-box">
-                {% include "includes/_thread_list_item.html" with thread=thread %}
+                {% include "includes/thread.html" with thread=thread %}
               </li>
             {% empty %}
               {% empty_thread_description current_profile_page as description %}
-              {% include "includes/_empty_state_card.html" with icon="fas fa-book" text=description %}
+              {% include "includes/empty_state_card.html" with icon="fas fa-book" text=description %}
             {% endfor %}
           </ul>
         </div>

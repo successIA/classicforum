@@ -31,20 +31,35 @@
           {% endif %}
           
           <div class="col-12 col-lg-8 search-result-box">
-            <ul class="list-group mb-4">
-              {% for thread in results %}
-                <li class="list-group-item" style="max-height: 13rem; overflow: hidden;">
+            <ul class="list-group mb-4 comment-list-group">
+            {% if is_comment %}
+              {% for comment in results %}
+                <li class="list-group-item link-list-item js-stretched-link-box mt-1 rounded" style="max-height: 13rem; overflow: hidden;">
                   <h5>
-                    <a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a>
+                    <b><a href="{{ comment.get_precise_url }}" class="js-stretched-link text-dark">{{ comment.thread.title }}</a></b>
                   </h5>
-                  {{ thread.starting_comment.marked_message|safe }}
+                  <div class="comment-message">
+                    {{ comment.marked_message|safe }}
+                  </div>
                 </li>                    
               {% endfor %}
+            {% else %}
+              {% for thread in results %}
+                <li class="list-group-item comment-list-group link-list-item js-stretched-link-box mt-1 rounded" style="max-height: 13rem; overflow: hidden;">
+                  <h5>
+                    <b><a href="{{ thread.get_absolute_url }}" class="js-stretched-link text-dark">{{ thread.title }}</a></b>
+                  </h5>
+                  <div class="comment-message">
+                    {{ thread.starting_comment.marked_message|safe }}
+                  </div>
+                </li>                    
+              {% endfor %}
+            {% endif %}
             </ul>
           </div>
         {% else %}
           <div class="col-12 col-lg-8 mt-4">
-            {% include "includes/_empty_state_card.html" with icon="fas fa-info-circle" text="Please enter a query in the search box." font_size="small" %}       
+            {% include "includes/empty_state_card.html" with icon="fas fa-info-circle" text="Please enter a query in the search box" font_size="small" %}       
           </div>
         {% endif %}  
       </div>

@@ -80,7 +80,21 @@
           >
             <div class="position-relative d-flex align-items-center">
               <i class="fas fa-search search-abs"></i>
-              <input class="form-control mr-3 md-mr-0 search-pl" type="search" name="q" value="{{ query }}" placeholder="Search" aria-label="Search" />
+              <input class="form-control mr-3 md-mr-0 search-pl js-search-input" type="search" name="q" value="{{ query }}" placeholder="Search" aria-label="Search" autocomplete="off" />
+              <ul class="list-group nav__search-filter-box js-search-filter-box" style="display: none;">
+                <li class="list-group-item">
+                  <div class="custom-control custom-radio d-flex justify-content-start">
+                    <input type="radio" id="thread" name="search_filter" value="thread" class="custom-control-input" {% if is_comment is None %}checked{% endif %}> 
+                    <label class="custom-control-label text-dark font-weight-bold" for="thread">Threads</label>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="custom-control custom-radio mt-1">
+                    <input type="radio" id="comment" name="search_filter" value="comment" class="custom-control-input" {% if is_comment %}checked{% endif %}>
+                    <label class="custom-control-label text-dark font-weight-bold" for="comment">Comments</label>
+                  </div>
+                </li>
+              </ul>
               <span class="d-inline-block d-md-none"><i class="fas fa-times-circle text-white" id="close-search-bar"></i></span>
             </div>
           </form>

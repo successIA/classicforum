@@ -97,9 +97,29 @@ $(document).ready(function() {
     $aroundSearchBar: null,
     $searchBar: null,
     $searchInput: null,
+    $filterBox: $('.js-search-filter-box'),
 
     init: function() {
+      // console.log(this.$filterBox.hide())
       this.bindOpenEvent();
+      this.toggleSearchFilterBox()
+    },
+
+    toggleSearchFilterBox: function() {
+      var self = SearchBarToggler
+      $('.js-search-input').on('focus', function() {
+        self.$filterBox.show();
+      });
+
+      $(document).on('click', function(e) {
+        var isFilterBox = !!($(e.target).parents('.js-search-filter-box').length)
+        var isSearchInput = !!($(e.target).is('.js-search-input'))
+        if ( !isFilterBox && !isSearchInput ) {
+          self.$filterBox.hide();
+        } else {
+          $('.js-search-input').focus();
+        }
+      })
     },
 
     hideSideSearchBar: function() {
