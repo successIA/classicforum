@@ -1,11 +1,11 @@
 from test_plus import TestCase
 
 from forum.accounts.tests.utils import make_superuser
+from forum.categories.tests.utils import make_category
 from forum.comments.models import Comment
+from forum.comments.tests.utils import make_comment
 from forum.moderation.models import Moderator
 from forum.threads.models import Thread
-from forum.categories.tests.utils import make_category
-from forum.comments.tests.utils import make_comment
 from forum.threads.tests.utils import make_only_thread
 
 
@@ -246,6 +246,3 @@ class ModeratorModelTest(TestCase):
         self.assertIn(random_category, cats)
         self.assertNotIn(self.category, cats)
         self.assertNotIn(self.category2, cats)
-
-
-

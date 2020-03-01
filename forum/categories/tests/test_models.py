@@ -1,7 +1,7 @@
 from django.urls import reverse
 
-from test_plus import TestCase
 from faker import Faker
+from test_plus import TestCase
 
 from forum.categories.models import Category, CategoryQuerySet
 

@@ -25,6 +25,3 @@ def is_thread_moderator(thread, user):
     if user.is_moderator:
         return user.moderator.is_moderating_thread(thread)
     return False
-
-         
-

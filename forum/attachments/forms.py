@@ -1,11 +1,11 @@
-from io import BytesIO
 import sys
+from io import BytesIO
 
 from django import forms
-from django.forms import ModelForm
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.conf import settings
+from django.forms import ModelForm
 
 from PIL import Image
 
@@ -58,4 +58,3 @@ class AttachmentForm(ModelForm):
             else:                  
                 uploaded_image = self._resize_image(uploaded_image, size=size)
         return uploaded_image
-

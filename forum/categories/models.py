@@ -1,6 +1,7 @@
-from django.db import models
 from django.core.urlresolvers import reverse
+from django.db import models
 from django.utils.text import slugify
+
 from forum.core.models import TimeStampedModel
 
 

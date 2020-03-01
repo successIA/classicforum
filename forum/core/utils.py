@@ -2,11 +2,11 @@ import random
 import re
 import string
 
-from django.http import HttpResponseRedirect
-from django.utils.html import mark_safe
-from django.shortcuts import render
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.utils.html import mark_safe
 
 from hitcount.models import HitCount
 from hitcount.views import HitCountMixin

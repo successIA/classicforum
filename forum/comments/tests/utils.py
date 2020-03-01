@@ -28,4 +28,3 @@ def make_comment(
         )
     Comment.objects.bulk_create(comment_list)
     return Comment.objects.last()
-

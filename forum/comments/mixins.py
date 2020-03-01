@@ -1,9 +1,9 @@
-from django.shortcuts import get_object_or_404
-from django.http import Http404
 from django.core.exceptions import PermissionDenied
+from django.http import Http404
+from django.shortcuts import get_object_or_404
 
-from forum.moderation.utils import can_see_post_or_404
 from forum.comments.models import Comment
+from forum.moderation.utils import can_see_post_or_404
 from forum.threads.mixins import thread_adder
 from forum.threads.models import Thread
 

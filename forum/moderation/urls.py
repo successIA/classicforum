@@ -2,16 +2,14 @@ from django.conf.urls import url
 
 from .views import (
     create_moderator,
-    moderator_detail,
-    update_moderator,
     delete_moderator,
-    moderator_list,
-
-    hide_thread,
-    unhide_thread,
-
     hide_comment,
+    hide_thread,
+    moderator_detail,
+    moderator_list,
     unhide_comment,
+    unhide_thread,
+    update_moderator,
 )
 
 urlpatterns = [
@@ -41,4 +39,3 @@ urlpatterns = [
         name='comment_unhide'
     ),
 ]
-

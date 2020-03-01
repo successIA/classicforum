@@ -1,30 +1,28 @@
-from datetime import timedelta
 import os
 import shutil
+from datetime import timedelta
 
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from forum.accounts.tokens import account_activation_token
 from django.conf import settings
+from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import override_settings, Client
+from django.core.paginator import Page
+from django.test import Client, RequestFactory, override_settings
 from django.urls import reverse
 from django.utils import timezone
-from django.test import RequestFactory
-from django.core.paginator import Page
-from django.core import mail
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
-from test_plus import TestCase
 from faker import Faker
+from test_plus import TestCase
 
+from forum.accounts.forms import UserProfileForm
 from forum.accounts.models import User
 from forum.accounts.tests.utils import login
-from forum.accounts.forms import UserProfileForm
+from forum.accounts.tokens import account_activation_token
 from forum.attachments.models import Attachment
 from forum.comments.models import CommentQuerySet
 from forum.notifications.models import Notification
 from forum.threads.models import ThreadQuerySet
-
 
 fake = Faker()
 

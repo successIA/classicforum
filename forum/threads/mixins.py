@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
+from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from django.core.exceptions import PermissionDenied
+from django.utils.decorators import method_decorator
 
-from forum.threads.models import Thread
 from forum.moderation.utils import can_see_post_or_404
+from forum.threads.models import Thread
 
 
 def thread_adder(function):

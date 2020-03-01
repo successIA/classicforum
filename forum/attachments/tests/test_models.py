@@ -1,21 +1,23 @@
 import os
 import shutil
 
-from django.test import override_settings
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings
 
 from test_plus import TestCase
 
-from forum.attachments.models import (
-    Attachment, upload_to # MediaFileSystemStorage,
+from forum.attachments.models import (  # MediaFileSystemStorage,
+    Attachment,
+    upload_to,
 )
-# from forum.attachments.models import upload_to
-
+from forum.categories.tests.utils import make_category
 from forum.comments.models import Comment, CommentRevision
 from forum.comments.tests.utils import make_comment
 from forum.threads.tests.utils import make_only_thread
-from forum.categories.tests.utils import make_category
+
+# from forum.attachments.models import upload_to
+
 
 TEST_IMAGES_DIR = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'testimages'

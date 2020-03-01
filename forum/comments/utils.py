@@ -1,24 +1,21 @@
 import re
 
+from django.contrib.auth import get_user_model
+from django.db.models import CharField, Count, F, Max, Min, Prefetch, Value
 from django.shortcuts import get_object_or_404
 from django.utils.html import mark_safe
-from django.contrib.auth import get_user_model
-from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch
 
+from markdown import markdown
+
+from forum.accounts.utils import get_user_list_without_creator
+from forum.attachments.models import Attachment
+from forum.comments.forms import CommentForm
 # from forum.core.utils import find_mentioned_usernames
 from forum.core.bbcode_quote import bbcode_quote
 from forum.core.bbcode_quote2 import BBCodeQuoteWithMarkdownParser
-from forum.core.utils import (
-    convert_mention_to_link,
-    find_mentioned_usernames
-)
-from forum.comments.forms import CommentForm
-from forum.accounts.utils import get_user_list_without_creator
-from forum.attachments.models import Attachment
-from forum.threads.models import ThreadFollowership
+from forum.core.utils import convert_mention_to_link, find_mentioned_usernames
 from forum.notifications.models import Notification
-
-from markdown import markdown
+from forum.threads.models import ThreadFollowership
 
 User = get_user_model()
 
@@ -101,4 +98,3 @@ def _perform_comment_post_save_actions(comment, prev_msg, mentions):
         notif_type=Notification.USER_MENTIONED
     )
     Notification.objects.notify_users(notif, user_list)
-

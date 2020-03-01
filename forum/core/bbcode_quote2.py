@@ -97,4 +97,3 @@ class BBCodeQuoteWithMarkdownParser:
             return self._render_quotes_as_html(replaced_text)
         else:
             return replaced_text
-        

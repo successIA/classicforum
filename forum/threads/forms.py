@@ -1,6 +1,5 @@
-from django.shortcuts import get_object_or_404
 from django import forms
-
+from django.shortcuts import get_object_or_404
 
 from forum.categories.models import Category
 from forum.threads.models import Thread
@@ -22,5 +21,3 @@ class ThreadForm(forms.ModelForm):
     class Meta:
         model = Thread
         fields = ['category', 'title', 'message', ]
-        
-

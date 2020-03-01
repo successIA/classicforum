@@ -1,5 +1,5 @@
-from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch
 from django.db import models
+from django.db.models import CharField, Count, F, Max, Min, Prefetch, Value
 from django.shortcuts import get_object_or_404
 
 

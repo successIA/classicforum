@@ -14,13 +14,12 @@ from django.views import View
 from forum.accounts.forms import UserProfileForm, UserSignUpForm
 from forum.accounts.mixins import profile_owner_required
 from forum.accounts.tokens import account_activation_token
-from forum.accounts.utils import (get_mentioned_users_context,
-                                  get_signup_email_confirm_form_entries)
-from forum.comments.models import Comment
-from forum.core.utils import (
-    add_pagination_context,
-    get_paginated_queryset,
+from forum.accounts.utils import (
+    get_mentioned_users_context,
+    get_signup_email_confirm_form_entries,
 )
+from forum.comments.models import Comment
+from forum.core.utils import add_pagination_context, get_paginated_queryset
 from forum.notifications.models import Notification
 from forum.threads.models import Thread
 from forum.threads.utils import get_filtered_threads

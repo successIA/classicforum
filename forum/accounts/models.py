@@ -1,13 +1,12 @@
 from datetime import timedelta
 
-from django.db import models
 from django.conf import settings
-from django.core.urlresolvers import reverse_lazy, reverse
-from django.contrib.contenttypes.fields import GenericRelation
-from django.db.models import Max, Min, Count, F, Value, CharField, Prefetch
-from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
-
+from django.contrib.contenttypes.fields import GenericRelation
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.db import models
+from django.db.models import CharField, Count, F, Max, Min, Prefetch, Value
+from django.utils import timezone
 
 from forum.core.models import TimeStampedModel
 from forum.notifications.models import Notification

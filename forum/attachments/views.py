@@ -1,11 +1,11 @@
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.shortcuts import render
 
 from forum.attachments.forms import AttachmentForm
+from forum.attachments.mixins import ajax_required
 from forum.attachments.models import Attachment
 from forum.attachments.utils import md5
-from forum.attachments.mixins import ajax_required
 from forum.core.utils import strip_leading_slash
 
 

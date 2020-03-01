@@ -2,23 +2,22 @@ from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 from django.urls import reverse, reverse_lazy
 
+from forum.accounts.forms import UserPasswordChangeForm
 from forum.accounts.views import (
-    signup,
     account_activation_sent,
     activate,
-    user_profile_edit,
-    user_profile_stats,
-    user_comment_list,
     follow_user,
-    user_following,
+    signup,
+    user_comment_list,
     user_followers,
-    user_notification_list,
+    user_following,
     user_mention,
     user_mention_list,
+    user_notification_list,
+    user_profile_edit,
+    user_profile_stats,
     user_thread_list,
 )
-
-from forum.accounts.forms import UserPasswordChangeForm
 
 urlpatterns = [
     # authentication

@@ -1,19 +1,15 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
-from django.shortcuts import reverse
+from django.shortcuts import get_object_or_404, render, reverse
 
 from forum.categories.models import Category
-from forum.threads.forms import ThreadForm
-from forum.threads.models import Thread
-from forum.threads.utils import (
-    get_paginated_queryset,
-    get_filtered_threads
-)
 from forum.core.constants import THREAD_PER_PAGE
 from forum.core.utils import (
-    get_post_login_redirect_url, 
     add_pagination_context,
+    get_post_login_redirect_url,
 )
+from forum.threads.forms import ThreadForm
+from forum.threads.models import Thread
+from forum.threads.utils import get_filtered_threads, get_paginated_queryset
 
 
 def category_detail(request, slug, filter_str=None, page=1, form=None):    

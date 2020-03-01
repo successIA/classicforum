@@ -1,19 +1,18 @@
-from datetime import timedelta
 import os
 import shutil
+from datetime import timedelta
 
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import override_settings
+from django.test import RequestFactory, override_settings
 from django.urls import reverse
 from django.utils import timezone
-from django.test import RequestFactory
 
-from test_plus import TestCase
 from faker import Faker
+from test_plus import TestCase
 
-from forum.attachments.models import Attachment
 from forum.accounts.models import User
+from forum.attachments.models import Attachment
 
 fake = Faker()
 

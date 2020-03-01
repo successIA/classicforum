@@ -1,22 +1,21 @@
 import os
 import shutil
 
-from django.test import override_settings
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from django.core.exceptions import FieldError
-from django.utils import timezone
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings
 from django.urls import reverse
+from django.utils import timezone
 
 from test_plus import TestCase
 
-from forum.notifications.models import Notification
-from forum.threads.models import ThreadFollowership
-
+from forum.categories.tests.utils import make_category
 from forum.comments.models import Comment, CommentRevision
 from forum.comments.tests.utils import make_comment
+from forum.notifications.models import Notification
+from forum.threads.models import ThreadFollowership
 from forum.threads.tests.utils import make_only_thread, make_threads
-from forum.categories.tests.utils import make_category
 
 
 class NotificationModelTest(TestCase):

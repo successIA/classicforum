@@ -2,10 +2,10 @@ from django.conf.urls import url
 
 from forum.comments.views import (
     create_comment,
-    update_comment,
-    reply_comment,
     like_comment,
+    reply_comment,
     report_comment,
+    update_comment,
 )
 
 urlpatterns = [
@@ -15,4 +15,3 @@ urlpatterns = [
     url(r'add/$', create_comment, name='comment_create'),
     url(r'(?P<pk>[0-9]+)/report/$', report_comment, name='report'),
 ]
-

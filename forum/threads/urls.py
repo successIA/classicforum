@@ -1,7 +1,6 @@
 from django.conf.urls import url
 
-from forum.threads.views import thread_list, create_thread
-
+from forum.threads.views import create_thread, thread_list
 
 urlpatterns = [    
     url(r'^$', thread_list, name='thread_list'),

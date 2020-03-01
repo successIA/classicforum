@@ -1,9 +1,9 @@
 from itertools import chain
 
 from django import forms
+from django.contrib.auth import get_user_model
 from django.forms import models
 from django.forms.fields import MultipleChoiceField
-from django.contrib.auth import get_user_model
 
 from ..categories.models import Category
 from .models import Moderator, ModeratorEvent, ModeratorQuerySet

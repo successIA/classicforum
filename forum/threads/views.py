@@ -1,43 +1,35 @@
 import datetime
 import re
 
-from django.core.exceptions import PermissionDenied
-from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
+from django.db import connection, transaction
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.db import connection, transaction
-from django.conf import settings
 
-from forum.core.utils import (
-    create_hit_count,
-    get_paginated_queryset,
-)
-from forum.threads.models import (
-    Thread, ThreadFollowership
-)
-from forum.threads.utils import (
-    get_filtered_threads,
-    get_additional_thread_detail_ctx,
-    perform_thread_post_update_actions,
-    perform_thread_post_create_actions,
-)
-from forum.comments.utils import (
-    perform_comment_save,
-    create_comment_revision,
-)
-from forum.comments.models import Comment, CommentRevision
 from forum.categories.models import Category
-from forum.threads.models import Thread, ThreadRevision
 from forum.categories.views import category_detail
 from forum.comments.forms import CommentForm
-from forum.threads.forms import ThreadForm
-from forum.threads.mixins import thread_adder, thread_owner_required
+from forum.comments.models import Comment, CommentRevision
+from forum.comments.utils import create_comment_revision, perform_comment_save
 from forum.core.constants import THREAD_PER_PAGE
 from forum.core.utils import (
-    get_post_login_redirect_url, 
     add_pagination_context,
+    create_hit_count,
+    get_paginated_queryset,
+    get_post_login_redirect_url,
+)
+from forum.threads.forms import ThreadForm
+from forum.threads.mixins import thread_adder, thread_owner_required
+from forum.threads.models import Thread, ThreadFollowership, ThreadRevision
+from forum.threads.utils import (
+    get_additional_thread_detail_ctx,
+    get_filtered_threads,
+    perform_thread_post_create_actions,
+    perform_thread_post_update_actions,
 )
 
 

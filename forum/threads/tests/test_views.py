@@ -9,13 +9,11 @@ from forum.accounts.tests.utils import login
 from forum.categories.models import Category, CategoryQuerySet
 from forum.categories.tests.utils import make_category
 from forum.comments.forms import CommentForm
+from forum.comments.tests.utils import make_comment
 from forum.moderation.tests.utils import make_moderator
 from forum.threads.forms import ThreadForm
-from forum.threads.models import (
-    Thread, ThreadRevision
-)
-from forum.comments.tests.utils import make_comment
-from forum.threads.tests.utils import make_threads, make_only_thread
+from forum.threads.models import Thread, ThreadRevision
+from forum.threads.tests.utils import make_only_thread, make_threads
 
 fake = Faker()
 
