@@ -7,9 +7,9 @@ from django.conf import settings
 
 from test_plus import TestCase
 
-from forum.attachments.models import (Attachment, upload_to
-                                      # MediaFileSystemStorage,
-                                      )
+from forum.attachments.models import (
+    Attachment, upload_to # MediaFileSystemStorage,
+)
 # from forum.attachments.models import upload_to
 
 from forum.comments.models import Comment, CommentRevision

@@ -123,20 +123,6 @@ class Moderator(TimeStampedModel):
 			)
 
 
-	# @staticmethod
-	# def _get_thread_hide_action_url(thread):
-	# 	return reverse(
-	# 		"moderation:thread_hide", kwargs={"slug": thread.slug}
-	# 	)
-		
-	# @staticmethod
-	# def _get_comment_hide_action_url(comment):
-	# 	return reverse(
-	# 		"moderation:comment_hide", 
-	# 		kwargs={"thread_slug": comment.thread.slug, "comment_pk": comment.pk}
-	# 	)
-
-
 class ModeratorEvent(models.Model):
 	MODERATOR_ADDED = 0
 	MODERATOR_REMOVED = 1

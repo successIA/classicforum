@@ -26,19 +26,6 @@ def make_comment(
                 modified=timezone.now()
             )
         )
-    # Use bulk_create instead of save to that not to
-    # hit the overriden model save method.
     Comment.objects.bulk_create(comment_list)
     return Comment.objects.last()
 
-
-# def assert_not_added_to_db(function):
-#     from forum.comments.forms import Comment
-
-#     def wrap(test_case, *args, **kwargs):
-#         test_case.assertEquals(Comment.objects.all().count(), 1)
-#         return function(test_case, *args, **kwargs)
-#         test_case.assertEquals(Comment.objects.all().count(), 1)
-#     wrap.__doc__ = function.__doc__
-#     wrap.__name__ = function.__name__
-#     return wrap

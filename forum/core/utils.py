@@ -61,7 +61,6 @@ def get_paginated_queryset(queryset, PER_PAGE, page_num):
 
 
 def add_pagination_context(base_url, context, paginator):
-    # TODO Match the last occurence of %s in the base_url
     number = paginator.number
     if paginator.has_next():
         number = paginator.next_page_number()

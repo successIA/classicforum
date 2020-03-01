@@ -124,7 +124,7 @@ urlpatterns = [
         user_followers, name='user_followers'
     ),
     
-    url(r'(?P<username>[\w-]+)/comments/$',  # /$
+    url(r'(?P<username>[\w-]+)/comments/$', 
         user_comment_list, name='user_comments'
     ),
 

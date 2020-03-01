@@ -40,8 +40,6 @@ def create_moderator(request):
             user = form.cleaned_data.get("user")
             cats = form.cleaned_data.get("categories")
             mod = Moderator.objects.create(user=user)
-            # user.is_moderator = True
-            # user.save()
             mod.categories.add(*cats)
             create_moderator_added_event(user, cats)
             messages.success(
@@ -89,8 +87,6 @@ def delete_moderator(request, username):
         # queryset must be evaluated here
         cats = list(mod.categories.all())
         mod.delete()
-        # user.is_moderator = False
-        # user.save()
         create_moderator_removed_event(user, cats)
         messages.success(
             request, 
