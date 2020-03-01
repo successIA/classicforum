@@ -23,7 +23,7 @@ fake = Faker()
 
 class CommentViewsTest(TestCase):
     def setUp(self):
-        self.user = self.make_user("john")
+        self.user = self.make_user("testuser1")
         self.category = make_category()
         self.thread = make_threads(
             count=1, user=self.user, category=self.category
@@ -183,7 +183,7 @@ class CommentCreateViewWithMarkedMessageTest(CommentViewsTest):
         self.create_url = reverse(
             'comments:comment_create', kwargs={'thread_slug': self.thread.slug}
         )
-        self.commenter = self.make_user('commenter')
+        self.commenter = self.make_user('testuser2')
         login(self, self.commenter, 'password')
 
     def test_message_with_newlines(self):
@@ -227,7 +227,7 @@ class CommentUpdateViewTest(CommentViewsTest):
         """
         Only comment owner can see the comment edit form and update comment
         """
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         login(self, second_user, 'password')
 
         get_response = self.client.get(self.update_url)
@@ -414,7 +414,7 @@ class CommentReplyViewTest(CommentViewsTest):
 
     def test_submit_success_for_authenticated_user(self):
         current_count = Comment.objects.count()
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         login(self, second_user, 'password')
         reply_message = 'reply to hello world'
         message = self.bbcode_message + reply_message
@@ -464,7 +464,7 @@ class CommentLikeTest(CommentViewsTest):
         self.assertRedirects(response, redirect_url)
 
     def test_using_valid_user(self):
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         login(self, second_user, 'password')
         response = self.client.post(self.like_url)
         self.assertEquals(response.status_code, 302)
@@ -472,7 +472,7 @@ class CommentLikeTest(CommentViewsTest):
 
     def test_with_existing_liker(self):
         """An existing liker is removed from likers count"""
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         login(self, second_user, 'password')
         self.client.post(self.like_url)
         response = self.client.post(self.like_url)

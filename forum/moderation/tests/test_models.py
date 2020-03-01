@@ -11,28 +11,28 @@ from forum.threads.tests.utils import make_only_thread
 
 class ModeratorModelTest(TestCase):
     def setUp(self):
-        self.user = self.make_user("john")
+        self.user = self.make_user("testuser1")
         self.moderator = Moderator.objects.create(user=self.user)
     
         self.category = make_category()
         self.moderator.categories.add(self.category)
 
-        self.user2 = self.make_user("wade")
+        self.user2 = self.make_user("testuser2")
         self.moderator2 = Moderator.objects.create(user=self.user2)    
         self.moderator2.categories.add(self.category)
 
-        self.superuser = make_superuser("yusuf")
+        self.superuser = make_superuser("testuser3")
         self.supermoderator = Moderator.objects.create(
             user=self.superuser
         )
         self.supermoderator.categories.add(self.category)
         
-        self.user3 = self.make_user("ola")
+        self.user3 = self.make_user("testuser4")
         self.moderator3 = Moderator.objects.create(user=self.user3)
         self.category2 = make_category(title="Business")
         self.moderator3.categories.add(self.category2)
 
-        self.regular_user = self.make_user("Klc")
+        self.regular_user = self.make_user("testuser5")
     
     def test_save(self):
         """

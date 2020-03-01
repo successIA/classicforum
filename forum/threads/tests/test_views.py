@@ -22,7 +22,7 @@ fake = Faker()
 
 class ThreadsViewsTest(TestCase):
     def setUp(self):
-        self.user = self.make_user('john')
+        self.user = self.make_user('testuser1')
         self.category = make_category()
 
 
@@ -306,7 +306,7 @@ class ThreadDetailViewTest(ThreadsViewsTest):
     #     hidden_comment = make_comment(self.user, self.thread, visible=False)
 
     #     login(self, self.user, 'password')
-    #     random_user = self.make_user(username="random")
+    #     random_user = self.make_user(username="random_testuser")
     #     cat = make_category(title="Random category")
     #     make_moderator(random_user, cat)
     #     response = self.client.get(f"{self.detail_url}")
@@ -354,7 +354,7 @@ class ThreadUpdateViewTest(ThreadsViewsTest):
         """
         Only thread owner can see the thread edit form and update thread
         """
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         login(self, second_user, 'password')
 
         get_response = self.client.get(self.update_url)
@@ -503,7 +503,7 @@ class FollowThreadViewTest(ThreadsViewsTest):
 
     def test_submit_success_for_authenticated_user(self):
         current_count = self.thread.followers.count()
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         login(self, second_user, 'password')
         response = self.client.post(self.follow_url)
         self.assertEquals(response.status_code, 302)

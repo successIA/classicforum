@@ -15,7 +15,7 @@ fake = Faker()
 
 class CommentModelTest(TestCase):
     def setUp(self):
-        self.user = self.make_user("first_user")
+        self.user = self.make_user("testuser1")
         self.category = Category.objects.create(
             title="progromming group", description="NA"
         )
@@ -33,7 +33,7 @@ class CommentModelTest(TestCase):
         )
 
     # def test_delete(self):
-    #     second_user = self.make_user('second_user')
+    #     second_user = self.make_user('testuser2')
     #     comment1 = Comment.objects.create(
     #         message='test message1', user=self.user, thread=self.thread
     #     )
@@ -51,17 +51,17 @@ class CommentModelTest(TestCase):
     #     self.assertEquals(comment2.offset, -2)
 
     def test_is_owner(self):
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         self.assertFalse(self.comment.is_owner(second_user))
         self.assertTrue(self.comment.is_owner(self.user))
 
     def test_toggle_like_with_new_liker(self):        
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         self.comment.toggle_like(second_user)
         self.assertIn(second_user, self.comment.likers.all())
 
     def test_toggle_like_with_liker(self):
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
         self.comment.likers.add(second_user)
         self.comment.toggle_like(second_user)
         self.assertNotIn(second_user, self.comment.likers.all())

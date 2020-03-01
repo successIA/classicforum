@@ -10,7 +10,7 @@ fake = Faker()
 
 class CategoryModelTest(TestCase):
     def setUp(self):
-        self.user = self.make_user('john')
+        self.user = self.make_user('testuser1')
         self.category = Category.objects.create(
             title='progromming group',
             description='NA'

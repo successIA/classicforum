@@ -20,7 +20,7 @@ from forum.categories.tests.utils import make_category
 TEST_IMAGES_DIR = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'testimages'
 )
-TEST_IMAGE_1 = os.path.join(TEST_IMAGES_DIR, 'abu3.jpg')
+TEST_IMAGE_1 = os.path.join(TEST_IMAGES_DIR, 'testimage.jpg')
 TEST_IMAGE_2 = os.path.join(TEST_IMAGES_DIR, 'aprf1.jpg')
 
 AVATAR_UPLOAD_DIR = os.path.join(settings.TEST_MEDIA_ROOT, 'avatars')
@@ -30,7 +30,7 @@ AVATAR_UPLOAD_DIR = os.path.join(settings.TEST_MEDIA_ROOT, 'avatars')
 class AttachmentModelTest(TestCase):
     def setUp(self):
         self.test_image = SimpleUploadedFile(
-            name='abu3.jpg',
+            name='testimage.jpg',
             content=open(TEST_IMAGE_1, 'rb').read(),
             content_type='image/jpeg'
         )
@@ -46,7 +46,7 @@ class AttachmentModelTest(TestCase):
     def test_save(self):
         attachment = Attachment.objects.create(image=self.test_image)
         self.assertIsNotNone(attachment.md5sum)
-        self.assertEquals(attachment.filename, 'abu3.jpg')
+        self.assertEquals(attachment.filename, 'testimage.jpg')
         self.assertIsInstance(attachment, Attachment)
 
     def test_upload_to(self):
@@ -68,7 +68,7 @@ class AttachmentModelTest(TestCase):
 #     def setUp(self):
 #         self.storage = MediaFileSystemStorage()
 #         self.test_image = SimpleUploadedFile(
-#             name='abu3.jpg',
+#             name='testimage.jpg',
 #             content=open(TEST_IMAGE_1, 'rb').read(),
 #             content_type='image/jpeg'
 #         )
@@ -102,9 +102,9 @@ class AttachmentModelTest(TestCase):
 @override_settings(MEDIA_ROOT=settings.TEST_MEDIA_ROOT)
 class AttachmentQuerySetTest(TestCase):
     def setUp(self):
-        self.user = self.make_user('john')
+        self.user = self.make_user('testuser1')
         self.test_image = SimpleUploadedFile(
-            name='abu3.jpg',
+            name='testimage.jpg',
             content=open(TEST_IMAGE_1, 'rb').read(),
             content_type='image/jpeg'
         )
@@ -136,7 +136,7 @@ class AttachmentQuerySetTest(TestCase):
         self.assertIn(self.user, Attachment.objects.all().first().users.all())
 
     def test_create_avatar_with_duplicate_images(self):
-        second_user = self.make_user('second_user')
+        second_user = self.make_user('testuser2')
 
         url = Attachment.objects.create_avatar(self.test_image, self.user)
         url2 = Attachment.objects.create_avatar(self.test_image, second_user)

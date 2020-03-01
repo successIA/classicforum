@@ -10,7 +10,7 @@ from forum.threads.tests.utils import make_only_thread
 
 class CategoryViewTest(TestCase):
     def setUp(self):
-        self.user = self.make_user('john')
+        self.user = self.make_user('testuser1')
         self.category = Category.objects.create(
             title='progromming group', description='NA'
         )
@@ -109,8 +109,8 @@ class CategoryDetailView(CategoryViewTest):
 
     def test_auth_filter_str_for_authenticated_user(self):
         auth_filter_str_list = ['new', 'following', 'me']
-        self.make_user('user1')
-        self.client.login(username='user1', password='password')
+        self.make_user('testuser2')
+        self.client.login(username='testuser2', password='password')
         for filter_str in auth_filter_str_list:
             filter_str_url = reverse(
                 "categories:category_detail_filter",
