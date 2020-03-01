@@ -17,7 +17,6 @@ def get_filtered_threads(
     request, filter_str=None, thread_qs=None, user=None
 ):
     RECENT = 'recent'
-    # auth_filter_list = ['following', 'new', 'me']
     auth_filter_list = ['following', 'new']
     if filter_str in auth_filter_list and not request.user.is_authenticated:
         raise Http404
@@ -31,14 +30,7 @@ def get_filtered_threads(
         'me': thread_qs.get_recent_for_user(request, user, count=None),
     }
     all_filter_list = auth_filter_list + ['trending', 'popular', 'fresh']
-    # Recent threads are returned for invalid filters as default.
-    # However, threads_dict.get(filter_str) may return an empty queryset
-    # if there is no thread for the current selection. So also perform check
-    # for that situation to avoid getting recent threads for valid filters
-    # with no threads
     if filter_str not in list(threads_dict.keys()):
-        # print('recent')
-        # if not threads_dict.get(filter_str) and filter_str not in all_filter_list:
         return [RECENT, threads_dict[RECENT]]
     return [filter_str, threads_dict[filter_str]]
 
