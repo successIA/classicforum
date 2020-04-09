@@ -5,7 +5,7 @@ bleach-whitelist==0.0.10
 colorama==0.4.1
 coverage==4.4.2
 dj-database-url==0.4.2
-Django==1.11.28
+Django==1.11.29
 django-appconf==1.0.3
 django-compat==1.0.15
 django-compressor==2.3
