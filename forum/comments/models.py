@@ -136,10 +136,11 @@ class Comment(TimeStampedModel):
         else:
             self.likers.add(user)
             is_liker = True
-            Notification.objects.create(
-                sender=user, receiver=self.user,
-                comment=self, notif_type=Notification.COMMENT_LIKED
-            )
+            if self.user != user:
+                Notification.objects.create(
+                    sender=user, receiver=self.user,
+                    comment=self, notif_type=Notification.COMMENT_LIKED
+                )
         return self.likers.count(), is_liker
 
     def is_owner(self, user):
