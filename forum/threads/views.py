@@ -49,7 +49,7 @@ def thread_list(request, filter_str=None, page=1, form=None):
         'threads': thread_paginator,
         'base_url': base_url,
         'show_floating_btn': True,
-        'scroll_or_login': get_post_login_redirect_url(home_url),
+        'login_redirect_url': get_post_login_redirect_url(home_url),
         'form': ThreadForm if not form else form,
         'is_post_update': True if form else False,
         'form_action': form_action + '#post-form',

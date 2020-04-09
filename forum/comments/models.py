@@ -110,13 +110,9 @@ class Comment(TimeStampedModel):
     def unhide(self, *args, **kwargs):
         self.thread.comments.pure().filter(
             pk__gt=self.pk
-        ).update(
-            offset=F('offset') + 1
-        )
+        ).update(offset=F('offset') + 1)
 
-        self.thread.comments.pure().filter(
-            pk=self.pk
-        ).update(visible=True)
+        self.thread.comments.pure().filter(pk=self.pk).update(visible=True)
         
         self.thread.synchronise(self._get_last())
     
@@ -218,7 +214,7 @@ class Comment(TimeStampedModel):
 
 class CommentRevision(models.Model):
     comment = models.ForeignKey(
-        Comment, on_delete=models.CASCADE, related_name="revisions"
+        Comment, on_delete=models.CASCADE, related_name='revisions'
     )
     message = models.TextField(max_length=4000)
     marked_message = models.TextField(max_length=4000, blank=True)

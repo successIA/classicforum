@@ -26,18 +26,17 @@
   </title>
 </head>
 
-<body>
-  {% block absolute_content %}{% endblock absolute_content %}
-  
-  <div class="sidebar-overlay"></div>
+<body>  
+  {% block sidebar_overlay %}
+    <div class="sidebar-overlay"></div>
+  {% endblock sidebar_overlay %}
 
   <div class="d-flex" id="wrapper">
     {% block sidebar %}
       <div class="bg-light" id="sidebar-wrapper">
         <div class="sidebar-heading font-weight-bold">
           <span class="d-inline-block d-md-none" id="close-sidebar">&times;</span>
-          <a class="navbar-brand" href="/">
-            <img src="{% static 'assets/bootstrap-solid.svg' %}" width="30" height="30" alt="" />
+          <a class="navbar-brand" href="/">            
             <span>ClassicForum</span>
           </a>
         </div>
@@ -68,9 +67,9 @@
           </button>
 
           <div class="around-search-bar d-flex d-lg-none justify-content-start align-items-center ml-2 ml-lg-0 mr-auto">
-            <a class="navbar-brand" href="/">
-              <img src="{% static 'assets/bootstrap-solid.svg' %}" width="30" height="30" alt="" />
-              <span class="d-none d-md-inline-block text-white">ClassicForum</span>
+            <a class="navbar-brand ml-1" href="/">
+              <span class="d-none d-md-inline-block text-white font-weight-bold">ClassicForum</span>
+              <span class="d-block d-md-none text-white font-weight-bold" href="/">CForum</span>
             </a>
           </div>
 
@@ -155,7 +154,7 @@
               {% else %}                
                 <div class="d-md-flex justify-content-end align-items-center">
                   {# Search icon small screen #}
-                  <span class="d-inline-block d-lg-none mr-3 text-white"><i class="fas fa-search search-icon"></i></span>
+                  <span class="d-inline-block d-md-none mr-3 text-white"><i class="fas fa-search search-icon"></i></span>
                   <a href="{% url 'accounts:signup' %}" class="btn btn-outline-warning btn mr-2">
                     Register
                   </a>
@@ -174,13 +173,14 @@
   </div>
 
   {% if show_floating_btn %}
-    <a href="{{scroll_or_login}}" style="display: flex; text-decoration: none;" 
+    <a href="{{login_redirect_url}}" style="display: flex; text-decoration: none;" 
       class="rounded-circle bg-primary add-thread-btn floating-action-btn align-items-center justify-content-center text-white">
       <i class="fas fa-pen"></i>
     </a>
+
+    <ul class="mention-dropdown"></ul>
   {% endif %}
 
-  <ul class="mention-dropdown"></ul>
 
   <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
   <script src="{% static 'js/popper.min.js' %}"></script>

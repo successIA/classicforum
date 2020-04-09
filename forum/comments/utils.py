@@ -10,7 +10,6 @@ from markdown import markdown
 from forum.accounts.utils import get_user_list_without_creator
 from forum.attachments.models import Attachment
 from forum.comments.forms import CommentForm
-# from forum.core.utils import find_mentioned_usernames
 from forum.core.bbcode_quote import bbcode_quote
 from forum.core.bbcode_quote2 import BBCodeQuoteWithMarkdownParser
 from forum.core.utils import convert_mention_to_link, find_mentioned_usernames

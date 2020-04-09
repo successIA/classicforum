@@ -29,7 +29,7 @@ def category_detail(request, slug, filter_str=None, page=1, form=None):
         'threads': thread_paginator,
         'base_url': base_url,
         'show_floating_btn': True,
-        'scroll_or_login': get_post_login_redirect_url(category_url),
+        'login_redirect_url': get_post_login_redirect_url(category_url),
         'form_action': category.get_thread_form_action(thread_data[0], page),
     }
     add_pagination_context(base_url, ctx, thread_paginator)
