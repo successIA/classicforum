@@ -51,7 +51,7 @@ def get_additional_thread_detail_ctx(request, thread, form_action):
         'category': category,
         'comments': comment_paginator,
         'base_url': base_url,
-        'scroll_or_login': get_post_login_redirect_url(thread_url),
+        'login_redirect_url': get_post_login_redirect_url(thread_url),
         'show_floating_btn': True,
         'form_action': form_action,
         'first_page': first_page
