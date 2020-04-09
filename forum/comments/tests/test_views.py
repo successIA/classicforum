@@ -16,6 +16,7 @@ from forum.moderation.tests.utils import make_moderator
 from forum.threads.forms import ThreadForm
 from forum.threads.models import Thread
 from forum.threads.tests.utils import make_only_thread, make_threads
+from forum.notifications.models import Notification
 
 fake = Faker()
 
@@ -477,3 +478,28 @@ class CommentLikeTest(CommentViewsTest):
         response = self.client.post(self.like_url)
         self.assertEquals(response.status_code, 302)
         self.assertEquals(self.comment.likers.count(), 0)
+    
+    def test_notification_after_like(self):
+        """
+        The ownwer of a comment should receive notification after
+        comment is liked.
+        """
+        second_user = self.make_user('testuser2')
+        login(self, second_user, 'password')
+        response = self.client.post(self.like_url)
+        notif_qs = Notification.objects.filter(
+            sender=second_user, receiver=self.user,
+            comment=self.comment, notif_type=Notification.COMMENT_LIKED
+        )
+        self.assertEqual(notif_qs.count(), 1)
+        self.assertEqual(notif_qs[0].sender, second_user)
+        self.assertEqual(notif_qs[0].receiver, self.user)
+
+    def test_no_notification_after_like_for_owner(self):
+        login(self, self.user, 'password')
+        response = self.client.post(self.like_url)
+        notif_qs = Notification.objects.filter(
+            sender=self.user, receiver=self.user,
+            comment=self.comment, notif_type=Notification.COMMENT_LIKED
+        )
+        self.assertEqual(notif_qs.count(), 0)
