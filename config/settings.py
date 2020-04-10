@@ -195,7 +195,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'django_libsass.SassCompiler'),
 )
-# COMPRESS_OFFLINE = True
+COMPRESS_OFFLINE = True
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'forum', 'media')
 TEST_MEDIA_ROOT = os.path.join(BASE_DIR, 'forum', 'testmedia')
