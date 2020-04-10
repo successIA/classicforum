@@ -68,8 +68,12 @@
 
           <div class="around-search-bar d-flex d-lg-none justify-content-start align-items-center ml-2 ml-lg-0 mr-auto">
             <a class="navbar-brand ml-1" href="/">
-              <span class="d-none d-md-inline-block text-white font-weight-bold">ClassicForum</span>
-              <span class="d-block d-md-none text-white font-weight-bold" href="/">CForum</span>
+              <span class="d-none d-sm-inline-block text-white font-weight-bold">ClassicForum</span>
+              {% if request.user.is_authenticated %}
+                <span class="d-inline-block text-white font-weight-bold">ClassicForum</span>
+              {% else %}
+                <span class="d-block d-sm-none text-white font-weight-bold" href="/">CF</span>
+              {% endif %}
             </a>
           </div>
 
