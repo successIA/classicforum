@@ -1,4 +1,5 @@
 $(document).ready(function() {
+  BASE_URL = 'http://127.0.0.1:8000'
   function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== "") {
