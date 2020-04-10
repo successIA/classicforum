@@ -13,10 +13,10 @@ from forum.comments.forms import Comment, CommentForm
 from forum.comments.tests.utils import make_comment
 from forum.comments.utils import get_bbcode_message_quote
 from forum.moderation.tests.utils import make_moderator
+from forum.notifications.models import Notification
 from forum.threads.forms import ThreadForm
 from forum.threads.models import Thread
 from forum.threads.tests.utils import make_only_thread, make_threads
-from forum.notifications.models import Notification
 
 fake = Faker()
 

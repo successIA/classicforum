@@ -54,7 +54,7 @@ $(document).ready(function() {
         var permalink = $(this).attr('href').trim()
         var $tempInput = $("<input>");
         $("body").append($tempInput);
-        $tempInput.val(permalink).select();
+        $tempInput.val(BASE_URL + permalink).select();
         document.execCommand("copy");
         $tempInput.remove();
         new Snackbar("Link copied to clipbaord!");
