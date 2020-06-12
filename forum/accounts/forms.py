@@ -32,11 +32,19 @@ class UserSignUpForm(UserCreationForm):
         self.fields['username'].help_text = None
         self.fields['password1'].help_text = None
 
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username__iexact=username).exists():
+            raise forms.ValidationError(
+                'This username has already been registered'
+            )
+        return username
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if not email:
             return email
-            
+
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError(
                 'This email has already been registered'

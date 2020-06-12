@@ -273,6 +273,13 @@ class SignupTest(TestCase):
         user = User.objects.get(username='testuser1')
         self.assertEqual(user.email, '')
 
+    def test_guest_signup(self):
+        response = self.client.post(reverse('accounts:guest_signup'))
+        self.assertEqual(response.status_code, 302)
+        user_qs = User.objects.filter(username__icontains='guest')
+        self.assertTrue(user_qs.exists())
+        self.assertEqual(user_qs.count(), 1)
+
     def test_email_sent(self):
         response = self.client.post(self.url, self.valid_data)
         self.assertEqual(response.status_code, 302)

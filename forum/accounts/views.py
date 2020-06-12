@@ -6,11 +6,14 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.utils.crypto import get_random_string
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
+
+from faker import Faker
 
 from forum.accounts.forms import UserProfileForm, UserSignUpForm
 from forum.accounts.mixins import profile_owner_required
@@ -164,6 +167,15 @@ def signup(request):
 
     ctx = {'form': form}
     return render(request, 'accounts/signup.html', ctx)
+
+
+def guest_signup(request):
+    user = User()
+    suffix = get_random_string(length=10).lower()
+    user.username = f'guest_{suffix}'
+    user.save()
+    auth_login(request, user)
+    return redirect('home')
 
 
 def activate(request, uidb64, token):

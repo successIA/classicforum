@@ -7,6 +7,7 @@ from forum.accounts.views import (
     account_activation_sent,
     activate,
     follow_user,
+    guest_signup,
     signup,
     user_comment_list,
     user_followers,
@@ -34,6 +35,7 @@ urlpatterns = [
     ),
     
     url(r'auth/signup/$', signup, name='signup'),
+    url(r'auth/guest-signup/$', guest_signup, name='guest_signup'),
     
     url(r'auth/login/$', 
         auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'
