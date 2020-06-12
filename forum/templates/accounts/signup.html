@@ -12,7 +12,10 @@
 			<div class="col-12 offset-0 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-8 offset-lg-2 col-xl-6 offset-xl-3">
 				<div class="card">
 					<div class="card-body">
-            <h3 class="card-title">Sign Up</h3>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h3 class="card-title mb-0">Sign Up</h3>
+              <a href="{% url 'accounts:guest_signup' %}" class="btn btn-light text-secondary">Login as guest</a>
+            </div>
 						<form method="post" novalidate class="auth-form">
 							{% csrf_token %}
 							{{ form | crispy }}
