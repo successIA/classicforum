@@ -251,7 +251,6 @@ class SignupTest(TestCase):
         self.valid_data = {
             'username': 'testuser1',
             'email': 'testuser1@example.com',
-            'email2': 'testuser1@example.com',
             'password1': 'random-password',
             'password2': 'random-password'
         }

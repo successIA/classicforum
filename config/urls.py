@@ -27,5 +27,5 @@ urlpatterns = [
 
     url(r'^search/', include('forum.search.urls', namespace='search')),
     url(r'^moderation/', include('forum.moderation.urls', namespace='moderation')),
-    url(r'^admin/', admin.site.urls),
+    url(settings.ADMIN_URL, admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
