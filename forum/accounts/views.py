@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login as auth_login
@@ -150,11 +151,16 @@ def signup(request):
     form = UserSignUpForm(request.POST or None)
     if form.is_valid():
         user = form.save(commit=False)
-        user.is_active = False
-        user.save()
-        email_data = get_signup_email_confirm_form_entries(request, user)
-        user.email_user(email_data['subject'], email_data['message'])
-        return redirect('accounts:account_activation_sent')
+        if settings.CONFIRM_EMAIL and user.email:
+            user.is_active = False
+            user.save()
+            email_data = get_signup_email_confirm_form_entries(request, user)
+            user.email_user(email_data['subject'], email_data['message'])
+            return redirect('accounts:account_activation_sent')
+        else:
+            user.save()
+            auth_login(request, user)
+            return redirect('home')
 
     ctx = {'form': form}
     return render(request, 'accounts/signup.html', ctx)

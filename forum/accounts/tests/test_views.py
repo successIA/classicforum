@@ -260,9 +260,18 @@ class SignupTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_valid_data_acceptance(self):
-        response = self.client.post(self.url, self.valid_data)
+        with self.settings(CONFIRM_EMAIL=True):
+            response = self.client.post(self.url, self.valid_data)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(User.objects.filter(username='testuser1').exists())
+    
+    def test_without_email_confirmation(self):
+        with self.settings(CONFIRM_EMAIL=False):
+            self.valid_data.pop('email')
+            response = self.client.post(self.url, self.valid_data)
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(username='testuser1')
+        self.assertEqual(user.email, '')
 
     def test_email_sent(self):
         response = self.client.post(self.url, self.valid_data)
