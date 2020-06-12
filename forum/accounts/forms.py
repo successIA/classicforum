@@ -16,16 +16,11 @@ class UserPasswordChangeForm(PasswordChangeForm):
 
 
 class UserSignUpForm(UserCreationForm):
-    email = forms.EmailField(
-        max_length=254, required=True, widget=forms.EmailInput()
-    )
-    email2 = forms.EmailField(
-        max_length=254, required=True, widget=forms.EmailInput(), label='Confirm Email'
-    )
+    email = forms.EmailField(max_length=254, widget=forms.EmailInput())
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'email2', 'password1', 'password2')
+        fields = ('username', 'email', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         super(UserSignUpForm, self).__init__(*args, **kwargs)
@@ -37,14 +32,8 @@ class UserSignUpForm(UserCreationForm):
         email_qs = User.objects.filter(email=email)
         if email_qs.exists():
             raise forms.ValidationError(
-                'This email has already been registered')
-        return email
-
-    def clean_email2(self):
-        email = self.cleaned_data.get('email')
-        email2 = self.cleaned_data.get('email2')
-        if email and email2 and email != email2:
-            raise forms.ValidationError('Emails must match.')
+                'This email has already been registered'
+            )
         return email
 
 
