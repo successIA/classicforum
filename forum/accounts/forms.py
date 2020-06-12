@@ -16,7 +16,12 @@ class UserPasswordChangeForm(PasswordChangeForm):
 
 
 class UserSignUpForm(UserCreationForm):
-    email = forms.EmailField(max_length=254, widget=forms.EmailInput())
+    email = forms.EmailField(
+        required=False,
+        max_length=254,
+        widget=forms.EmailInput(),
+        help_text='You may leave this field empty.'
+    )
 
     class Meta:
         model = User
@@ -29,8 +34,10 @@ class UserSignUpForm(UserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        email_qs = User.objects.filter(email=email)
-        if email_qs.exists():
+        if not email:
+            return email
+            
+        if User.objects.filter(email=email).exists():
             raise forms.ValidationError(
                 'This email has already been registered'
             )
