@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% load compress %}
 {% load forum_template_tags %}
 {% load humanize %}
 {% load static %}
@@ -42,6 +43,8 @@
   {% block profile_content %}{% endblock profile_content %}
 {% endblock content %}
 
-{% block javascript %} 
-  <script src="{% static 'js/user-profile.js' %}"></script>
+{% block javascript %}
+  {% compress js %}
+    <script src="{% static 'js/user-profile.js' %}"></script>
+  {% endcompress %}
 {% endblock javascript %}

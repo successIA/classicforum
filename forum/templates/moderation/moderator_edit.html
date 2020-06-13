@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% load compress %}
 {% load crispy_forms_tags %}
 {% load static %}
 
@@ -93,6 +94,8 @@
   </main>
 {% endblock content %}
 
-{% block javascript %} 
-  <script src="{% static 'js/moderation.js' %}"></script>
+{% block javascript %}
+  {% compress js %}
+    <script src="{% static 'js/moderation.js' %}"></script>
+  {% endcompress %}
 {% endblock javascript %}

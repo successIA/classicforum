@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load crispy_forms_tags %}
+{% load compress %}
 {% load forum_template_tags %}
 {% load humanize %}
 {% load moderation_template_tags %}
@@ -135,5 +136,7 @@
 {% endblock content %}
 
 {% block javascript %} 
-  <script src="{% static 'js/thread-detail.js' %}"></script>
+  {% compress js %}
+    <script src="{% static 'js/thread-detail.js' %}"></script>
+  {% endcompress %}
 {% endblock javascript %}
