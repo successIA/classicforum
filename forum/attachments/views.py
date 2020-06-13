@@ -1,6 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, Http404
 
 from forum.attachments.forms import AttachmentForm
 from forum.attachments.mixins import ajax_required
@@ -12,11 +13,13 @@ from forum.core.utils import strip_leading_slash
 @login_required
 @ajax_required
 def upload(request):
+    if not settings.DEBUG:
+        raise Http404
     if request.method == "POST":
         data = {}
         form = AttachmentForm(request.POST, request.FILES)
 
-        if form.is_valid():            
+        if form.is_valid():       
             attachment = form.save(commit=False)            
             md5sum = md5(attachment.image)
             attachment_qs = Attachment.objects.filter(

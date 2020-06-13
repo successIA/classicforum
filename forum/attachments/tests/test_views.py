@@ -21,7 +21,7 @@ TEST_IMAGE_3 = os.path.join(TEST_IMAGES_DIR, 'Chrysanthemum.jpg')
 IMAGE_UPLOAD_DIR = os.path.join(settings.TEST_MEDIA_ROOT, 'uploads')
 
 
-@override_settings(MEDIA_ROOT=settings.TEST_MEDIA_ROOT)
+@override_settings(MEDIA_ROOT=settings.TEST_MEDIA_ROOT, DEBUG=True)
 class ImageUploadViewTest(TestCase):
     def setUp(self):
         self.user = self.make_user('testuser1')
@@ -66,6 +66,17 @@ class ImageUploadViewTest(TestCase):
         )
         self.assertEquals(response.status_code, 302)
         self.assertEquals(Attachment.objects.count(), 0)
+
+    def test_404_for_production(self):
+        current_count = Attachment.objects.count()
+        login(self, self.user, 'password')
+        data = {'image': self.test_image}
+        with self.settings(DEBUG=False):
+            response = self.client.post(
+                self.upload_url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+            )
+        self.assertEquals(response.status_code, 404)
+        self.assertEquals(Attachment.objects.count(), current_count)
 
     def test_post_with_authenticated_user_with_ajax(self):
         current_count = Attachment.objects.count()

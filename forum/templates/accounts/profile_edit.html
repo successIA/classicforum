@@ -29,9 +29,11 @@
                       class="avatar mx-auto d-md-none" alt="..."
                       style="cursor: pointer;"
                       id="custom-image-chooser1" />
-                    <span class="text-muted font-weight-light mt-1 text-center d-block d-md-none">
-                      Tap image to change picture
-                    </span>
+                    {% if debug %}
+                      <span class="text-muted font-weight-light mt-1 text-center d-block d-md-none">
+                        Tap image to change picture
+                      </span>
+                    {% endif %}
                   </div>{# Mobile #}
 
                   {# Destop #}

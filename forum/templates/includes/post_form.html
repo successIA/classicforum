@@ -10,10 +10,12 @@
     
     {{ form|crispy }}
 
-    <button id="customFileChooser" type="button" class="btn btn-secondary pull-right mb-4 float-right">
-      <i class="fa fa-cloud-upload-alt mr-1"></i>Upload Image
-    </button>
-
+    {% if debug %}
+      <button id="customFileChooser" type="button" class="btn btn-secondary pull-right mb-4 float-right">
+        <i class="fa fa-cloud-upload-alt mr-1"></i>Upload Image
+      </button>
+    {% endif %}
+    
     <input id="realFileChooser" type="file" name="image" style="display: none;" data-url="{% url 'attachments:upload_img' %}"
       data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
 
@@ -43,4 +45,5 @@
       </div>
     </div>
   </div>
+  <div style="height: 10rem;"></div>
 </div>
