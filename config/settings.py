@@ -196,6 +196,13 @@ COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
 COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'django_libsass.SassCompiler'),
 )
+COMPRESS_FILTERS = {
+    'css': [
+        'compressor.filters.css_default.CssAbsoluteFilter', 
+        'compressor.filters.cssmin.rCSSMinFilter'
+    ],
+    'js': ['compressor.filters.jsmin.JSMinFilter']
+}
 COMPRESS_OFFLINE = config('COMPRESS_OFFLINE', default=True, cast=bool)
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'forum', 'media')

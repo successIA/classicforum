@@ -12,7 +12,7 @@
 
     {% if debug %}
       <button id="customFileChooser" type="button" class="btn btn-secondary pull-right mb-4 float-right">
-        <i class="fa fa-cloud-upload-alt mr-1"></i>Upload Image
+        <i class="fa fa-cloud-upload-alt mr-1"></i>UPLOAD IMAGE
       </button>
     {% endif %}
     
@@ -21,9 +21,9 @@
 
     <div class="float-right">
       {% if not form.instance.pk %}
-        <button type="submit" class="btn btn-primary mr-2 js-post-submit-btn">Post</button>
+        <button type="submit" class="btn btn-primary mr-2 js-post-submit-btn font-weight-bold px-4">POST</button>
       {% else %}
-        <button type="submit" class="btn btn-primary mr-2 js-post-submit-btn">Save</button>
+        <button type="submit" class="btn btn-primary mr-2 js-post-submit-btn font-weight-bold px-4">SAVE</button>
       {% endif %}
     </div>
   </form>
