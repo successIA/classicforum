@@ -86,8 +86,13 @@ def user_notification_list(request, username):
 def user_profile_edit(request, username):
     form = UserProfileForm(instance=request.user)
     if request.method == 'POST':
-        form = UserProfileForm(
-            request.POST, request.FILES, instance=request.user)
+        if settings.DEBUG:
+            form = UserProfileForm(
+                request.POST, request.FILES, instance=request.user
+            )
+        else:
+            form = UserProfileForm(request.POST, instance=request.user)
+
         if form.is_valid():
             image = form.cleaned_data.get('image')
             from forum.attachments.models import Attachment

@@ -172,15 +172,32 @@ class UserProfileEditTest(TestCase):
         login(self, self.user, 'password')
         self.valid_data.update({'image': self.test_avatar_large})
         data = self.valid_data
-        response = self.client.post(self.user_edit_url, data)
+        with self.settings(DEBUG=True):
+            response = self.client.post(self.user_edit_url, data)
         self.assertEqual(response.status_code, 200)
         message = 'File too large. Size should not exceed 500 KB.'
         form = response.context.get('form')
         self.assertIn(message, form.errors['image'])
 
+    def test_avatar_not_accepted_in_production(self):
+        login(self, self.user, 'password')
+        with self.settings(DEBUG=False):
+            response = self.client.post(self.user_edit_url, self.valid_data)
+        self.assertEqual(response.status_code, 302)
+        
+        self.assertEqual(Attachment.objects.count(), 0)
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.avatar_url, None)
+        self.assertEqual(self.user.gender, self.valid_data['gender'])
+        self.assertEqual(self.user.signature, self.valid_data['signature'])
+        self.assertEqual(self.user.location, self.valid_data['location'])
+        self.assertEqual(self.user.website, self.valid_data['website'])
+
     def test_valid_data_acceptance(self):
         login(self, self.user, 'password')
-        response = self.client.post(self.user_edit_url, self.valid_data)
+        with self.settings(DEBUG=True):
+            response = self.client.post(self.user_edit_url, self.valid_data)
         self.assertEqual(response.status_code, 302)
         self.user.refresh_from_db()
         self.assertIsNotNone(self.user.avatar_url)
@@ -191,7 +208,8 @@ class UserProfileEditTest(TestCase):
 
     def test_duplicate_images(self):
         login(self, self.user, 'password')
-        response = self.client.post(self.user_edit_url, self.valid_data)
+        with self.settings(DEBUG=True):
+            response = self.client.post(self.user_edit_url, self.valid_data)
         self.assertEqual(response.status_code, 302)
 
         second_user = self.make_user('testuser2')
@@ -202,7 +220,8 @@ class UserProfileEditTest(TestCase):
         )
         self.valid_data.update({'image': self.test_avatar_copy})
         data = self.valid_data
-        second_response = client.post(second_user_edit_url, data)
+        with self.settings(DEBUG=True):
+            second_response = client.post(second_user_edit_url, data)
         self.assertEqual(second_response.status_code, 302)
 
         self.user.refresh_from_db()
@@ -281,7 +300,8 @@ class SignupTest(TestCase):
         self.assertEqual(user_qs.count(), 1)
 
     def test_email_sent(self):
-        response = self.client.post(self.url, self.valid_data)
+        with self.settings(CONFIRM_EMAIL=True):
+            response = self.client.post(self.url, self.valid_data)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'Activate Your ClassicForum Account')
