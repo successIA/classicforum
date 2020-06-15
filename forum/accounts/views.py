@@ -175,6 +175,9 @@ def signup(request):
 
 
 def guest_signup(request):
+    if request.method != 'POST':
+        raise Http404
+    
     user = User()
     suffix = get_random_string(length=10).lower()
     user.username = f'guest_{suffix}'

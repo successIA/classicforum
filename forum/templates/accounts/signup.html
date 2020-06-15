@@ -14,7 +14,12 @@
 					<div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <h3 class="card-title mb-0">Sign Up</h3>
-              <a href="{% url 'accounts:guest_signup' %}" class="btn btn-light text-secondary">Login as guest</a>
+              <form action="{% url 'accounts:guest_signup' %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-light btn-sm text-uppercase">
+                  <i class="fas fa-sign-in-alt mr-1"></i>Login as guest
+                </button>
+              </form>
             </div>
 						<form method="post" novalidate class="auth-form">
 							{% csrf_token %}
