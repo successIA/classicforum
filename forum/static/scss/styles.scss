@@ -1,6 +1,23 @@
 $primary: #9c27b0;
 // $breadcrumb-divider: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxwYXRoIGQ9Ik0yLjUgMEwxIDEuNSAzLjUgNCAxIDYuNSAyLjUgOGw0LTQtNC00eiIgZmlsbD0iY3VycmVudENvbG9yIi8+PC9zdmc+);
 // $breadcrumb-divider: quote(">");
+
+@import "../bootstrap/functions";
+@import "../bootstrap/variables";
+
+$navbar-dark-toggler-icon-bg:                  str-replace($navbar-dark-toggler-icon-bg, " ", "%20");
+$navbar-light-toggler-icon-bg:                 str-replace($navbar-light-toggler-icon-bg, " ", "%20");
+
+$carousel-control-prev-icon-bg:                str-replace($carousel-control-prev-icon-bg, " ", "%20");
+$carousel-control-next-icon-bg:                str-replace($carousel-control-next-icon-bg, " ", "%20");
+
+$custom-checkbox-indicator-icon-checked:       str-replace($custom-checkbox-indicator-icon-checked, " ", "%20");
+$custom-checkbox-indicator-icon-indeterminate: str-replace($custom-checkbox-indicator-icon-indeterminate, " ", "%20");
+
+$custom-radio-indicator-icon-checked:          str-replace($custom-radio-indicator-icon-checked, " ", "%20");
+
+$custom-select-indicator:                      str-replace($custom-select-indicator, " ", "%20");
+
 @import "../bootstrap/bootstrap";
 @import "./components/global";
 @import "./components/empty-state";
