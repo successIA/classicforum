@@ -35,19 +35,19 @@ def _get_filtered_threads(
         raise Http404
 
     if filter_str == 'trending':
-        return ['trending', thread_qs.get_by_days_from_now(request, days=7)]
+        return 'trending', thread_qs.get_by_days_from_now(request, days=7)
     elif filter_str == 'popular':
-        return ['popular', thread_qs.get_by_days_from_now(request, days=None)]
+        return 'popular', thread_qs.get_by_days_from_now(request, days=None)
     elif filter_str == 'fresh':
-        return ['fresh', thread_qs.get_with_no_reply()]
+        return 'fresh', thread_qs.get_with_no_reply()
     elif filter_str == 'new':
-        return ['new', thread_qs.get_new_for_user(request)]
+        return 'new', thread_qs.get_new_for_user(request)
     elif filter_str == 'following':
-        return ['following', thread_qs.get_following_for_user(request)]
+        return 'following', thread_qs.get_following_for_user(request)
     elif filter_str == 'me':
-        return ['me', thread_qs.get_recent_for_user(request, user, count=None)]
+        return 'me', thread_qs.get_recent_for_user(request, user, count=None)
     
-    return ['recent', thread_qs.get_recent(request)]
+    return 'recent', thread_qs.get_recent(request)
 
 
 def get_additional_thread_detail_ctx(request, thread, form_action):

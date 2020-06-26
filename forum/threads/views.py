@@ -35,18 +35,18 @@ from forum.threads.utils import (
 
 def thread_list(request, filter_str=None, page=1, form=None):
     thread_qs = Thread.objects.active()
-    thread_data = get_filtered_threads_for_page(
+    filter_str, filtered_qs = get_filtered_threads_for_page(
         request, filter_str, thread_qs, request.user
     )
     thread_paginator = get_paginated_queryset(
-        thread_data[1], THREAD_PER_PAGE, page
+        filtered_qs, THREAD_PER_PAGE, page
     )
     form_action = reverse(
         'threads:thread_create',
-        kwargs={'filter_str': thread_data[0], 'page': page}
+        kwargs={'filter_str': filter_str, 'page': page}
     )
-    home_url = Thread.get_precise_url(thread_data[0], page)
-    base_url = [f"/threads/{thread_data[0]}/", "/"]
+    home_url = Thread.get_precise_url(filter_str, page)
+    base_url = [f"/threads/{filter_str}/", "/"]
     ctx = {
         'threads': thread_paginator,
         'base_url': base_url,
@@ -55,7 +55,7 @@ def thread_list(request, filter_str=None, page=1, form=None):
         'form': ThreadForm if not form else form,
         'is_post_update': True if form else False,
         'form_action': form_action + '#post-form',
-        'current_thread_filter': thread_data[0]
+        'current_thread_filter': filter_str
     }
     add_pagination_context(base_url, ctx, thread_paginator)
     return render(request, 'home.html', ctx)

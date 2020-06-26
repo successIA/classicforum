@@ -138,16 +138,16 @@ def user_thread_list(request, username, filter_str, page):
     if not user.is_required_filter_owner(request.user, filter_str):
         raise Http404
     thread_qs = Thread.objects.active()
-    thread_data = get_filtered_threads_for_profile(
+    filter_str, filtered_qs = get_filtered_threads_for_profile(
         request, filter_str, thread_qs, user=user
     )
-    thread_paginator = get_paginated_queryset(thread_data[1], 10, page)
-    base_url = [f'/accounts/{username}/{thread_data[0]}/', '/']
+    thread_paginator = get_paginated_queryset(filtered_qs, 10, page)
+    base_url = [f'/accounts/{username}/{filter_str}/', '/']
     ctx = {
         'userprofile': user,
         'threads': thread_paginator,
         'base_url': base_url,
-        'current_profile_page': thread_data[0]
+        'current_profile_page': filter_str
     }
     add_pagination_context(base_url, ctx, thread_paginator)
     return render(request, 'accounts/profile_threads.html', ctx)
