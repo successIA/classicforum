@@ -41,7 +41,6 @@ class User(AbstractUser):
         return self == user
 
     def is_required_filter_owner(self, user, filter_str):
-        # owner_only = ['me', 'following', 'new']
         owner_only = ['following', 'new']
         if filter_str not in owner_only:
             return True

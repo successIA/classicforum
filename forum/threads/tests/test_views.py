@@ -80,8 +80,7 @@ class ThreadListViewTest(ThreadsViewsTest):
             )
 
     def test_auth_threads_filter_with_anonymous_user(self):
-        # auth_filter_str_list = ['new', 'following', 'me']
-        auth_filter_str_list = ['new', 'following']
+        auth_filter_str_list = ['new', 'following', 'me']
         for filter_str in auth_filter_str_list:
             url = reverse(
                 "threads:thread_list_filter",

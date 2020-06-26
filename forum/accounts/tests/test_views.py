@@ -244,6 +244,16 @@ class UserCommentListTest(TestCase):
 
 
 class UserThreadListTest(TestCase):
+    def test_auth_filter_str_for_guest(self):
+        user = self.make_user('testuser1')
+        for filter_str in ['new', 'following']:
+            url = reverse(
+                'accounts:thread_%s' % filter_str,
+                kwargs={'username': user.username, 'filter_str': filter_str}
+            )
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 404)
+
     def test_list(self):
         user = self.make_user('testuser1')
         login(self, user, 'password')

@@ -26,7 +26,7 @@ from forum.comments.models import Comment
 from forum.core.utils import add_pagination_context, get_paginated_queryset
 from forum.notifications.models import Notification
 from forum.threads.models import Thread
-from forum.threads.utils import get_filtered_threads
+from forum.threads.utils import get_filtered_threads_for_profile
 
 User = get_user_model()
 
@@ -134,13 +134,11 @@ def user_comment_list(request, username):
 
 
 def user_thread_list(request, username, filter_str, page):
-    user = get_object_or_404(
-        User, username=username
-    )
+    user = get_object_or_404(User, username=username)
     if not user.is_required_filter_owner(request.user, filter_str):
         raise Http404
     thread_qs = Thread.objects.active()
-    thread_data = get_filtered_threads(
+    thread_data = get_filtered_threads_for_profile(
         request, filter_str, thread_qs, user=user
     )
     thread_paginator = get_paginated_queryset(thread_data[1], 10, page)

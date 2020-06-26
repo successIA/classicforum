@@ -27,7 +27,7 @@ from forum.threads.mixins import thread_adder, thread_owner_required
 from forum.threads.models import Thread, ThreadFollowership, ThreadRevision
 from forum.threads.utils import (
     get_additional_thread_detail_ctx,
-    get_filtered_threads,
+    get_filtered_threads_for_page,
     perform_thread_post_create_actions,
     perform_thread_post_update_actions,
 )
@@ -35,7 +35,9 @@ from forum.threads.utils import (
 
 def thread_list(request, filter_str=None, page=1, form=None):
     thread_qs = Thread.objects.active()
-    thread_data = get_filtered_threads(request, filter_str, thread_qs)
+    thread_data = get_filtered_threads_for_page(
+        request, filter_str, thread_qs, request.user
+    )
     thread_paginator = get_paginated_queryset(
         thread_data[1], THREAD_PER_PAGE, page
     )

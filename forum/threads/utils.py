@@ -13,26 +13,41 @@ from forum.notifications.models import Notification
 from forum.threads.models import ThreadFollowership
 
 
-def get_filtered_threads(
+def get_filtered_threads_for_page(
+    request, filter_str=None, thread_qs=None, user=None
+):  
+    if not request.user.is_authenticated and filter_str == 'me':
+        raise Http404
+    return _get_filtered_threads(request, filter_str, thread_qs, user)
+
+
+def get_filtered_threads_for_profile(
+    request, filter_str=None, thread_qs=None, user=None
+):    
+    return _get_filtered_threads(request, filter_str, thread_qs, user)
+
+
+def _get_filtered_threads(
     request, filter_str=None, thread_qs=None, user=None
 ):
-    RECENT = 'recent'
     auth_filter_list = ['following', 'new']
     if filter_str in auth_filter_list and not request.user.is_authenticated:
         raise Http404
-    threads_dict = {
-        RECENT: thread_qs.get_recent(request),
-        'trending': thread_qs.get_by_days_from_now(request, days=7),
-        'popular': thread_qs.get_by_days_from_now(request, days=None),
-        'fresh': thread_qs.get_with_no_reply(),
-        'new': thread_qs.get_new_for_user(request),
-        'following': thread_qs.get_following_for_user(request),
-        'me': thread_qs.get_recent_for_user(request, user, count=None),
-    }
-    all_filter_list = auth_filter_list + ['trending', 'popular', 'fresh']
-    if filter_str not in list(threads_dict.keys()):
-        return [RECENT, threads_dict[RECENT]]
-    return [filter_str, threads_dict[filter_str]]
+
+    if filter_str == 'trending':
+        return ['trending', thread_qs.get_by_days_from_now(request, days=7)]
+    elif filter_str == 'popular':
+        return ['popular', thread_qs.get_by_days_from_now(request, days=None)]
+    elif filter_str == 'fresh':
+        return ['fresh', thread_qs.get_with_no_reply()]
+    elif filter_str == 'new':
+        return ['new', thread_qs.get_new_for_user(request)]
+    elif filter_str == 'following':
+        return ['following', thread_qs.get_following_for_user(request)]
+    elif filter_str == 'me':
+        return ['me', thread_qs.get_recent_for_user(request, user, count=None)]
+    
+    return ['recent', thread_qs.get_recent(request)]
 
 
 def get_additional_thread_detail_ctx(request, thread, form_action):
