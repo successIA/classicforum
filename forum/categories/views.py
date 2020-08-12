@@ -9,7 +9,10 @@ from forum.core.utils import (
 )
 from forum.threads.forms import ThreadForm
 from forum.threads.models import Thread
-from forum.threads.utils import get_filtered_threads_for_page, get_paginated_queryset
+from forum.threads.utils import (
+    get_filtered_threads_for_page,
+    get_paginated_queryset,
+)
 
 
 def category_detail(request, slug, filter_str=None, page=1, form=None):    

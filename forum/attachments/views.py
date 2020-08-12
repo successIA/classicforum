@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import render, Http404
+from django.shortcuts import Http404, render
 
 from forum.attachments.forms import AttachmentForm
 from forum.attachments.mixins import ajax_required

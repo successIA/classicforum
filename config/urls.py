@@ -12,12 +12,8 @@ from forum.threads.views import (
     update_thread,
 )
 
-def trigger_error(request):
-    division_by_zero = 1 / 0
-
 urlpatterns = [
     url('__debug__/', include(debug_toolbar.urls)),
-    url(r'^sentry-debug/', trigger_error),
 
     url(r'^$', thread_list, name='home'),
     url(r'^categories/', include('forum.categories.urls', namespace='categories')),

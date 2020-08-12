@@ -12,8 +12,10 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
-from decouple import config, Csv
 import dj_database_url
+import sentry_sdk
+from decouple import Csv, config
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,8 +29,7 @@ SECRET_KEY = config(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = config('DEBUG', default=True, cast=bool)
-DEBUG = False
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1', cast=Csv())
 
@@ -166,6 +167,16 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Sentry Integration
+sentry_sdk.init(
+    dsn=config('SENTRY_DSN', ''),
+    integrations=[DjangoIntegration()],
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)
+
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = '/accounts/auth/login/'
 LOGIN_REDIRECT_URL = 'home'
@@ -227,15 +238,3 @@ PASSWORD_RESET_TIMEOUT_DAYS = 1 # 1 day
 ADMIN_URL = config('ADMIN_URL', r'^admin/')
 
 CONFIRM_EMAIL = False
-
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
-
-sentry_sdk.init(
-    dsn="https://f501f7a006144127893695fbc936c390@o433279.ingest.sentry.io/5388100",
-    integrations=[DjangoIntegration()],
-
-    # If you wish to associate users to errors (assuming you are using
-    # django.contrib.auth) you may enable sending PII data.
-    send_default_pii=True
-)
