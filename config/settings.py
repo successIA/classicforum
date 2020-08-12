@@ -27,7 +27,8 @@ SECRET_KEY = config(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+# DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = False
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1', cast=Csv())
 
@@ -226,3 +227,15 @@ PASSWORD_RESET_TIMEOUT_DAYS = 1 # 1 day
 ADMIN_URL = config('ADMIN_URL', r'^admin/')
 
 CONFIRM_EMAIL = False
+
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn="https://f501f7a006144127893695fbc936c390@o433279.ingest.sentry.io/5388100",
+    integrations=[DjangoIntegration()],
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)
