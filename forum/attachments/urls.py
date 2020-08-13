@@ -6,6 +6,8 @@ from django.contrib import admin
 
 from forum.attachments.views import upload
 
+app_name = 'attachments'
+
 urlpatterns = [
     url(r'^$', upload, name='upload_img'),  
 ] 

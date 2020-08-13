@@ -8,6 +8,8 @@ from forum.comments.views import (
     update_comment,
 )
 
+app_name = 'comments'
+
 urlpatterns = [
     url(r'(?P<pk>[0-9]+)/reply/$', reply_comment, name='comment_reply'),
     url(r'(?P<pk>[0-9]+)/like/$', like_comment, name='like'),

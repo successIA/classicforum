@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.db.models import CharField, Count, F, Max, Min, Prefetch, Value
 from django.utils.html import mark_safe

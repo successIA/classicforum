@@ -324,7 +324,7 @@ class ActivateTest(TestCase):
         user.is_active = False
         user.save()
 
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        uid = urlsafe_base64_encode(force_bytes(user.pk)).decode()
         token = account_activation_token.make_token(user)
         url = reverse(
             'accounts:activate', kwargs={'uidb64': uid, 'token': token}

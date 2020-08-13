@@ -5,7 +5,7 @@ from math import ceil
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.fields import GenericRelation
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models, transaction
 from django.db.models import CharField, Count, F, Max, Min, Prefetch, Value
 from django.db.models.signals import pre_save

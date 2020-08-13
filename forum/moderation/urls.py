@@ -12,6 +12,8 @@ from .views import (
     update_moderator,
 )
 
+app_name = 'moderation'
+
 urlpatterns = [
     url(r'^add/$', create_moderator, name='moderator_create'),
     url(

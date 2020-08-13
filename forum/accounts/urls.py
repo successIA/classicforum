@@ -20,6 +20,8 @@ from forum.accounts.views import (
     user_thread_list,
 )
 
+app_name = 'accounts'
+
 urlpatterns = [
     # authentication
     url(

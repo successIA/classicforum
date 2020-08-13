@@ -10,7 +10,7 @@ def get_signup_email_confirm_form_entries(request, user):
     ctx = {
         'user': user,
         'domain': get_current_site(request).domain,
-        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
         'token': account_activation_token.make_token(user)
     }
     return {
