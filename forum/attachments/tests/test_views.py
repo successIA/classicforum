@@ -56,16 +56,16 @@ class ImageUploadViewTest(TestCase):
         login(self, self.user, 'password')
         data = {'image': self.test_image}
         response = self.client.post(self.upload_url, data)
-        self.assertEquals(response.status_code, 400)
-        self.assertEquals(Attachment.objects.count(), 0)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Attachment.objects.count(), 0)
 
     def test_post_with_anonymous_user_with_ajax(self):
         data = {'image': self.test_image}
         response = self.client.post(
             self.upload_url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(Attachment.objects.count(), 0)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Attachment.objects.count(), 0)
 
     def test_404_for_production(self):
         current_count = Attachment.objects.count()
@@ -75,8 +75,8 @@ class ImageUploadViewTest(TestCase):
             response = self.client.post(
                 self.upload_url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest'
             )
-        self.assertEquals(response.status_code, 404)
-        self.assertEquals(Attachment.objects.count(), current_count)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(Attachment.objects.count(), current_count)
 
     def test_post_with_authenticated_user_with_ajax(self):
         current_count = Attachment.objects.count()
@@ -85,8 +85,8 @@ class ImageUploadViewTest(TestCase):
         response = self.client.post(
             self.upload_url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(Attachment.objects.count(), current_count + 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Attachment.objects.count(), current_count + 1)
 
     def test_post_with_duplicate_images(self):
         current_count = Attachment.objects.count()
@@ -96,16 +96,16 @@ class ImageUploadViewTest(TestCase):
         first_response = self.client.post(
             self.upload_url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(first_response.status_code, 200)
+        self.assertEqual(first_response.status_code, 200)
 
         second_response = self.client.post(
             self.upload_url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(second_response.status_code, 200)
+        self.assertEqual(second_response.status_code, 200)
 
-        self.assertEquals(Attachment.objects.count(), current_count + 1)
+        self.assertEqual(Attachment.objects.count(), current_count + 1)
         path, dirs, files = next(os.walk(IMAGE_UPLOAD_DIR))
-        self.assertEquals(len(files), 1)
+        self.assertEqual(len(files), 1)
 
     def test_post_with_two_images(self):
         current_count = Attachment.objects.count()
@@ -115,17 +115,17 @@ class ImageUploadViewTest(TestCase):
         first_response = self.client.post(
             self.upload_url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(first_response.status_code, 200)
+        self.assertEqual(first_response.status_code, 200)
 
         data2 = {'image': self.test_image2}
         second_response = self.client.post(
             self.upload_url, data2, HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(second_response.status_code, 200)
+        self.assertEqual(second_response.status_code, 200)
 
-        self.assertEquals(Attachment.objects.count(), current_count + 2)
+        self.assertEqual(Attachment.objects.count(), current_count + 2)
         path, dirs, files = next(os.walk(IMAGE_UPLOAD_DIR))
-        self.assertEquals(len(files), 2)
+        self.assertEqual(len(files), 2)
 
     def test_with_empty_data(self):
         login(self, self.user, 'password')
@@ -133,9 +133,9 @@ class ImageUploadViewTest(TestCase):
         response = self.client.post(
             self.upload_url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertFalse(response.json()['is_valid'])
-        self.assertEquals(
+        self.assertEqual(
             response.json()['message'], 'This field is required.'
         )
 
@@ -145,11 +145,11 @@ class ImageUploadViewTest(TestCase):
         response = self.client.post(
             self.upload_url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         attachment_qs = Attachment.objects.filter(image='')
         self.assertFalse(attachment_qs.exists())
         self.assertFalse(response.json()['is_valid'])
-        self.assertEquals(
+        self.assertEqual(
             response.json()['message'], 'This field is required.'
         )
 
@@ -159,11 +159,11 @@ class ImageUploadViewTest(TestCase):
         response = self.client.post(
             self.upload_url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(Attachment.objects.count(), 0)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Attachment.objects.count(), 0)
         self.assertFalse(response.json()['is_valid'])
         message = 'File too large. Size should not exceed 500 KB.'
-        self.assertEquals(response.json()['message'], message)
+        self.assertEqual(response.json()['message'], message)
 
     def test_with_valid_data(self):
         login(self, self.user, 'password')
@@ -171,7 +171,7 @@ class ImageUploadViewTest(TestCase):
         response = self.client.post(
             self.upload_url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         attachment_qs = Attachment.objects.filter(
             image=response.json()['name']
         )

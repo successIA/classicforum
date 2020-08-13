@@ -48,14 +48,14 @@ class AttachmentModelTest(TestCase):
     def test_save(self):
         attachment = Attachment.objects.create(image=self.test_image)
         self.assertIsNotNone(attachment.md5sum)
-        self.assertEquals(attachment.filename, 'testimage.jpg')
+        self.assertEqual(attachment.filename, 'testimage.jpg')
         self.assertIsInstance(attachment, Attachment)
 
     def test_upload_to(self):
         attachment = Attachment(image=self.test_image, md5sum='abc')
         returned_upload_to = upload_to(attachment, attachment.filename)
         expected_upload_to = 'uploads/%s' % 'abc'
-        self.assertEquals(returned_upload_to, expected_upload_to)
+        self.assertEqual(returned_upload_to, expected_upload_to)
 
     def test_upload_to_with_avatar(self):
         attachment = Attachment(
@@ -63,7 +63,7 @@ class AttachmentModelTest(TestCase):
         )
         returned_upload_to = upload_to(attachment, attachment.filename)
         expected_upload_to = 'avatars/%s' % 'abc'
-        self.assertEquals(returned_upload_to, expected_upload_to)
+        self.assertEqual(returned_upload_to, expected_upload_to)
 
 # @override_settings(MEDIA_ROOT=settings.TEST_MEDIA_ROOT)
 # class MediaFileSystemStorageTest(TestCase):
@@ -91,14 +91,14 @@ class AttachmentModelTest(TestCase):
 #         )
 #         print('RESULT1:', result1)
 #         print('IMAGE_NAME:', self.attachment.image.name)
-#         self.assertEquals(result1, self.attachment.image.name)
+#         self.assertEqual(result1, self.attachment.image.name)
 
 #         result2 = self.storage._save(
 #             self.attachment.image.name, self.attachment.image
 #         )
 #         print('RESULT2:', result2)
 #         print('IMAGE_NAME:', self.attachment.image.name)
-#         self.assertEquals(result2, self.attachment.image.name)
+#         self.assertEqual(result2, self.attachment.image.name)
 
 
 @override_settings(MEDIA_ROOT=settings.TEST_MEDIA_ROOT)
@@ -128,13 +128,13 @@ class AttachmentQuerySetTest(TestCase):
 
     def test_create_avatar_with_no_image(self):
         url = Attachment.objects.create_avatar(None, self.user)
-        self.assertEquals(Attachment.objects.count(), self.current_count)
+        self.assertEqual(Attachment.objects.count(), self.current_count)
         self.assertIsNone(url)
 
     def test_create_avatar_with_image(self):
         url = Attachment.objects.create_avatar(self.test_image, self.user)
-        self.assertEquals(Attachment.objects.count(), self.current_count + 1)
-        self.assertEquals(Attachment.objects.all().first().image.url, url)
+        self.assertEqual(Attachment.objects.count(), self.current_count + 1)
+        self.assertEqual(Attachment.objects.all().first().image.url, url)
         self.assertIn(self.user, Attachment.objects.all().first().users.all())
 
     def test_create_avatar_with_duplicate_images(self):
@@ -143,10 +143,10 @@ class AttachmentQuerySetTest(TestCase):
         url = Attachment.objects.create_avatar(self.test_image, self.user)
         url2 = Attachment.objects.create_avatar(self.test_image, second_user)
 
-        self.assertEquals(Attachment.objects.count(), self.current_count + 1)
+        self.assertEqual(Attachment.objects.count(), self.current_count + 1)
         path, dirs, files = next(os.walk(AVATAR_UPLOAD_DIR))
-        self.assertEquals(len(files), 1)
-        self.assertEquals(url, url2)
+        self.assertEqual(len(files), 1)
+        self.assertEqual(url, url2)
         self.assertIn(self.user, Attachment.objects.all().first().users.all())
         self.assertIn(
             second_user, Attachment.objects.all().first().users.all()

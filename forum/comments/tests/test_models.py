@@ -39,15 +39,15 @@ class CommentModelTest(TestCase):
     #     comment2 = Comment.objects.create(
     #         message='test message2', user=self.user, thread=self.thread
     #     )
-    #     self.assertEquals(Comment.objects.count(), 3)
+    #     self.assertEqual(Comment.objects.count(), 3)
     #     comment1.delete()
-    #     self.assertEquals(Comment.objects.count(), 2)
+    #     self.assertEqual(Comment.objects.count(), 2)
     #     comment2.refresh_from_db()
-    #     self.assertEquals(comment2.offset, -1)
+    #     self.assertEqual(comment2.offset, -1)
     #     self.comment.delete()
-    #     self.assertEquals(Comment.objects.count(), 1)
+    #     self.assertEqual(Comment.objects.count(), 1)
     #     comment2.refresh_from_db()
-    #     self.assertEquals(comment2.offset, -2)
+    #     self.assertEqual(comment2.offset, -2)
 
     def test_is_owner(self):
         second_user = self.make_user('testuser2')

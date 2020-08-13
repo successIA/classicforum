@@ -30,24 +30,24 @@ class CategoryDetailView(CategoryViewTest):
         response = self.client.get(self.detail_url)
         Category.objects.all().delete()
         response = self.client.get('/categories/random-slug/')
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
     def test_no_thread(self):
         Thread.objects.all().delete()
         response = self.client.get(self.detail_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         # no_threads_str = 'No Available threads for the current selection.'
         no_threads_str = 'No threads yet'
         self.assertIn(no_threads_str, response.content.decode())
-        self.assertEquals(response.context['category'], self.category)
+        self.assertEqual(response.context['category'], self.category)
         self.assertIsInstance(response.context['form'], ThreadForm)
-        self.assertEquals(
+        self.assertEqual(
             response.context['form'].initial['category'], self.category
         )
-        self.assertEquals(response.context['current_thread_filter'], 'recent')
+        self.assertEqual(response.context['current_thread_filter'], 'recent')
         self.assertIsInstance(response.context['threads'], Page)
-        self.assertEquals(response.context['threads'].number, 1)
-        self.assertEquals(
+        self.assertEqual(response.context['threads'].number, 1)
+        self.assertEqual(
             response.context['base_url'],  
             [f'/categories/progromming-group/recent/', '/']
         )
@@ -56,7 +56,7 @@ class CategoryDetailView(CategoryViewTest):
             kwargs={'slug': self.category.slug,
                     'filter_str': 'recent', 'page': 1}
         )
-        self.assertEquals(response.context['form_action'], form_action)
+        self.assertEqual(response.context['form_action'], form_action)
 
     def test_one_thread(self):
         Thread.objects.all().delete()
@@ -64,20 +64,20 @@ class CategoryDetailView(CategoryViewTest):
         response = self.client.get(self.detail_url)
         no_threads_str = 'No Available threads for the current selection.'
         self.assertNotIn(no_threads_str, response.content.decode())
-        self.assertEquals(response.context['threads'][0], thread)
+        self.assertEqual(response.context['threads'][0], thread)
 
     def test_many_threads(self):
         # make_only_thread(self.user, self.category, count=15)
         response = self.client.get(self.detail_url)
-        self.assertEquals(len(response.context['threads']), 10)
+        self.assertEqual(len(response.context['threads']), 10)
         filter_str_url = reverse(
             "categories:category_detail_filter",
             kwargs={'slug': self.category.slug,
                     'filter_str': 'recent', 'page': 2}
         )
         response = self.client.get(filter_str_url)
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(len(response.context['threads']), 5)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['threads']), 5)
 
     def test_all_threads_filter_str(self):
         for filter_str in ['recent', 'trending', 'popular', 'fresh']:
@@ -87,11 +87,11 @@ class CategoryDetailView(CategoryViewTest):
                         'filter_str': filter_str, 'page': 1}
             )
             response = self.client.get(filter_str_url)
-            self.assertEquals(response.status_code, 200)
-            self.assertEquals(
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(
                 response.context['current_thread_filter'], filter_str
             )
-            self.assertEquals(
+            self.assertEqual(
                 response.context['base_url'],
                 [f'/categories/{self.category.slug}/{filter_str}/', '/']
             )
@@ -106,7 +106,7 @@ class CategoryDetailView(CategoryViewTest):
                         'filter_str': filter_str, 'page': 1}
             )
             response = self.client.get(filter_str_url)
-            self.assertEquals(response.status_code, 404)
+            self.assertEqual(response.status_code, 404)
 
     def test_auth_filter_str_for_authenticated_user(self):
         auth_filter_str_list = ['new', 'following', 'me']
@@ -119,11 +119,11 @@ class CategoryDetailView(CategoryViewTest):
                         'filter_str': filter_str, 'page': 1}
             )
             response = self.client.get(filter_str_url)
-            self.assertEquals(response.status_code, 200)
-            self.assertEquals(
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(
                 response.context['current_thread_filter'], filter_str
             )
-            self.assertEquals(
+            self.assertEqual(
                 response.context['base_url'],
                 [f'/categories/{self.category.slug}/{filter_str}/', '/']
             )

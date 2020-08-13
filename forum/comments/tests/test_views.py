@@ -55,7 +55,7 @@ class CommentCreateViewTest(CommentViewsTest):
         """
         login(self, self.user, 'password')
         response = self.client.get(self.create_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['form'], CommentForm)
 
     def test_view_submit_success_for_authenticated_user(self):
@@ -63,14 +63,14 @@ class CommentCreateViewTest(CommentViewsTest):
         login(self, self.user, 'password')
         data = {'message': 'hello word'}
         response = self.client.post(self.create_url, data)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(Comment.objects.count(), current_count + 1)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Comment.objects.count(), current_count + 1)
 
     def test_empty_data_cannot_be_posted(self):
         login(self, self.user, 'password')
         data = {}
         response = self.client.post(self.create_url, data)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         form = response.context.get('form')
         self.assertTrue(form.errors)
 
@@ -78,7 +78,7 @@ class CommentCreateViewTest(CommentViewsTest):
         login(self, self.user, 'password')
         data = {'message': ''}
         response = self.client.post(self.create_url, data)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         form = response.context.get('form')
         self.assertTrue(form.errors)
     
@@ -101,14 +101,14 @@ class CommentCreateWithHiddenThreadTest(CommentViewsTest):
         """
         login(self, self.user, 'password')
         response = self.client.get(self.create_url)
-        self.assertEquals(response.status_code, 404)    
+        self.assertEqual(response.status_code, 404)    
     
     def test_view_should_not_allow_post_for_hidden_thread(self):
         current_count = Comment.objects.count()
         login(self, self.user, 'password')
         response = self.client.post(self.create_url, self.data)
-        self.assertEquals(response.status_code, 404)
-        self.assertEquals(Comment.objects.count(), current_count)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(Comment.objects.count(), current_count)
     
     def test_view_should_render_hidden_thread_for_moderator(self):
         """
@@ -118,15 +118,15 @@ class CommentCreateWithHiddenThreadTest(CommentViewsTest):
         make_moderator(self.user, self.category)
         login(self, self.user, 'password')
         response = self.client.get(self.create_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
     
     def test_view_should_prevent_moderators_from_posting(self):
         current_count = Comment.objects.count()
         login(self, self.user, 'password')
         make_moderator(self.user, self.category)
         response = self.client.post(self.create_url, self.data)
-        self.assertEquals(response.status_code, 403)
-        self.assertEquals(Comment.objects.count(), current_count)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Comment.objects.count(), current_count)
     
 
 class CommentCreateViewWithMentionTest(CommentViewsTest):
@@ -143,8 +143,8 @@ class CommentCreateViewWithMentionTest(CommentViewsTest):
         message = 'hello world @mentione'
         data = {'message': message}
         response = self.client.post(self.create_url, data)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(Comment.objects.all().count(), 2)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Comment.objects.all().count(), 2)
         comment = Comment.objects.get(message=message)
         self.assertNotIn(mentionee, comment.mentioned_users.all())
 
@@ -153,8 +153,8 @@ class CommentCreateViewWithMentionTest(CommentViewsTest):
         message = 'hello world @mentionee'
         data = {'message': message}
         response = self.client.post(self.create_url, data)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(Comment.objects.all().count(), 2)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Comment.objects.all().count(), 2)
         comment = Comment.objects.get(message=message)
         self.assertIn(mentionee, comment.mentioned_users.all())
 
@@ -170,11 +170,11 @@ class CommentCreateViewWithMentionTest(CommentViewsTest):
         """
         data = {'message': message}
         response = self.client.post(self.create_url, data)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(Comment.objects.all().count(), 2)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Comment.objects.all().count(), 2)
         comment = Comment.objects.last()
-        self.assertNotEquals(comment.mentioned_users.count(), 5)
-        self.assertEquals(comment.mentioned_users.count(), 2)
+        self.assertNotEqual(comment.mentioned_users.count(), 5)
+        self.assertEqual(comment.mentioned_users.count(), 2)
 
 
 class CommentCreateViewWithMarkedMessageTest(CommentViewsTest):
@@ -192,10 +192,10 @@ class CommentCreateViewWithMarkedMessageTest(CommentViewsTest):
         """
         data = {'message': message}
         response = self.client.post(self.create_url, data)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(Comment.objects.all().count(), 2)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Comment.objects.all().count(), 2)
         comment = Comment.objects.last()
-        self.assertEquals(comment.marked_message, '<p>hello world</p>')
+        self.assertEqual(comment.marked_message, '<p>hello world</p>')
 
 
 class CommentUpdateViewTest(CommentViewsTest):
@@ -231,23 +231,23 @@ class CommentUpdateViewTest(CommentViewsTest):
         login(self, second_user, 'password')
 
         get_response = self.client.get(self.update_url)
-        self.assertEquals(get_response.status_code, 403)
+        self.assertEqual(get_response.status_code, 403)
 
         data = {'message': 'hello word'}
         post_response = self.client.post(self.update_url, data)
-        self.assertEquals(post_response.status_code, 403)
+        self.assertEqual(post_response.status_code, 403)
 
     def test_render_for_authenticated_user_with_permission(self):
         login(self, self.user, 'password')
         response = self.client.get(self.update_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.context['form'], CommentForm)
 
     def test_empty_data_rejection(self):
         login(self, self.user, 'password')
         data = {}
         response = self.client.post(self.update_url, data)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         form = response.context.get('form')
         self.assertTrue(form.errors)
 
@@ -259,7 +259,7 @@ class CommentUpdateViewTest(CommentViewsTest):
             'message': '',
         }
         response = self.client.post(self.update_url, data)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         form = response.context.get('form')
         self.assertTrue(form.errors)
 
@@ -267,9 +267,9 @@ class CommentUpdateViewTest(CommentViewsTest):
         login(self, self.user, 'password')
         data = {'message': 'hello world changed'}
         response = self.client.post(self.update_url, data)
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.comment.refresh_from_db()
-        self.assertEquals(self.comment.message, 'hello world changed')
+        self.assertEqual(self.comment.message, 'hello world changed')
 
     def test_starting_comment_change_rejection(self):
         """
@@ -284,7 +284,7 @@ class CommentUpdateViewTest(CommentViewsTest):
             kwargs={'thread_slug': self.thread.slug, 'pk': pk}
         )
         response = self.client.post(update_url, data)
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
 
 class CommentUpdateWithHiddenThread(CommentViewsTest):
@@ -307,7 +307,7 @@ class CommentUpdateWithHiddenThread(CommentViewsTest):
         """
         login(self, self.user, 'password')
         response = self.client.get(self.update_url)
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
     
     def test_view_should_render_hidden_thread_for_moderator(self):
         """
@@ -317,24 +317,24 @@ class CommentUpdateWithHiddenThread(CommentViewsTest):
         make_moderator(self.user, self.category)
         login(self, self.user, 'password')
         response = self.client.get(self.update_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
     
     def test_view_should_not_allow_post_for_hidden_thread(self):
         login(self, self.user, 'password')
         response = self.client.post(self.update_url, self.data)
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
         prev_msg = self.comment.message
         self.comment.refresh_from_db()
-        self.assertEquals(self.comment.message, prev_msg)
+        self.assertEqual(self.comment.message, prev_msg)
 
     def test_view_should_prevent_moderators_from_posting(self):
         make_moderator(self.user, self.category)
         login(self, self.user, 'password')
         response = self.client.post(self.update_url, self.data)
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
         prev_msg = self.comment.message
         self.comment.refresh_from_db()
-        self.assertEquals(self.comment.message, prev_msg)
+        self.assertEqual(self.comment.message, prev_msg)
 
 
 class CommentUpdateWithHiddenComment(CommentViewsTest):
@@ -350,30 +350,30 @@ class CommentUpdateWithHiddenComment(CommentViewsTest):
     def test_view_should_not_render_hidden_comment(self):
         login(self, self.user, 'password')
         response = self.client.get(self.update_url)
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
     def test_view_should_not_render_hidden_comment_for_moderator(self):
         make_moderator(self.user, self.category)
         login(self, self.user, 'password')
         response = self.client.get(self.update_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
     
     def test_view_should_not_allow_post_for_hidden_comment(self):
         login(self, self.user, 'password')
         response = self.client.post(self.update_url, self.data)
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
         prev_msg = self.comment.message
         self.comment.refresh_from_db()
-        self.assertEquals(self.comment.message, prev_msg)
+        self.assertEqual(self.comment.message, prev_msg)
 
     def test_view_should_prevent_moderators_from_posting(self):
         make_moderator(self.user, self.category)
         login(self, self.user, 'password')
         response = self.client.post(self.update_url, self.data)
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
         prev_msg = self.comment.message
         self.comment.refresh_from_db()
-        self.assertEquals(self.comment.message, prev_msg)
+        self.assertEqual(self.comment.message, prev_msg)
 
     
 class CommentReplyViewTest(CommentViewsTest):
@@ -406,9 +406,9 @@ class CommentReplyViewTest(CommentViewsTest):
         """Logged in users can see the reply form"""
         login(self, self.user, 'password')
         response = self.client.get(self.reply_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.context['form'], CommentForm)
-        self.assertEquals(
+        self.assertEqual(
             self.bbcode_message, response.context['form'].initial['message']
         )
 
@@ -420,15 +420,15 @@ class CommentReplyViewTest(CommentViewsTest):
         message = self.bbcode_message + reply_message
         data = {'message': message}
         response = self.client.post(self.reply_url, data)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(Comment.objects.count(), current_count + 1)
-        self.assertEquals(Comment.objects.last().parent, self.comment)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Comment.objects.count(), current_count + 1)
+        self.assertEqual(Comment.objects.last().parent, self.comment)
 
     def test_empty_data_rejection(self):
         login(self, self.user, 'password')
         data = {}
         response = self.client.post(self.reply_url, data)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         form = response.context.get('form')
         self.assertTrue(form.errors)
 
@@ -436,7 +436,7 @@ class CommentReplyViewTest(CommentViewsTest):
         login(self, self.user, 'password')
         data = {'message': ''}
         response = self.client.post(self.reply_url, data)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         form = response.context.get('form')
         self.assertTrue(form.errors)
 
@@ -467,8 +467,8 @@ class CommentLikeTest(CommentViewsTest):
         second_user = self.make_user('testuser2')
         login(self, second_user, 'password')
         response = self.client.post(self.like_url)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(self.comment.likers.count(), 1)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(self.comment.likers.count(), 1)
 
     def test_with_existing_liker(self):
         """An existing liker is removed from likers count"""
@@ -476,8 +476,8 @@ class CommentLikeTest(CommentViewsTest):
         login(self, second_user, 'password')
         self.client.post(self.like_url)
         response = self.client.post(self.like_url)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(self.comment.likers.count(), 0)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(self.comment.likers.count(), 0)
     
     def test_notification_after_like(self):
         """

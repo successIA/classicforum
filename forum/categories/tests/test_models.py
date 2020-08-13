@@ -19,10 +19,10 @@ class CategoryModelTest(TestCase):
     def test_save(self):
         cat = Category(title='Test Title', description='Test description')
         cat.save()
-        self.assertEquals(cat.slug, 'test-title')
+        self.assertEqual(cat.slug, 'test-title')
 
 
 class CategoryModelManagerTest(CategoryModelTest):
     def test_get_by_slug(self):
         category = Category.objects.get_by_slug(self.category.slug)
-        self.assertEquals(category, self.category)
+        self.assertEqual(category, self.category)

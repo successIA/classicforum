@@ -46,7 +46,7 @@ class Comment(TimeStampedModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
-    parent = models.ForeignKey('self', blank=True, null=True)
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
     mentioned_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         blank=True,

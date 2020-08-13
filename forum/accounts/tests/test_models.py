@@ -43,7 +43,7 @@ class UserModelTest(TestCase):
             print(e)
 
     def test_str_(self):
-        self.assertEquals(self.user.__str__(), self.user.username)
+        self.assertEqual(self.user.__str__(), self.user.username)
 
     def test_is_online(self):
         self.user.last_seen = timezone.now()
@@ -79,10 +79,10 @@ class UserModelTest(TestCase):
         url = Attachment.objects.create_avatar(self.test_avatar, self.user)
         self.user.avatar_url = url
         self.user.save()
-        self.assertEquals(self.user.get_avatar_url(), url)
+        self.assertEqual(self.user.get_avatar_url(), url)
 
     def test_get_avatar_url_without_avatar(self):
-        self.assertEquals(self.user.get_avatar_url(), '/static/img/avatar.svg')
+        self.assertEqual(self.user.get_avatar_url(), '/static/img/avatar.svg')
 
     def test_update_notification_info(self):
         request = RequestFactory()
@@ -90,8 +90,8 @@ class UserModelTest(TestCase):
         url = '/notification_url_example/'
         count = 99
         self.user.update_notification_info(request, url, count)
-        self.assertEquals(request.user.notif_url, url)
-        self.assertEquals(request.user.notif_count, count)
+        self.assertEqual(request.user.notif_url, url)
+        self.assertEqual(request.user.notif_count, count)
 
     def test_toggle_followers_with_new_follower(self):
         second_user = self.make_user('testuser2')
@@ -107,16 +107,16 @@ class UserModelTest(TestCase):
 
     def test_get_absolute_url(self):
         url = '/accounts/%s/' % self.user.username
-        self.assertEquals(self.user.get_absolute_url(), url)
+        self.assertEqual(self.user.get_absolute_url(), url)
 
     def test_get_user_follow_url(self):
         url = '/accounts/%s/follow/' % self.user.username
-        self.assertEquals(self.user.get_user_follow_url(), url)
+        self.assertEqual(self.user.get_user_follow_url(), url)
 
     def test_get_userprofile_update_url(self):
         url = '/accounts/%s/info/' % self.user.username
-        self.assertEquals(self.user.get_userprofile_update_url(), url)
+        self.assertEqual(self.user.get_userprofile_update_url(), url)
 
     def test_get_login_url(self):
         url = '/accounts/auth/login/'
-        self.assertEquals(self.user.get_login_url(), url)
+        self.assertEqual(self.user.get_login_url(), url)

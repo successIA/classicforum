@@ -28,26 +28,26 @@ class ThreadModelTest(TestCase):
         )
 
     def test_save(self):
-        self.assertEquals(self.thread.slug, 'python-discussion')
+        self.assertEqual(self.thread.slug, 'python-discussion')
 
     def test_synchronise_for_create(self):
-        self.assertEquals(self.thread.comment_count, 0)
+        self.assertEqual(self.thread.comment_count, 0)
         comment = make_comment(self.user, self.thread)
         self.thread.synchronise(comment)
         self.thread.refresh_from_db()
-        self.assertEquals(self.thread.comment_count, 1)
+        self.assertEqual(self.thread.comment_count, 1)
 
         comment2 = make_comment(self.user, self.thread)
         self.thread.synchronise(comment2)
         self.thread.refresh_from_db()
-        self.assertEquals(self.thread.comment_count, 2)
+        self.assertEqual(self.thread.comment_count, 2)
 
         comment3 = make_comment(self.user, self.thread)
         self.thread.synchronise(comment3, added=False)
         self.thread.refresh_from_db()
-        self.assertEquals(self.thread.comment_count, 1)
-        self.assertEquals(self.thread.final_comment_user, comment3.user)
-        self.assertEquals(self.thread.final_comment_time, comment3.created)
+        self.assertEqual(self.thread.comment_count, 1)
+        self.assertEqual(self.thread.final_comment_user, comment3.user)
+        self.assertEqual(self.thread.final_comment_time, comment3.created)
 
     def test_toggle_follower(self):
         second_user = self.make_user('testuser2')
@@ -79,4 +79,4 @@ class ThreadRevisionQuerySetTest(ThreadModelTest):
 
         # revision = ThreadRevision.objects.create_from_thread(self.thread)
         # self.assertIsNotNone(revision)
-        # self.assertEquals(self.thread, revision.thread)
+        # self.assertEqual(self.thread, revision.thread)
