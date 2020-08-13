@@ -58,18 +58,15 @@ def make_only_thread(user, category, count=1, visible=True):
     if count > 1:
         thread_list = []
         for _ in range(count):
-            thread_list.append(
-                Thread(
-                    title=fake.sentence(),
-                    body="NA",
-                    user=user,
-                    category=category,
-                    visible=visible,
-                    created=timezone.now(),
-                    modified=timezone.now()
-                )
+            Thread.objects.create(
+                title=fake.sentence(),
+                body="NA",
+                user=user,
+                category=category,
+                visible=visible,
+                created=timezone.now(),
+                modified=timezone.now()
             )
-        Thread.objects.bulk_create(thread_list)
     else:
         return Thread.objects.create(
             title=fake.sentence(),
