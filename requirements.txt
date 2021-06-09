@@ -9,7 +9,7 @@ colorama==0.4.3
 coverage==5.2.1
 cryptography==3.0
 dj-database-url==0.5.0
-Django==2.2.15
+Django==2.2.22
 django-appconf==1.0.4
 django-compat==1.0.15
 django-compressor==2.4
